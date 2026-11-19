@@ -423,37 +423,29 @@ fn valco_check_updates() -> bool {
     }
 }
 
-/// Keeps the window opaque under transparency mods (Windhawk translucent windows, Mica-for-everything tools):
-/// no DWM backdrop, no extended glass, no acrylic accent. Valco Weave draws its own frame.
+/// Keeps the window opaque under transparency mods (Windhawk etc.), which make every window layered with a
+/// window-wide alpha: restore full alpha and drop WS_EX_LAYERED. Valco Weave draws its own frame.
 #[cfg(windows)]
 fn keep_opaque(h: isize) {
-    #[repr(C)]
-    struct Margins { l: i32, r: i32, t: i32, b: i32 }
-    #[repr(C)]
-    struct Accent { state: i32, flags: i32, color: i32, anim: i32 }
-    #[repr(C)]
-    struct CompData { attr: i32, data: *mut std::ffi::c_void, size: usize }
-    #[link(name = "dwmapi")]
-    extern "system" {
-        fn DwmSetWindowAttribute(h: isize, attr: u32, v: *const std::ffi::c_void, n: u32) -> i32;
-        fn DwmExtendFrameIntoClientArea(h: isize, m: *const Margins) -> i32;
-    }
     #[link(name = "user32")]
     extern "system" {
-        fn SetWindowCompositionAttribute(h: isize, d: *mut CompData) -> i32;
+        fn GetWindowLongPtrW(h: isize, i: i32) -> isize;
+        fn SetWindowLongPtrW(h: isize, i: i32, v: isize) -> isize;
+        fn SetLayeredWindowAttributes(h: isize, key: u32, alpha: u8, flags: u32) -> i32;
+        fn SetWindowPos(h: isize, after: isize, x: i32, y: i32, cx: i32, cy: i32, flags: u32) -> i32;
     }
+    const GWL_EXSTYLE: i32 = -20;
+    const WS_EX_LAYERED: isize = 0x0008_0000;
     if h == 0 {
         return;
     }
     unsafe {
-        let none: i32 = 1; // DWMSBT_NONE
-        DwmSetWindowAttribute(h, 38, &none as *const i32 as *const _, 4);
-        let off: i32 = 0;
-        DwmSetWindowAttribute(h, 17, &off as *const i32 as *const _, 4);
-        DwmExtendFrameIntoClientArea(h, &Margins { l: 0, r: 0, t: 0, b: 0 });
-        let mut accent = Accent { state: 0, flags: 0, color: 0, anim: 0 };
-        let mut data = CompData { attr: 19, data: &mut accent as *mut Accent as *mut _, size: std::mem::size_of::<Accent>() };
-        SetWindowCompositionAttribute(h, &mut data);
+        let ex = GetWindowLongPtrW(h, GWL_EXSTYLE);
+        if ex & WS_EX_LAYERED != 0 {
+            SetLayeredWindowAttributes(h, 0, 255, 0x2);
+            SetWindowLongPtrW(h, GWL_EXSTYLE, ex & !WS_EX_LAYERED);
+            SetWindowPos(h, 0, 0, 0, 0, 0, 0x1 | 0x2 | 0x4 | 0x10 | 0x20);
+        }
     }
 }
 #[cfg(not(windows))]

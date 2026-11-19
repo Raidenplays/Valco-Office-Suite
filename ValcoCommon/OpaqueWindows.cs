@@ -8,11 +8,10 @@ using System.Windows.Media;
 namespace Valco.UI
 {
     /// <summary>
-    /// Valco windows draw their own Vista frame, so they must stay fully opaque. Transparency tweaks such as Windhawk's
-    /// translucent-window mods or Mica/acrylic "for every app" tools extend DWM glass or a backdrop into the whole window,
-    /// and WPF (whose WindowChrome clears to transparent) then shows the blur through the ribbon and text.
-    /// This opts every Valco window out: opaque WPF background, no DWM backdrop, no accent blur, no extended frame,
-    /// and re-applies it whenever the window is activated or resized (some mods re-apply theirs).
+    /// Valco windows draw their own Vista frame, so they must stay fully opaque. Transparency mods (Windhawk etc.) make
+    /// every window layered with a window-wide alpha; this undoes that for Valco windows and keeps WPF's background
+    /// opaque, re-applying when the window is activated or resized. The backdrop/blur itself is left alone: removing it
+    /// while the mod keeps the window see-through only makes things worse.
     /// </summary>
     public static class OpaqueWindows
     {
@@ -53,37 +52,27 @@ namespace Valco.UI
             catch { }
             try
             {
-                var none = 1; // DWMSBT_NONE
-                DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE, ref none, sizeof(int));
-                var off = 0;
-                DwmSetWindowAttribute(hwnd, DWMWA_USE_HOSTBACKDROPBRUSH, ref off, sizeof(int));
-                var m = new MARGINS();
-                DwmExtendFrameIntoClientArea(hwnd, ref m);
-                // undo an acrylic/blur accent set from outside (ACCENT_DISABLED)
-                var accent = new AccentPolicy { AccentState = 0 };
-                var size = Marshal.SizeOf(accent);
-                var ptr = Marshal.AllocHGlobal(size);
-                try
+                // Transparency mods make a window see-through by turning it into a layered window with a
+                // window-wide alpha. A normal WPF window is never layered, so undo that: full alpha, then drop the style.
+                var ex = GetWindowLongPtr(hwnd, GWL_EXSTYLE).ToInt64();
+                if ((ex & WS_EX_LAYERED) != 0)
                 {
-                    Marshal.StructureToPtr(accent, ptr, false);
-                    var data = new WindowCompositionAttributeData { Attribute = WCA_ACCENT_POLICY, Data = ptr, SizeOfData = size };
-                    SetWindowCompositionAttribute(hwnd, ref data);
+                    SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+                    SetWindowLongPtr(hwnd, GWL_EXSTYLE, new IntPtr(ex & ~WS_EX_LAYERED));
+                    SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
                 }
-                finally { Marshal.FreeHGlobal(ptr); }
             }
-            catch { /* older Windows or DWM off: nothing to undo */ }
+            catch { }
         }
 
-        const int DWMWA_USE_HOSTBACKDROPBRUSH = 17;
-        const int DWMWA_SYSTEMBACKDROP_TYPE = 38;
-        const int WCA_ACCENT_POLICY = 19;
+        const int GWL_EXSTYLE = -20;
+        const long WS_EX_LAYERED = 0x00080000;
+        const int LWA_ALPHA = 0x2;
+        const uint SWP_NOSIZE = 0x1, SWP_NOMOVE = 0x2, SWP_NOZORDER = 0x4, SWP_NOACTIVATE = 0x10, SWP_FRAMECHANGED = 0x20;
 
-        [StructLayout(LayoutKind.Sequential)] struct MARGINS { public int Left, Right, Top, Bottom; }
-        [StructLayout(LayoutKind.Sequential)] struct AccentPolicy { public int AccentState, AccentFlags, GradientColor, AnimationId; }
-        [StructLayout(LayoutKind.Sequential)] struct WindowCompositionAttributeData { public int Attribute; public IntPtr Data; public int SizeOfData; }
-
-        [DllImport("dwmapi.dll")] static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int value, int size);
-        [DllImport("dwmapi.dll")] static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
-        [DllImport("user32.dll")] static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")] static extern IntPtr GetWindowLongPtr(IntPtr hwnd, int index);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")] static extern IntPtr SetWindowLongPtr(IntPtr hwnd, int index, IntPtr value);
+        [DllImport("user32.dll")] static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint key, byte alpha, uint flags);
+        [DllImport("user32.dll")] static extern bool SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int cx, int cy, uint flags);
     }
 }
