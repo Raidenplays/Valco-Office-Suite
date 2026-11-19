@@ -291,6 +291,11 @@ namespace ValcoSetup
             key.SetValue("Kind", app.Kind);
             key.SetValue("Folder", AppDir(app));
             var owned = new List<string>(); var values = new List<string>(); var shortcuts = new List<string>();
+            // keys the app owns are rewritten from scratch, so values an update dropped (e.g. a file type) don't linger
+            foreach (var k in app.Registry.Where(r => r.Owned).Select(r => Expand(r.Key, app)).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x.Length))
+            {
+                try { Registry.LocalMachine.DeleteSubKeyTree(k, false); } catch { }
+            }
             // file types, protocols and Default apps registration (MSI-chained apps too)
             foreach (var r in app.Registry)
             {

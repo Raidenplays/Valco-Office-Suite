@@ -578,7 +578,7 @@ namespace ValcoSetup
             sp.Children.Add(Heading("Change your installation of Valco Office"));
             RadioButton Opt(string title, string text, bool check)
             {
-                var r = new RadioButton { IsChecked = check, Margin = new Thickness(0, 12, 0, 0), Content = new StackPanel { Children = { new TextBlock { Text = title, FontWeight = FontWeights.SemiBold, Foreground = HeadingBrush }, new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, Foreground = TextBrush, MaxWidth = 520, Margin = new Thickness(0, 2, 0, 0) } } } };
+                var r = new RadioButton { IsChecked = check, Margin = new Thickness(0, 12, 0, 0), Content = new StackPanel { Children = { new AccessText { Text = title, FontWeight = FontWeights.SemiBold, Foreground = HeadingBrush }, new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, Foreground = TextBrush, MaxWidth = 520, Margin = new Thickness(0, 2, 0, 0) } } } };
                 sp.Children.Add(r);
                 return r;
             }
