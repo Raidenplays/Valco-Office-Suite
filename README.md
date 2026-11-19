@@ -14,7 +14,7 @@ A suite of Windows Vista-style apps for Windows 11 that replace Microsoft and ot
 `ValcoCommon` holds the shared Ribbon, colour schemes, Valco button, Quick Access Toolbar, Valco menu and suite icons used by Word, Express and Code. Edit them there, never in the apps.
 
 ## Install
-Download **ValcoOffice-Setup.exe** from the [latest release](https://github.com/Raidenplays/Valco-Office-Suite/releases/latest) and run it — it's one file with every program inside. The apps check these releases for updates once a day (and from Check for Updates); Valco Office Update downloads the new installer and updates the programs you have.
+Download **ValcoOffice-Setup.exe** from the [latest release](https://github.com/Raidenplays/Valco-Office-Suite/releases/latest) and run it — it's one file with every program inside. The apps check these releases for updates once a day (and from Check for Updates); Valco Office Update downloads only the programs that changed (each release also carries every program as its own file) and updates the ones you have.
 
 Windows 11 doesn't let installers change your default programs, so Setup ends with **Set Default Programs**: one click per app opens its page in Settings → Default apps.
 
@@ -34,6 +34,6 @@ ValcoNet's build downloads the latest Firefox ESR as its engine each time, so re
 ## Releasing an update
 1. Bump `<Version>` in the app's project (or just rebuild — every build gets a new revision number).
 2. Run `ValcoSetup\build-all.cmd`.
-3. Create a GitHub release with the tag from `dist\release-tag.txt` (for example `v1.0.0.464900`) and attach only `ValcoOffice-Setup.exe`. The apps compare that tag with the installed suite version.
+3. Create a GitHub release with the tag from `dist\release-tag.txt` (for example `v1.0.0.464900`) and attach every file in `ValcoSetup\release` (the full installer, `ValcoOffice-Updater.exe`, `valco-office.json`, and each program's .zip/.msi and .ico). The apps compare that tag with the installed suite version.
 
 © 2026 ItsRaiden

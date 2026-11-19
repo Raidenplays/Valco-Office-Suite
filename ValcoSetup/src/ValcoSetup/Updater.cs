@@ -18,13 +18,16 @@ using Path = System.IO.Path;
 namespace ValcoSetup
 {
     /// <summary>
-    /// Updates come from the GitHub releases of Raidenplays/Valco-Office-Suite. Each release has one file, ValcoOffice-Setup.exe
-    /// (setup + every program), and its tag is the suite version (v1.0.0.464900).
+    /// Updates come from the GitHub releases of Raidenplays/Valco-Office-Suite; the tag is the suite version (v1.0.0.464900).
+    /// Each release has ValcoOffice-Setup.exe (setup + every program, for new installs) and the same programs as separate files
+    /// (valco-office.json, ValcoOffice-Updater.exe, one .zip/.msi + .ico per program), so updates download only what changed.
     /// </summary>
     public static class UpdateFeed
     {
         public const string DefaultRepo = "Raidenplays/Valco-Office-Suite";
         public const string Asset = "ValcoOffice-Setup.exe";
+        public const string ManifestAsset = "valco-office.json";
+        public const string UpdaterAsset = "ValcoOffice-Updater.exe";
         static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
         static readonly HttpClient NoRedirect = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(30) };
         static UpdateFeed()
@@ -54,10 +57,22 @@ namespace ValcoSetup
 
         public static bool IsNewer(string version) => Ver.Newer(version, InstalledVersion);
 
-        public static async Task Download(string tag, string dest, Action<long, long> progress, CancellationToken ct)
+        static string AssetUrl(string tag, string name) => $"https://github.com/{Repo}/releases/download/{Uri.EscapeDataString(tag)}/{Uri.EscapeDataString(name)}";
+
+        public static Task Download(string tag, string dest, Action<long, long> progress, CancellationToken ct) => DownloadAsset(tag, Asset, dest, progress, ct);
+
+        /// <summary>The release's program list, or null when the release only has the single installer (older releases).</summary>
+        public static async Task<SuiteManifest> ManifestAsync(string tag, CancellationToken ct)
         {
-            using var resp = await Http.GetAsync($"https://github.com/{Repo}/releases/download/{Uri.EscapeDataString(tag)}/{Asset}", HttpCompletionOption.ResponseHeadersRead, ct);
-            resp.EnsureSuccessStatusCode();
+            using var resp = await Http.GetAsync(AssetUrl(tag, ManifestAsset), ct);
+            if (!resp.IsSuccessStatusCode) return null;
+            try { return SuiteManifest.Parse(await resp.Content.ReadAsStringAsync(ct)); } catch { return null; }
+        }
+
+        public static async Task DownloadAsset(string tag, string name, string dest, Action<long, long> progress, CancellationToken ct)
+        {
+            using var resp = await Http.GetAsync(AssetUrl(tag, name), HttpCompletionOption.ResponseHeadersRead, ct);
+            if (!resp.IsSuccessStatusCode) throw new Exception($"{name} couldn't be downloaded ({(int)resp.StatusCode} {resp.ReasonPhrase}).");
             long total = resp.Content.Headers.ContentLength ?? -1, done = 0;
             using var src = await resp.Content.ReadAsStreamAsync(ct);
             using var fs = File.Create(dest);
@@ -224,6 +239,7 @@ namespace ValcoSetup
             Directory.CreateDirectory(dir);
             try
             {
+                if (await TryDownloadPrograms(dir, line, bar)) { Close(); return; }
                 var exe = Path.Combine(dir, UpdateFeed.Asset);
                 await UpdateFeed.Download(_tag, exe, (d, t) => Dispatcher.Invoke(() =>
                 {
@@ -256,6 +272,55 @@ namespace ValcoSetup
                 _body.Child = p;
                 Btn("_Try Again", Check, true); Btn("Close", Close);
             }
+        }
+
+        /// <summary>
+        /// Downloads only the programs that changed (plus the small updater) and starts the elevated apply step.
+        /// Returns false when the release has no separate program files, so the caller falls back to the full installer.
+        /// </summary>
+        async Task<bool> TryDownloadPrograms(string dir, TextBlock line, ProgressBar bar)
+        {
+            var m = await UpdateFeed.ManifestAsync(_tag, _cts.Token);
+            if (m == null || m.Apps.Count == 0) return false;
+            var installed = Engine.InstalledApps();
+            m.Apps.RemoveAll(a => !installed.TryGetValue(a.Id, out var v) || !Ver.Newer(a.Version, v));
+            var payload = Path.Combine(dir, "payload");
+            Directory.CreateDirectory(payload);
+            var runner = Path.Combine(dir, "setup.exe");
+            // what to fetch: the updater, each changed program and its icon, and the license
+            var jobs = new List<(string Name, string Dest, string Sha, long Size, bool Required)>
+            {
+                (UpdateFeed.UpdaterAsset, runner, m.SetupSha256, 0, true),
+                ("License.rtf", Path.Combine(payload, "License.rtf"), null, 0, false),
+            };
+            foreach (var a in m.Apps)
+            {
+                jobs.Add((a.File, Path.Combine(payload, a.File), a.Sha256, a.DownloadSize, true));
+                if (!string.IsNullOrEmpty(a.Icon)) jobs.Add((a.Icon, Path.Combine(payload, a.Icon), null, 0, false));
+            }
+            long total = jobs.Sum(j => j.Size), before = 0;
+            var names = string.Join(", ", m.Apps.Select(a => a.Name));
+            foreach (var j in jobs)
+            {
+                var label = m.Apps.FirstOrDefault(a => a.File == j.Name)?.Name ?? "Valco Office Update";
+                try
+                {
+                    await UpdateFeed.DownloadAsset(_tag, j.Name, j.Dest, (d, t) => Dispatcher.Invoke(() =>
+                    {
+                        long all = Math.Max(total, before + Math.Max(t, d));
+                        bar.Value = all > 0 ? (before + d) / (double)all : 0;
+                        line.Text = $"Downloading {label}...  {(before + d) / 1048576.0:N1} of {all / 1048576.0:N1} MB";
+                    }), _cts.Token);
+                }
+                catch (Exception) when (!j.Required) { continue; }
+                if (!string.IsNullOrEmpty(j.Sha) && !Engine.Sha256(j.Dest).Equals(j.Sha, StringComparison.OrdinalIgnoreCase))
+                    throw new Exception($"{j.Name} was damaged while downloading. Try again.");
+                before += j.Size > 0 ? j.Size : new FileInfo(j.Dest).Length;
+            }
+            File.WriteAllText(Path.Combine(payload, "valco-office.json"), m.ToJson());
+            line.Text = m.Apps.Count > 0 ? $"Installing updates for {names}..." : "Installing updates...";
+            Process.Start(new ProcessStartInfo(runner, $"/applyupdates \"{payload}\"") { UseShellExecute = true, Verb = "runas" });
+            return true;
         }
     }
 

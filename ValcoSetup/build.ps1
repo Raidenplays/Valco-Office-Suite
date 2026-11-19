@@ -129,7 +129,7 @@ Copy-Item 'assets\ValcoOffice.ico' (Join-Path $dist 'ValcoOffice.ico')
 
 # ValcoOffice-Setup.exe: setup.exe with the payload folder appended as a zip
 #   [setup.exe][payload.zip][Int64 zip length][VALCOPKG]  (read by Package.cs)
-# This single file is the whole GitHub release.
+# This is the download for new installs; release\ also gets each program on its own for updates.
 $single = Join-Path $PSScriptRoot 'dist\ValcoOffice-Setup.exe'
 $payloadZip = Join-Path $env:TEMP 'valco-payload.zip'
 foreach ($f in @($single, $payloadZip, (Join-Path $PSScriptRoot 'dist\ValcoOffice-Setup.zip'))) { if (Test-Path $f) { Remove-Item $f -Force } }
@@ -144,9 +144,12 @@ try {
 } finally { $out.Dispose() }
 Remove-Item $payloadZip -Force
 Copy-Item $single (Join-Path $release 'ValcoOffice-Setup.exe')
+# the same programs as separate release files, so Valco Office Update downloads only the ones that changed
+Copy-Item $setupExe (Join-Path $release 'ValcoOffice-Updater.exe')
+Get-ChildItem $payload -File | ForEach-Object { Copy-Item $_.FullName (Join-Path $release $_.Name) }
 "v$suiteVersion" | Out-File (Join-Path $PSScriptRoot 'dist\release-tag.txt') -Encoding ascii -NoNewline
 
 "BUILD SUCCEEDED: $dist" | Out-File $log -Append -Encoding utf8
 Log "`nDone! Setup: $dist\setup.exe" Green
 Log "Single-file installer: $single" Green
-Log "GitHub release: tag v$suiteVersion, upload $release\ValcoOffice-Setup.exe" Green
+Log "GitHub release: tag v$suiteVersion, upload every file in $release" Green
