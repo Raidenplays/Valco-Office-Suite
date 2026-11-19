@@ -367,8 +367,9 @@ namespace ValcoSetup
             if (!PathsEqual(self, setupExe))
             {
                 // a newer setup replaces the installed one (retry briefly in case the old one is still exiting)
-                bool replace = !File.Exists(setupExe) || Ver.Newer(FileVersionInfo.GetVersionInfo(self).FileVersion, FileVersionInfo.GetVersionInfo(setupExe).FileVersion) || new FileInfo(self).Length != new FileInfo(setupExe).Length;
-                for (int i = 0; replace && i < 10; i++) { try { File.Copy(self, setupExe, true); break; } catch { Thread.Sleep(500); } }
+                // ValcoOffice-Setup.exe carries the whole payload; only the setup program itself is kept
+                bool replace = !File.Exists(setupExe) || Ver.Newer(FileVersionInfo.GetVersionInfo(self).FileVersion, FileVersionInfo.GetVersionInfo(setupExe).FileVersion) || Package.ExeLength(self) != new FileInfo(setupExe).Length;
+                for (int i = 0; replace && i < 10; i++) { try { Package.CopyExe(self, setupExe); break; } catch { Thread.Sleep(500); } }
             }
             var installedManifest = Path.Combine(SetupDir, "valco-office.json");
             // merge: remember every app either manifest knows, with the newest metadata

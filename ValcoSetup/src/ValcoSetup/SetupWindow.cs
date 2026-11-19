@@ -89,6 +89,11 @@ namespace ValcoSetup
                 SuiteManifest m = null; string error = null;
                 try
                 {
+                    if (payload == null)
+                    {
+                        var self = new FileInfo(Environment.ProcessPath);
+                        payload = Package.Extract(self.FullName, Path.Combine(Path.GetTempPath(), "ValcoOfficeSetup", $"{self.Length:x}-{self.LastWriteTimeUtc.Ticks:x}"));
+                    }
                     m = SuiteManifest.Load(Path.Combine(payload, "valco-office.json"));
                     foreach (var a in m.Apps)
                     {

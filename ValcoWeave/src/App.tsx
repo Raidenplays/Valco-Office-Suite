@@ -32,6 +32,7 @@ import { Ribbon, groupsFromMenu, type RibbonTabDef, type AppMenuDef } from './co
 
 interface UpdateInfo { ok: boolean; available: boolean; latest?: string; installed: string; error?: string }
 const RELEASE_PAGE = 'https://github.com/Raidenplays/Valco-Office-Suite/releases/latest';
+const INSTALLER_URL = RELEASE_PAGE + '/download/ValcoOffice-Setup.exe';
 import DesignView, { type DesignApi } from './components/DesignView';
 import PropertiesPanel from './components/PropertiesPanel';
 import CssDesigner, { type CssSource } from './components/CssDesigner';
@@ -1945,7 +1946,7 @@ function Workspace({ platform }: { platform: Platform }) {
     setUpdate(null);
     const { invoke } = await import('@tauri-apps/api/core');
     const ok = await invoke<boolean>('valco_check_updates').catch(() => false);
-    if (!ok) platform.openExternal(RELEASE_PAGE).catch(() => {});
+    if (!ok) platform.openExternal(INSTALLER_URL).catch(() => {});
   };
   const checkForUpdates = async (manual = true) => {
     if (platform.kind !== 'tauri') { if (manual) platform.openExternal(RELEASE_PAGE).catch(() => {}); return; }
@@ -1955,7 +1956,7 @@ function Workspace({ platform }: { platform: Platform }) {
     if (r.available) {
       if (!manual && localStorage.getItem('valco.update.skip') === r.latest) return;
       setUpdate(r);
-    } else if (manual) flash(`Valco Weave is up to date (version ${r.installed}).`);
+    } else if (manual) flash(`Valco Office is up to date (version ${r.installed}).`);
   };
   checkRef.current = checkForUpdates;
   const ribbonTabs: RibbonTabDef[] = [
@@ -2103,7 +2104,7 @@ function Workspace({ platform }: { platform: Platform }) {
       {update && (
         <div className="update-bar">
           <img src={suiteMarkUrl} alt="" />
-          <span><b>An update for Valco Weave is available.</b> Version {update.latest} is ready to download (you have {update.installed}).</span>
+          <span><b>An update for Valco Office is available.</b> Valco Office {update.latest} is ready to download (you have {update.installed}).</span>
           <span className="grow" />
           <button className="btn sm accent" onClick={installUpdates}>Install Updates</button>
           <button className="btn sm" onClick={() => { localStorage.setItem('valco.update.skip', update.latest ?? ''); setUpdate(null); }}>Skip This Version</button>

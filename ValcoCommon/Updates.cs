@@ -3,7 +3,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,58 +14,57 @@ using Microsoft.Win32;
 namespace Valco.UI
 {
     /// <summary>
-    /// Checks the Valco Office GitHub releases (github.com/Raidenplays/Valco-Office-Suite) for a newer version of the app.
+    /// Checks the Valco Office GitHub releases (github.com/Raidenplays/Valco-Office-Suite) for a newer version of the suite.
+    /// Each release is a single ValcoOffice-Setup.exe tagged with the suite version.
     /// Automatic check once a day at startup; manual check from Help / Options. Installing hands over to Valco Office Update
     /// (setup.exe /update) or, without Setup, opens the release page.
     /// </summary>
     public static class Updates
     {
         public const string Repo = "Raidenplays/Valco-Office-Suite";
-        public const string FeedUrl = "https://github.com/" + Repo + "/releases/latest/download/valco-office.json";
+        public const string InstallerUrl = "https://github.com/" + Repo + "/releases/latest/download/ValcoOffice-Setup.exe";
         public const string ReleasePage = "https://github.com/" + Repo + "/releases/latest";
         const string StateKey = @"Software\Valco\Office\Updates";
 
         public record Result(bool Ok, bool Available, string Latest, string Installed, string Description, string Error);
 
-        static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromSeconds(20) };
+        static readonly HttpClient Http = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(20) };
         static Updates() { Http.DefaultRequestHeaders.UserAgent.ParseAdd("ValcoOffice/1.0"); }
 
-        /// <summary>Version installed by Valco Office Setup (HKLM\SOFTWARE\Valco\Office\Apps\&lt;id&gt;), else the exe's version.</summary>
-        public static string InstalledVersion(string appId)
+        /// <summary>Valco Office version installed by Setup (HKLM\SOFTWARE\Valco\Office\Version); null when the app wasn't installed by Setup.</summary>
+        public static string InstalledSuiteVersion()
         {
             try
             {
-                using var k = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Valco\Office\Apps\" + appId);
-                if (k?.GetValue("Version") is string v && v.Length > 0) return v;
+                using var k = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Valco\Office");
+                return k?.GetValue("Version") as string;
             }
-            catch { }
-            var a = Assembly.GetEntryAssembly();
-            var info = a?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0];
-            return info ?? a?.GetName().Version?.ToString() ?? "0.0.0";
+            catch { return null; }
         }
 
         static Version Parse(string v)
         {
-            var parts = (v ?? "0").Split('.', '-', '+').Take(4).Select(p => int.TryParse(p, out var n) ? n : 0).ToList();
+            var parts = (v ?? "0").TrimStart('v', 'V').Split('.', '-', '+').Take(4).Select(p => int.TryParse(p, out var n) ? n : 0).ToList();
             while (parts.Count < 2) parts.Add(0);
             return parts.Count switch { 2 => new Version(parts[0], parts[1]), 3 => new Version(parts[0], parts[1], parts[2]), _ => new Version(parts[0], parts[1], parts[2], parts[3]) };
         }
 
+        /// <summary>The latest release's tag (v1.0.0.464900), read from GitHub's redirect for /releases/latest.</summary>
+        public static async Task<string> LatestVersionAsync()
+        {
+            using var resp = await Http.GetAsync(ReleasePage, HttpCompletionOption.ResponseHeadersRead);
+            var loc = resp.Headers.Location?.ToString();
+            if (loc == null || !loc.Contains("/releases/tag/")) throw new Exception("No Valco Office release has been published yet.");
+            return Uri.UnescapeDataString(loc.Substring(loc.LastIndexOf('/') + 1)).TrimStart('v', 'V');
+        }
+
         public static async Task<Result> CheckAsync(string appId)
         {
-            var installed = InstalledVersion(appId);
+            var installed = InstalledSuiteVersion();
             try
             {
-                var json = await Http.GetStringAsync(FeedUrl);
-                using var doc = JsonDocument.Parse(json);
-                foreach (var app in doc.RootElement.GetProperty("apps").EnumerateArray())
-                {
-                    if (!string.Equals(app.GetProperty("id").GetString(), appId, StringComparison.OrdinalIgnoreCase)) continue;
-                    var latest = app.GetProperty("version").GetString();
-                    var desc = app.TryGetProperty("notes", out var n) && n.ValueKind == JsonValueKind.String ? n.GetString() : null;
-                    return new Result(true, Parse(latest) > Parse(installed), latest, installed, desc, null);
-                }
-                return new Result(true, false, null, installed, null, null);
+                var latest = await LatestVersionAsync();
+                return new Result(true, installed == null || Parse(latest) > Parse(installed), latest, installed ?? "not installed with Valco Office Setup", null, null);
             }
             catch (Exception ex) { return new Result(false, false, null, installed, null, ex.Message); }
         }
@@ -112,7 +110,7 @@ namespace Valco.UI
             var r = await CheckAsync(appId);
             owner.Cursor = cursor;
             if (!r.Ok) { Message(owner, appName, "Valco Office Update couldn't reach the update server.", "Check your Internet connection and try again.\n\n" + r.Error, false); return; }
-            if (!r.Available) { Message(owner, appName, $"{appName} is up to date.", $"You have version {r.Installed}, the latest version.", true); return; }
+            if (!r.Available) { Message(owner, appName, $"{appName} is up to date.", $"You have Valco Office {r.Installed}, the latest version.", true); return; }
             Offer(owner, appName, appId, r, false);
         }
 
@@ -126,11 +124,11 @@ namespace Valco.UI
             try { using var k = Registry.CurrentUser.CreateSubKey(StateKey); k.SetValue("Skip." + appId, version); } catch { }
         }
 
-        /// <summary>Starts Valco Office Update if Setup is installed; otherwise opens the release page.</summary>
+        /// <summary>Starts Valco Office Update if Setup is installed; otherwise downloads the installer in the browser.</summary>
         public static void Install()
         {
             if (Suite.CheckForUpdates()) return;
-            try { Process.Start(new ProcessStartInfo(ReleasePage) { UseShellExecute = true }); } catch { }
+            try { Process.Start(new ProcessStartInfo(InstallerUrl) { UseShellExecute = true }); } catch { }
         }
 
         static Window Dialog(Window owner, string appName, string heading, string body, out StackPanel buttons)
@@ -173,7 +171,7 @@ namespace Valco.UI
 
         static void Offer(Window owner, string appName, string appId, Result r, bool automatic)
         {
-            var body = $"Version {r.Latest} is ready to download. You have version {r.Installed}." +
+            var body = $"Valco Office {r.Latest} is ready to download. You have {r.Installed}." +
                        (string.IsNullOrWhiteSpace(r.Description) ? "" : "\n\n" + r.Description) +
                        "\n\nValco Office Update will close the Valco programs it updates, so save your work first.";
             var w = Dialog(owner, appName, $"An update for {appName} is available", body, out var buttons);

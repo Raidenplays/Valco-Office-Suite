@@ -17,46 +17,47 @@ using Path = System.IO.Path;
 
 namespace ValcoSetup
 {
+    /// <summary>
+    /// Updates come from the GitHub releases of Raidenplays/Valco-Office-Suite. Each release has one file, ValcoOffice-Setup.exe
+    /// (setup + every program), and its tag is the suite version (v1.0.0.464900).
+    /// </summary>
     public static class UpdateFeed
     {
-        static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromMinutes(30) };
-        static UpdateFeed() { Http.DefaultRequestHeaders.UserAgent.ParseAdd("ValcoOfficeUpdate/1.0"); }
-
-        public static string FeedUrl
+        public const string DefaultRepo = "Raidenplays/Valco-Office-Suite";
+        public const string Asset = "ValcoOffice-Setup.exe";
+        static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
+        static readonly HttpClient NoRedirect = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { Timeout = TimeSpan.FromSeconds(30) };
+        static UpdateFeed()
         {
-            get
-            {
-                var u = Engine.GetOption("UpdateUrl", null) is string o && o.Length > 0 ? o : (Engine.InstalledManifest()?.UpdateUrl ?? new SuiteManifest().UpdateUrl);
-                // the suite moved to github.com/Raidenplays/Valco-Office-Suite
-                return u.Replace("/Raidenplays/valco-office/", "/Raidenplays/Valco-Office-Suite/", StringComparison.OrdinalIgnoreCase);
-            }
+            Http.DefaultRequestHeaders.UserAgent.ParseAdd("ValcoOfficeUpdate/1.0");
+            NoRedirect.DefaultRequestHeaders.UserAgent.ParseAdd("ValcoOfficeUpdate/1.0");
         }
 
-        public static async Task<SuiteManifest> FetchAsync(CancellationToken ct = default)
+        public static string Repo => Engine.GetOption("UpdateRepo", null) is string r && r.Contains('/') ? r : DefaultRepo;
+        public static string LatestPage => $"https://github.com/{Repo}/releases/latest";
+        public static string InstalledVersion => Engine.GetOption("Version", "0");
+
+        /// <summary>Tag of the latest release, read from GitHub's redirect (no API limits).</summary>
+        public static async Task<(string Version, string Tag)> LatestAsync(CancellationToken ct = default)
         {
-            var json = await Http.GetStringAsync(FeedUrl, ct);
-            return SuiteManifest.Parse(json);
+            using var resp = await NoRedirect.GetAsync(LatestPage, HttpCompletionOption.ResponseHeadersRead, ct);
+            var loc = resp.Headers.Location?.ToString();
+            if (loc == null || !loc.Contains("/releases/tag/"))
+                throw new Exception(resp.IsSuccessStatusCode || (int)resp.StatusCode == 302 ? "No Valco Office release has been published yet." : $"The update server answered {(int)resp.StatusCode} {resp.ReasonPhrase}.");
+            var tag = Uri.UnescapeDataString(loc.Substring(loc.LastIndexOf('/') + 1));
+            return (tag.TrimStart('v', 'V'), tag);
         }
 
-        /// <summary>Installed apps with a newer version on the server, plus apps that aren't installed yet.</summary>
-        public static (List<AppEntry> Updates, List<AppEntry> New) Compare(SuiteManifest remote)
-        {
-            var installed = Engine.InstalledApps();
-            var ups = remote.Apps.Where(a => installed.TryGetValue(a.Id, out var v) && Ver.Newer(a.Version, v)).ToList();
-            var add = remote.Apps.Where(a => !installed.ContainsKey(a.Id)).ToList();
-            return (ups, add);
-        }
+        public static bool IsNewer(string version) => Ver.Newer(version, InstalledVersion);
 
-        public static Uri Resolve(string file) => new Uri(new Uri(FeedUrl), file);
-
-        public static async Task Download(string file, string dest, Action<long, long> progress, CancellationToken ct)
+        public static async Task Download(string tag, string dest, Action<long, long> progress, CancellationToken ct)
         {
-            using var resp = await Http.GetAsync(Resolve(file), HttpCompletionOption.ResponseHeadersRead, ct);
+            using var resp = await Http.GetAsync($"https://github.com/{Repo}/releases/download/{Uri.EscapeDataString(tag)}/{Asset}", HttpCompletionOption.ResponseHeadersRead, ct);
             resp.EnsureSuccessStatusCode();
             long total = resp.Content.Headers.ContentLength ?? -1, done = 0;
             using var src = await resp.Content.ReadAsStreamAsync(ct);
             using var fs = File.Create(dest);
-            var buf = new byte[81920];
+            var buf = new byte[1 << 17];
             int n;
             while ((n = await src.ReadAsync(buf, 0, buf.Length, ct)) > 0)
             {
@@ -72,7 +73,7 @@ namespace ValcoSetup
     {
         readonly Border _body = new Border { Padding = new Thickness(24, 16, 24, 16) };
         readonly StackPanel _buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 0, 14, 0), VerticalAlignment = VerticalAlignment.Center };
-        SuiteManifest _remote;
+        string _latest, _tag;
         CancellationTokenSource _cts;
 
         public UpdateWindow()
@@ -131,14 +132,14 @@ namespace ValcoSetup
         {
             _buttons.Children.Clear();
             var sp = new StackPanel();
-            sp.Children.Add(Status(null, new SolidColorBrush(Color.FromRgb(0x2F, 0x8B, 0xE0)), "Checking for updates...", "Valco Office Update is looking for new versions of your Valco programs."));
+            sp.Children.Add(Status(null, new SolidColorBrush(Color.FromRgb(0x2F, 0x8B, 0xE0)), "Checking for updates...", "Valco Office Update is looking for a new version of Valco Office."));
             sp.Children.Add(new ProgressBar { Height = 14, IsIndeterminate = true, Margin = new Thickness(0, 4, 0, 0) });
             _body.Child = sp;
             _cts = new CancellationTokenSource();
             Btn("Cancel", Close);
             try
             {
-                _remote = await UpdateFeed.FetchAsync(_cts.Token);
+                (_latest, _tag) = await UpdateFeed.LatestAsync(_cts.Token);
                 using (var k = Registry.CurrentUser.CreateSubKey(@"Software\Valco\Office\Update")) k.SetValue("LastCheck", DateTime.Now.ToString("o"));
                 ShowResults();
             }
@@ -147,7 +148,7 @@ namespace ValcoSetup
                 _buttons.Children.Clear();
                 var p = new StackPanel();
                 p.Children.Add(Status(ErrShield, new SolidColorBrush(Color.FromRgb(0xC8, 0x2A, 0x2A)), "Valco Office Update couldn't check for updates", ex.Message));
-                p.Children.Add(new TextBlock { Text = "Check your Internet connection and try again.\n\nUpdate server: " + UpdateFeed.FeedUrl, TextWrapping = TextWrapping.Wrap, Foreground = SetupWindow.DimBrush });
+                p.Children.Add(new TextBlock { Text = "Check your Internet connection and try again.\n\nUpdates come from: " + UpdateFeed.LatestPage, TextWrapping = TextWrapping.Wrap, Foreground = SetupWindow.DimBrush });
                 _body.Child = p;
                 Btn("_Try Again", Check, true); Btn("Close", Close);
             }
@@ -157,47 +158,23 @@ namespace ValcoSetup
         void ShowResults()
         {
             _buttons.Children.Clear();
-            var (ups, add) = UpdateFeed.Compare(_remote);
-            bool setupNewer = Ver.Newer(_remote.SetupVersion, typeof(App).Assembly.GetName().Version?.ToString(3));
             var sp = new StackPanel();
             var lastCheck = DateTime.Now;
-            if (ups.Count == 0 && add.Count == 0)
+            if (!UpdateFeed.IsNewer(_latest))
             {
-                sp.Children.Add(Status(OkShield, new SolidColorBrush(Color.FromRgb(0x3C, 0xA8, 0x3C)), "Valco Office is up to date", "There are no new updates available for your Valco programs."));
+                sp.Children.Add(Status(OkShield, new SolidColorBrush(Color.FromRgb(0x3C, 0xA8, 0x3C)), "Valco Office is up to date", $"You have Valco Office {UpdateFeed.InstalledVersion}, the latest version."));
                 sp.Children.Add(InstalledList());
                 sp.Children.Add(Footer(lastCheck));
                 _body.Child = new ScrollViewer { Content = sp, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
                 Btn("Check _Again", Check); Btn("Close", Close, true);
                 return;
             }
-            sp.Children.Add(Status(WarnShield, new SolidColorBrush(Color.FromRgb(0xE8, 0xA0, 0x10)),
-                ups.Count > 0 ? $"{ups.Count} update{(ups.Count == 1 ? " is" : "s are")} available" : "New Valco programs are available",
-                ups.Count > 0 ? "Select the updates you want to install, then click Install updates." : "You can add these programs to Valco Office."));
-            var checks = new List<(CheckBox Box, AppEntry App)>();
-            var installed = Engine.InstalledApps();
-            void Group(string title, IEnumerable<AppEntry> apps, bool checkedDefault)
-            {
-                if (!apps.Any()) return;
-                sp.Children.Add(new TextBlock { Text = title, FontWeight = FontWeights.SemiBold, Foreground = SetupWindow.HeadingBrush, Margin = new Thickness(0, 6, 0, 4) });
-                foreach (var a in apps)
-                {
-                    var cb = new CheckBox { IsChecked = checkedDefault, Margin = new Thickness(4, 2, 0, 2) };
-                    var t = new StackPanel();
-                    var cur = installed.TryGetValue(a.Id, out var v) ? $"{v} → {a.Version}" : a.Version;
-                    t.Children.Add(new TextBlock { Text = $"{a.Name} {cur}   ({a.DownloadSize / (1024.0 * 1024):N1} MB)", Foreground = SetupWindow.TextBrush });
-                    if (!string.IsNullOrWhiteSpace(a.Notes)) t.Children.Add(new TextBlock { Text = a.Notes, Foreground = SetupWindow.DimBrush, TextWrapping = TextWrapping.Wrap, MaxWidth = 500 });
-                    cb.Content = t;
-                    sp.Children.Add(cb);
-                    checks.Add((cb, a));
-                }
-            }
-            Group("Important updates", ups, true);
-            Group("Optional: new programs", add, false);
-            if (setupNewer) sp.Children.Add(new TextBlock { Text = $"Valco Office Setup {_remote.SetupVersion} will also be installed.", Foreground = SetupWindow.DimBrush, Margin = new Thickness(4, 8, 0, 0) });
+            sp.Children.Add(Status(WarnShield, new SolidColorBrush(Color.FromRgb(0xE8, 0xA0, 0x10)), "An update for Valco Office is available",
+                $"Valco Office {_latest} is ready to download. You have version {UpdateFeed.InstalledVersion}. Your installed programs will be updated; programs you haven't installed stay as they are."));
+            sp.Children.Add(InstalledList());
             sp.Children.Add(Footer(lastCheck));
             _body.Child = new ScrollViewer { Content = sp, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-            var install = Btn("_Install updates", async () => await DownloadAndApply(checks.Where(c => c.Box.IsChecked == true).Select(c => c.App).ToList(), setupNewer), true);
-            foreach (var c in checks) c.Box.Click += (s, e) => install.IsEnabled = checks.Any(x => x.Box.IsChecked == true);
+            Btn("_Install updates", async () => await DownloadAndApply(), true);
             Btn("Close", Close);
         }
 
@@ -228,49 +205,41 @@ namespace ValcoSetup
             return sp;
         }
 
-        async Task DownloadAndApply(List<AppEntry> apps, bool setupNewer)
+        async Task DownloadAndApply()
         {
-            if (apps.Count == 0 && !setupNewer) return;
             _buttons.Children.Clear();
             var sp = new StackPanel();
             sp.Children.Add(Status(null, new SolidColorBrush(Color.FromRgb(0x2F, 0x8B, 0xE0)), "Downloading updates...", null));
-            var line = new TextBlock { Foreground = SetupWindow.TextBrush, Margin = new Thickness(0, 4, 0, 4) };
+            var line = new TextBlock { Foreground = SetupWindow.TextBrush, Margin = new Thickness(0, 4, 0, 4), Text = $"Downloading Valco Office {_latest}..." };
             var bar = new ProgressBar { Height = 16, Maximum = 1 };
             sp.Children.Add(line); sp.Children.Add(bar);
             _body.Child = sp;
             _cts = new CancellationTokenSource();
             Btn("Cancel", () => _cts.Cancel());
-            var dir = Path.Combine(Path.GetTempPath(), "ValcoOfficeUpdate", _remote.Version + "-" + DateTime.Now.Ticks);
+            var dir = Path.Combine(Path.GetTempPath(), "ValcoOfficeUpdate", _latest + "-" + DateTime.Now.Ticks);
             Directory.CreateDirectory(dir);
             try
             {
-                long total = apps.Sum(a => Math.Max(1, a.DownloadSize)), before = 0;
-                foreach (var a in apps)
+                var exe = Path.Combine(dir, UpdateFeed.Asset);
+                await UpdateFeed.Download(_tag, exe, (d, t) => Dispatcher.Invoke(() =>
                 {
-                    line.Text = $"Downloading {a.Name} {a.Version}...";
-                    var dest = Path.Combine(dir, a.File);
-                    await UpdateFeed.Download(a.File, dest, (d, t) => Dispatcher.Invoke(() => bar.Value = (before + d) / (double)total), _cts.Token);
-                    if (!string.IsNullOrEmpty(a.Sha256) && !Engine.Sha256(dest).Equals(a.Sha256, StringComparison.OrdinalIgnoreCase)) throw new Exception($"The download of {a.Name} was damaged. Try again.");
-                    if (!string.IsNullOrEmpty(a.Icon)) { try { Directory.CreateDirectory(Path.Combine(dir, Path.GetDirectoryName(a.Icon) ?? "")); await UpdateFeed.Download(a.Icon, Path.Combine(dir, a.Icon), (x, y) => { }, _cts.Token); } catch { } }
-                    before += Math.Max(1, a.DownloadSize);
-                }
-                string runner = Environment.ProcessPath;
-                if (setupNewer)
-                {
-                    line.Text = "Downloading Valco Office Setup...";
-                    var s = Path.Combine(dir, "setup.exe");
-                    await UpdateFeed.Download(_remote.SetupFile ?? "setup.exe", s, (d, t) => { }, _cts.Token);
-                    if (!string.IsNullOrEmpty(_remote.SetupSha256) && !Engine.Sha256(s).Equals(_remote.SetupSha256, StringComparison.OrdinalIgnoreCase)) throw new Exception("The download of Valco Office Setup was damaged. Try again.");
-                    runner = s;
-                }
-                // only the chosen apps go in this manifest; the apply step installs them and keeps everything else as it is
-                var m = SuiteManifest.Parse(_remote.ToJson());
-                var chosen = new HashSet<string>(apps.Select(a => a.Id));
-                m.Apps.RemoveAll(a => !chosen.Contains(a.Id));
-                File.WriteAllText(Path.Combine(dir, "valco-office.json"), m.ToJson());
-                line.Text = "Installing updates...";
+                    bar.Value = t > 0 ? d / (double)t : 0;
+                    line.Text = t > 0 ? $"Downloading Valco Office {_latest}...  {d / 1048576.0:N0} of {t / 1048576.0:N0} MB" : $"Downloading Valco Office {_latest}...  {d / 1048576.0:N0} MB";
+                }), _cts.Token);
+                line.Text = "Preparing the update...";
                 bar.IsIndeterminate = true;
-                Process.Start(new ProcessStartInfo(runner, $"/applyupdates \"{dir}\"") { UseShellExecute = true, Verb = "runas" });
+                var payload = Path.Combine(dir, "payload");
+                await Task.Run(() => Package.Extract(exe, payload));
+                // only the programs that are installed (and older) are updated; the apply step keeps everything else as it is
+                var m = SuiteManifest.Load(Path.Combine(payload, "valco-office.json"));
+                var installed = Engine.InstalledApps();
+                m.Apps.RemoveAll(a => !installed.TryGetValue(a.Id, out var v) || !Ver.Newer(a.Version, v));
+                File.WriteAllText(Path.Combine(payload, "valco-office.json"), m.ToJson());
+                var runner = Path.Combine(dir, "setup.exe");
+                Package.CopyExe(exe, runner);
+                try { File.Delete(exe); } catch { }
+                line.Text = "Installing updates...";
+                Process.Start(new ProcessStartInfo(runner, $"/applyupdates \"{payload}\"") { UseShellExecute = true, Verb = "runas" });
                 Close();
             }
             catch (OperationCanceledException) { ShowResults(); }
@@ -279,7 +248,7 @@ namespace ValcoSetup
             {
                 _buttons.Children.Clear();
                 var p = new StackPanel();
-                p.Children.Add(Status(ErrShield, new SolidColorBrush(Color.FromRgb(0xC8, 0x2A, 0x2A)), "Some updates couldn't be downloaded", ex.Message));
+                p.Children.Add(Status(ErrShield, new SolidColorBrush(Color.FromRgb(0xC8, 0x2A, 0x2A)), "The update couldn't be downloaded", ex.Message));
                 _body.Child = p;
                 Btn("_Try Again", Check, true); Btn("Close", Close);
             }
@@ -353,17 +322,16 @@ namespace ValcoSetup
                     using (var k = Registry.CurrentUser.OpenSubKey(@"Software\Valco\Office\Update"))
                         if (DateTime.TryParse(k?.GetValue("LastCheck") as string, out var last) && (DateTime.Now - last).TotalHours < 20) { app.Dispatcher.Invoke(app.Shutdown); return; }
                     await Task.Delay(TimeSpan.FromSeconds(45));
-                    var remote = await UpdateFeed.FetchAsync();
+                    var (latest, _) = await UpdateFeed.LatestAsync();
                     using (var k = Registry.CurrentUser.CreateSubKey(@"Software\Valco\Office\Update")) k.SetValue("LastCheck", DateTime.Now.ToString("o"));
-                    var (ups, _) = UpdateFeed.Compare(remote);
-                    if (ups.Count == 0) { app.Dispatcher.Invoke(app.Shutdown); return; }
-                    app.Dispatcher.Invoke(() => Notify(ups));
+                    if (!UpdateFeed.IsNewer(latest)) { app.Dispatcher.Invoke(app.Shutdown); return; }
+                    app.Dispatcher.Invoke(() => Notify(latest));
                 }
                 catch { app.Dispatcher.Invoke(app.Shutdown); }
             });
         }
 
-        static void Notify(List<AppEntry> ups)
+        static void Notify(string latest)
         {
             var app = Application.Current;
             System.Drawing.Icon icon;
@@ -378,7 +346,7 @@ namespace ValcoSetup
             }
             ni.BalloonTipClicked += (s, e) => Open();
             ni.Click += (s, e) => Open();
-            ni.ShowBalloonTip(15000, "Updates are available for Valco Office", (ups.Count == 1 ? ups[0].Name + " " + ups[0].Version + " is ready." : $"{ups.Count} updates are ready.") + " Click here to install them.", System.Windows.Forms.ToolTipIcon.Info);
+            ni.ShowBalloonTip(15000, "An update for Valco Office is available", $"Valco Office {latest} is ready. Click here to install it.", System.Windows.Forms.ToolTipIcon.Info);
             // stay in the notification area for a while, then go away quietly
             var t = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMinutes(30) };
             t.Tick += (s, e) => { ni.Visible = false; ni.Dispose(); app.Shutdown(); };

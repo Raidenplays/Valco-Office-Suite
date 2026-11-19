@@ -343,27 +343,25 @@ fn launch_arg() -> Option<String> {
 }
 
 
-/// Checks the Valco Office GitHub releases for a newer Valco Weave.
+/// Checks the Valco Office GitHub releases for a newer suite version. Each release is one ValcoOffice-Setup.exe
+/// tagged v<suite version>; the tag is read from GitHub's /releases/latest redirect.
 /// Returns { ok, available, latest, installed, error }.
 #[tauri::command]
 fn valco_update_check() -> serde_json::Value {
-    const FEED: &str = "https://github.com/Raidenplays/Valco-Office-Suite/releases/latest/download/valco-office.json";
-    let installed = installed_version().unwrap_or_else(|| env!("CARGO_PKG_VERSION").to_string());
-    let fetched = ureq::get(FEED)
-        .set("User-Agent", "ValcoOffice/1.0")
-        .timeout(std::time::Duration::from_secs(20))
-        .call()
-        .map_err(|e| e.to_string())
-        .and_then(|r| r.into_string().map_err(|e| e.to_string()));
-    match fetched {
-        Err(e) => serde_json::json!({ "ok": false, "available": false, "installed": installed, "error": e }),
-        Ok(body) => {
-            let body = body.trim_start_matches('\u{feff}');
-            let latest = serde_json::from_str::<serde_json::Value>(body).ok().and_then(|v| {
-                v["apps"].as_array()?.iter().find(|a| a["id"] == "weave").and_then(|a| a["version"].as_str().map(|s| s.to_string()))
-            });
-            let available = latest.as_deref().map(|l| parse_ver(l) > parse_ver(&installed)).unwrap_or(false);
-            serde_json::json!({ "ok": true, "available": available, "latest": latest, "installed": installed })
+    const LATEST: &str = "https://github.com/Raidenplays/Valco-Office-Suite/releases/latest";
+    let installed = installed_version();
+    let agent = ureq::AgentBuilder::new().redirects(0).timeout(std::time::Duration::from_secs(20)).build();
+    let loc = match agent.get(LATEST).set("User-Agent", "ValcoOffice/1.0").call() {
+        Ok(r) => r.header("location").map(|s| s.to_string()),
+        Err(ureq::Error::Status(_, r)) => r.header("location").map(|s| s.to_string()),
+        Err(e) => return serde_json::json!({ "ok": false, "available": false, "installed": installed, "error": e.to_string() }),
+    };
+    match loc.filter(|l| l.contains("/releases/tag/")) {
+        None => serde_json::json!({ "ok": false, "available": false, "installed": installed, "error": "No Valco Office release has been published yet." }),
+        Some(l) => {
+            let latest = l.rsplit('/').next().unwrap_or("").trim_start_matches(|c| c == 'v' || c == 'V').to_string();
+            let available = match &installed { Some(i) => parse_ver(&latest) > parse_ver(i), None => true };
+            serde_json::json!({ "ok": true, "available": available, "latest": latest, "installed": installed.unwrap_or_else(|| "not installed with Valco Office Setup".into()) })
         }
     }
 }
@@ -380,7 +378,7 @@ fn installed_version() -> Option<String> {
     {
         use std::os::windows::process::CommandExt;
         let o = std::process::Command::new("reg")
-            .args(["query", r"HKLM\SOFTWARE\Valco\Office\Apps\weave", "/v", "Version", "/reg:64"])
+            .args(["query", r"HKLM\SOFTWARE\Valco\Office", "/v", "Version", "/reg:64"])
             .creation_flags(0x0800_0000) // CREATE_NO_WINDOW
             .output()
             .ok()?;

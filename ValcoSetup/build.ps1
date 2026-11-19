@@ -110,10 +110,13 @@ foreach ($a in $cfg.apps) {
 }
 if ($apps.Count -eq 0) { "BUILD FAILED: no apps were found to package" | Out-File $log -Append -Encoding utf8; throw "No apps to package" }
 
+# suite version = apps.json suiteVersion + a revision from the build time; the GitHub release tag is v<suite version>
+$suiteBase = (([string]$cfg.suiteVersion) -split '\.')[0..2] -join '.'
+$suiteVersion = "$suiteBase.$(Revision (Get-Date))"
 $setupExe = Join-Path $PSScriptRoot 'out\setup.exe'
 $setupVer = (Get-Item $setupExe).VersionInfo.FileVersion -replace '^(\d+\.\d+\.\d+).*','$1'
 $manifest = [ordered]@{
-    product = 'Valco Office'; version = $cfg.suiteVersion; publisher = 'ItsRaiden'; updateUrl = $cfg.updateUrl
+    product = 'Valco Office'; version = $suiteVersion; publisher = 'ItsRaiden'; updateUrl = $cfg.updateUrl
     setupVersion = $setupVer; setupFile = 'setup.exe'; setupSha256 = (Sha $setupExe); apps = $apps
     retired = @($cfg.retired | Where-Object { $_ })
 }
@@ -124,15 +127,26 @@ Copy-Item $setupExe (Join-Path $dist 'setup.exe')
 Copy-Item 'assets\ValcoOffice.ico' (Join-Path $dist 'ValcoOffice.ico')
 "[AutoRun]`r`nopen=setup.exe`r`nicon=ValcoOffice.ico`r`nlabel=Valco Office" | Out-File (Join-Path $dist 'autorun.inf') -Encoding ascii
 
-# release\: flat files to attach to a GitHub release (Valco Office Update reads valco-office.json from there)
-Get-ChildItem $payload -File | Copy-Item -Destination $release
-Copy-Item $setupExe (Join-Path $release 'setup.exe')
-
-# one zip of the whole setup folder, for sharing
-$zip = Join-Path $PSScriptRoot 'dist\ValcoOffice-Setup.zip'
-if (Test-Path $zip) { Remove-Item $zip -Force }
-[IO.Compression.ZipFile]::CreateFromDirectory($dist, $zip, [IO.Compression.CompressionLevel]::Optimal, $true)
+# ValcoOffice-Setup.exe: setup.exe with the payload folder appended as a zip
+#   [setup.exe][payload.zip][Int64 zip length][VALCOPKG]  (read by Package.cs)
+# This single file is the whole GitHub release.
+$single = Join-Path $PSScriptRoot 'dist\ValcoOffice-Setup.exe'
+$payloadZip = Join-Path $env:TEMP 'valco-payload.zip'
+foreach ($f in @($single, $payloadZip, (Join-Path $PSScriptRoot 'dist\ValcoOffice-Setup.zip'))) { if (Test-Path $f) { Remove-Item $f -Force } }
+[IO.Compression.ZipFile]::CreateFromDirectory($payload, $payloadZip, [IO.Compression.CompressionLevel]::NoCompression, $false)
+$out = [IO.File]::Create($single)
+try {
+    foreach ($part in @($setupExe, $payloadZip)) { $in = [IO.File]::OpenRead($part); try { $in.CopyTo($out) } finally { $in.Dispose() } }
+    $len = (Get-Item $payloadZip).Length
+    $out.Write([BitConverter]::GetBytes([long]$len), 0, 8)
+    $magic = [Text.Encoding]::ASCII.GetBytes('VALCOPKG')
+    $out.Write($magic, 0, 8)
+} finally { $out.Dispose() }
+Remove-Item $payloadZip -Force
+Copy-Item $single (Join-Path $release 'ValcoOffice-Setup.exe')
+"v$suiteVersion" | Out-File (Join-Path $PSScriptRoot 'dist\release-tag.txt') -Encoding ascii -NoNewline
 
 "BUILD SUCCEEDED: $dist" | Out-File $log -Append -Encoding utf8
 Log "`nDone! Setup: $dist\setup.exe" Green
-Log "Update files for GitHub: $release" Green
+Log "Single-file installer: $single" Green
+Log "GitHub release: tag v$suiteVersion, upload $release\ValcoOffice-Setup.exe" Green

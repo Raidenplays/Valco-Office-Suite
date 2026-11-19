@@ -13,7 +13,7 @@ A suite of Windows Vista-style apps for Windows 11 that replace Microsoft and ot
 `ValcoCommon` holds the shared Ribbon, colour schemes, Valco button, Quick Access Toolbar, Valco menu and suite icons used by Word, Express and Code. Edit them there, never in the apps.
 
 ## Install
-Download **ValcoOffice-Setup.zip** from the [latest release](https://github.com/Raidenplays/Valco-Office-Suite/releases/latest), extract it and run `setup.exe`. Valco Office Update (Start → Valco Office → Valco Office Tools) keeps the apps up to date from these releases.
+Download **ValcoOffice-Setup.exe** from the [latest release](https://github.com/Raidenplays/Valco-Office-Suite/releases/latest) and run it — it's one file with every program inside. The apps check these releases for updates once a day (and from Check for Updates); Valco Office Update downloads the new installer and updates the programs you have.
 
 Windows 11 doesn't let installers change your default programs, so Setup ends with **Set Default Programs**: one click per app opens its page in Settings → Default apps.
 
@@ -24,13 +24,13 @@ Needs the .NET 8 SDK and WiX v5 (`dotnet tool install --global wix`). Keep the f
 ValcoSetup\build-all.cmd      rebuild every app, then setup.exe
 ValcoSetup\build.cmd          rebuild setup.exe from the apps' existing builds
 ```
-Setup ends up in `ValcoSetup\dist\Valco Office`; the files for a GitHub release (setup.exe, the app packages and `valco-office.json`) in `ValcoSetup\release`.
+The single-file installer ends up in `ValcoSetup\dist\ValcoOffice-Setup.exe` (also copied to `ValcoSetup\release`), and its release tag in `ValcoSetup\dist\release-tag.txt`.
 
 Valco Weave's MSI is cross-built on Linux: `ValcoWeave/packaging/windows/build-msi-on-linux.sh`.
 
 ## Releasing an update
 1. Bump `<Version>` in the app's project (or just rebuild — every build gets a new revision number).
 2. Run `ValcoSetup\build-all.cmd`.
-3. Create a GitHub release and upload everything in `ValcoSetup\release`. Valco Office Update reads `valco-office.json` from the latest release.
+3. Create a GitHub release with the tag from `dist\release-tag.txt` (for example `v1.0.0.464900`) and attach only `ValcoOffice-Setup.exe`. The apps compare that tag with the installed suite version.
 
 © 2026 ItsRaiden

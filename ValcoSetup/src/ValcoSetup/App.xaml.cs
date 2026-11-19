@@ -53,6 +53,8 @@ namespace ValcoSetup
                 if (Has("/uninstall")) { SetupWindow.StartMaintenance(removeOnly: true); return; }
                 if (Has("/maintenance")) { SetupWindow.StartMaintenance(false); return; }
                 if (HasPayload) { SetupWindow.StartInstall(PayloadDir); return; }
+                // single-file ValcoOffice-Setup.exe: the payload is appended to the exe and unpacked behind the splash
+                if (Package.HasPayload(Environment.ProcessPath)) { SetupWindow.StartInstall(null); return; }
                 if (Engine.IsInstalled) { SetupWindow.StartMaintenance(false); return; }
                 VistaDialog.Show(null, "The installation files for Valco Office couldn't be found. Make sure the \"payload\" folder is next to setup.exe.", "Valco Office Setup", MessageBoxButton.OK, DlgIcon.Error, "Setup can't continue");
                 Shutdown();
