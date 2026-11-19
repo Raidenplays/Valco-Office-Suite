@@ -1,0 +1,181 @@
+<local:VistaWindow x:Class="ValcoCode.Views.MainWindow"
+        xmlns:local="clr-namespace:ValcoCode.Views"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Valco Code" Width="1280" Height="820" MinWidth="700" MinHeight="450"
+                Background="{DynamicResource BgBrush}" Foreground="{DynamicResource FgBrush}"
+        FontFamily="{StaticResource UiFont}" FontSize="12"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="24" />
+        </Grid.RowDefinitions>
+
+        <!-- ============ menu bar -->
+        <Border x:Name="MenuBarRow" Grid.Row="0" Background="{DynamicResource MenuBarBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1">
+            <Grid Height="32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button x:Name="ValcoButton" Style="{StaticResource IconButton}" Margin="6,0,2,0" Padding="3,1" Click="ValcoButton_Click" ToolTip="Valco Office">
+                    <Image Source="/Assets/ValcoOffice-mark.png" Width="20" Height="20" RenderOptions.BitmapScalingMode="HighQuality" />
+                </Button>
+                <Menu x:Name="MainMenu" Grid.Column="1" VerticalAlignment="Center" />
+                <Border x:Name="CommandCenter" Grid.Column="2" HorizontalAlignment="Center" Width="420" Height="22" CornerRadius="5" Cursor="Hand"
+                        Background="#18808080" BorderBrush="#40808080" BorderThickness="1" MouseLeftButtonUp="CommandCenter_Click">
+                    <DockPanel Margin="8,0">
+                        <TextBlock DockPanel.Dock="Right" Text="Ctrl+P" Opacity="0.6" FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource MenuBarFgBrush}" />
+                        <TextBlock x:Name="CommandCenterText" Text="Valco Code" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" Foreground="{DynamicResource MenuBarFgBrush}" Opacity="0.85" />
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ============ workbench -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48" />
+                <ColumnDefinition x:Name="SideCol" Width="260" MinWidth="0" />
+                <ColumnDefinition x:Name="SplitCol" Width="4" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <!-- activity bar -->
+            <Border Background="{DynamicResource ActivityBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,1,0">
+                <DockPanel LastChildFill="False">
+                    <ToggleButton x:Name="ActExplorer" DockPanel.Dock="Top" Style="{StaticResource ActivityButton}" Content="&#xE8B7;" ToolTip="Explorer (Ctrl+Shift+E)" Click="Activity_Click" Tag="explorer" />
+                    <ToggleButton x:Name="ActSearch" DockPanel.Dock="Top" Style="{StaticResource ActivityButton}" Content="&#xE721;" ToolTip="Search (Ctrl+Shift+F)" Click="Activity_Click" Tag="search" />
+                    <Grid DockPanel.Dock="Top">
+                        <ToggleButton x:Name="ActScm" Style="{StaticResource ActivityButton}" ToolTip="Source Control (Ctrl+Shift+G)" Click="Activity_Click" Tag="scm">
+                            <Path Data="M6,3 a2,2 0 1 1 0,4 a2,2 0 1 1 0,-4 M6,17 a2,2 0 1 1 0,4 a2,2 0 1 1 0,-4 M18,5 a2,2 0 1 1 0,4 a2,2 0 1 1 0,-4 M6,7 L6,17 M18,9 C18,13 6,12 6,16" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}" StrokeThickness="1.6" Width="24" Height="24" Stretch="None" />
+                        </ToggleButton>
+                        <Border x:Name="ScmBadge" Style="{StaticResource CountBadge}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,6,8" Visibility="Collapsed" IsHitTestVisible="False">
+                            <TextBlock x:Name="ScmBadgeText" FontSize="10" Foreground="{DynamicResource BadgeFgBrush}" HorizontalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ToggleButton x:Name="ActRun" DockPanel.Dock="Top" Style="{StaticResource ActivityButton}" Content="&#xE768;" ToolTip="Run (Ctrl+Shift+D)" Click="Activity_Click" Tag="run" />
+                    <ToggleButton x:Name="ActSettings" DockPanel.Dock="Bottom" Style="{StaticResource ActivityButton}" Content="&#xE713;" ToolTip="Manage — Settings and Themes" Click="Settings_Click" />
+                    <ToggleButton x:Name="ActAccount" DockPanel.Dock="Bottom" Style="{StaticResource ActivityButton}" Content="&#xE77B;" ToolTip="Accounts — Sign in to GitHub" Click="Account_Click" />
+                </DockPanel>
+            </Border>
+
+            <!-- side bar -->
+            <Border x:Name="SideBar" Grid.Column="1" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,1,0">
+                <ContentControl x:Name="SideContent" Focusable="False" />
+            </Border>
+            <GridSplitter x:Name="SideSplitter" Grid.Column="2" HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext" DragCompleted="Splitter_DragCompleted" Cursor="SizeWE" />
+
+            <!-- editor + panel -->
+            <Grid Grid.Column="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition x:Name="PanelSplitRow" Height="4" />
+                    <RowDefinition x:Name="PanelRow" Height="240" />
+                </Grid.RowDefinitions>
+
+                <Grid Background="{DynamicResource EditorBgBrush}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!-- tab strip -->
+                    <Border Background="{DynamicResource TabsBgBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1">
+                        <DockPanel Height="35">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="4,0">
+                                <Button x:Name="RunBtn" Style="{StaticResource IconButton}" Content="&#xE768;" ToolTip="Run File (F5)" Click="Run_Click" Foreground="{DynamicResource OkBrush}" FontSize="14" />
+                                <Button x:Name="FormatBtn" Style="{StaticResource IconButton}" Content="&#xE8E4;" ToolTip="Format Document (Shift+Alt+F)" Click="Format_Click" />
+                                <Button Style="{StaticResource IconButton}" Content="&#xE712;" ToolTip="More…" Click="TabMore_Click" />
+                            </StackPanel>
+                            <ScrollViewer x:Name="TabScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" PreviewMouseWheel="TabScroll_Wheel">
+                                <StackPanel x:Name="TabStrip" Orientation="Horizontal" />
+                            </ScrollViewer>
+                        </DockPanel>
+                    </Border>
+                    <!-- breadcrumbs -->
+                    <TextBlock x:Name="Breadcrumbs" Grid.Row="1" Margin="14,3,0,3" FontSize="12" Foreground="{DynamicResource MutedBrush}" TextTrimming="CharacterEllipsis" />
+                    <ContentControl x:Name="EditorHost" Grid.Row="2" Focusable="False" />
+                </Grid>
+
+                <GridSplitter x:Name="PanelSplitter" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" Cursor="SizeNS" DragCompleted="Splitter_DragCompleted" />
+
+                <Border x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource PanelBgBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0">
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Top" Height="34" Margin="8,0,4,0">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button x:Name="TermNew" Style="{StaticResource IconButton}" Content="&#xE710;" ToolTip="New Terminal (Ctrl+Shift+`)" Click="TermNew_Click" />
+                                <Button x:Name="TermStop" Style="{StaticResource IconButton}" Content="&#xE71A;" ToolTip="Stop (Ctrl+C)" Click="TermStop_Click" />
+                                <Button x:Name="TermClear" Style="{StaticResource IconButton}" Content="&#xE894;" ToolTip="Clear" Click="TermClear_Click" />
+                                <Button x:Name="TermKill" Style="{StaticResource IconButton}" Content="&#xE74D;" ToolTip="Kill Terminal" Click="TermKill_Click" />
+                                <Button Style="{StaticResource IconButton}" Content="&#xE740;" ToolTip="Maximize Panel" Click="PanelMax_Click" />
+                                <Button Style="{StaticResource IconButton}" Content="&#xE711;" ToolTip="Close Panel (Ctrl+J)" Click="PanelClose_Click" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton x:Name="TabProblems" Style="{StaticResource TabToggle}" Click="PanelTab_Click" Tag="problems">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="PROBLEMS" />
+                                        <Border x:Name="ProblemsBadge" Style="{StaticResource CountBadge}" Margin="6,0,0,0" Visibility="Collapsed">
+                                            <TextBlock x:Name="ProblemsBadgeText" FontSize="10" Foreground="{DynamicResource BadgeFgBrush}" HorizontalAlignment="Center" />
+                                        </Border>
+                                    </StackPanel>
+                                </ToggleButton>
+                                <ToggleButton x:Name="TabOutput" Style="{StaticResource TabToggle}" Content="OUTPUT" Click="PanelTab_Click" Tag="output" />
+                                <ToggleButton x:Name="TabTerminal" Style="{StaticResource TabToggle}" Content="TERMINAL" Click="PanelTab_Click" Tag="terminal" />
+                            </StackPanel>
+                        </DockPanel>
+                        <Grid>
+                            <ListBox x:Name="ProblemsList" Visibility="Collapsed" MouseDoubleClick="Problems_Open" KeyDown="Problems_Key" />
+                            <TextBox x:Name="OutputBox" Visibility="Collapsed" IsReadOnly="True" BorderThickness="0" Background="Transparent" FontFamily="{StaticResource CodeFont}"
+                                     VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True" />
+                            <ContentControl x:Name="TerminalHost" Focusable="False" />
+                        </Grid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ============ status bar -->
+        <Border Grid.Row="2" Background="{DynamicResource StatusBgBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,1,0,0">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Button x:Name="SbBranch" Style="{StaticResource StatusButton}" Click="Branch_Click" Visibility="Collapsed" />
+                    <Button x:Name="SbSync" Style="{StaticResource StatusButton}" Click="Sync_Click" Visibility="Collapsed" />
+                    <Button x:Name="SbProblems" Style="{StaticResource StatusButton}" Click="SbProblems_Click" ToolTip="Problems (Ctrl+Shift+M)" />
+                    <TextBlock x:Name="SbBusy" Foreground="{DynamicResource StatusFgBrush}" VerticalAlignment="Center" Margin="8,0" FontSize="12" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="SbCursor" Style="{StaticResource StatusButton}" Click="GoToLine_Click" ToolTip="Go to Line (Ctrl+G)" />
+                    <Button x:Name="SbIndent" Style="{StaticResource StatusButton}" Click="Indent_Click" ToolTip="Select Indentation" />
+                    <Button x:Name="SbEncoding" Style="{StaticResource StatusButton}" Content="UTF-8" />
+                    <Button x:Name="SbEol" Style="{StaticResource StatusButton}" Click="Eol_Click" ToolTip="Select End of Line Sequence" />
+                    <Button x:Name="SbLang" Style="{StaticResource StatusButton}" Click="Lang_Click" ToolTip="Select Language Mode" />
+                    <Button x:Name="SbFormatter" Style="{StaticResource StatusButton}" Click="Format_Click" ToolTip="Format Document (Shift+Alt+F)" />
+                    <Button x:Name="SbTheme" Style="{StaticResource StatusButton}" Click="Theme_Click" ToolTip="Color Theme (Ctrl+K Ctrl+T)" />
+                    <Button x:Name="SbBell" Style="{StaticResource StatusButton}" Content="&#xEA8F;" FontFamily="{StaticResource IconFont}" Click="Bell_Click" ToolTip="Notifications" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ============ overlays: notifications + command palette -->
+        <StackPanel x:Name="Notes" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,14,14" Width="420" />
+
+        <Grid x:Name="PaletteVeil" Grid.RowSpan="3" Background="#01000000" Visibility="Collapsed" MouseDown="PaletteVeil_MouseDown">
+            <Border x:Name="PaletteBox" VerticalAlignment="Top" HorizontalAlignment="Center" Width="620" Margin="0,40,0,0"
+                    Background="{DynamicResource MenuBgBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1" CornerRadius="6" Padding="6"
+                    MouseDown="PaletteBox_MouseDown">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="18" ShadowDepth="4" Opacity="0.45" Color="{DynamicResource ShadowColor}" />
+                </Border.Effect>
+                <StackPanel>
+                    <TextBox x:Name="PaletteInput" FontSize="13" Padding="6,4" TextChanged="PaletteInput_Changed" PreviewKeyDown="PaletteInput_Key" />
+                    <ListBox x:Name="PaletteList" MaxHeight="420" Margin="0,6,0,0" MouseUp="PaletteList_Click" SelectionChanged="PaletteList_Selection" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</local:VistaWindow>

@@ -1,0 +1,11 @@
+<!-- Shared Valco Office UI. Import from an app's .csproj:
+     <Import Project="..\..\..\ValcoCommon\ValcoCommon.props" />  -->
+<Project>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Ribbon.cs" Link="ValcoCommon\Ribbon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValcoChrome.cs" Link="ValcoCommon\ValcoChrome.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" Link="ValcoCommon\GlobalUsings.cs" />
+    <Page Include="$(MSBuildThisFileDirectory)SuiteIcons.xaml" Link="Themes\SuiteIcons.xaml" />
+    <Resource Include="$(MSBuildThisFileDirectory)ValcoOffice-mark.png" Link="ValcoOffice-mark.png" />
+  </ItemGroup>
+</Project>

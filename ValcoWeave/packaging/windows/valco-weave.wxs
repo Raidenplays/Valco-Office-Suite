@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Valco Weave" Language="1033" Version="0.5.0.0" Manufacturer="ItsRaiden"
+           UpgradeCode="5E7A1C2B-8F3D-4B6A-9C1E-2D4F6A8B0C13">
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" Platform="x64"
+             Description="Valco Weave Setup" Manufacturer="ItsRaiden" />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of Valco Weave is already installed." />
+    <Media Id="1" Cabinet="valcoweave.cab" EmbedCab="yes" />
+    <Icon Id="ValcoWeaveIcon" SourceFile="icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="ValcoWeaveIcon" />
+    <Property Id="ARPHELPLINK" Value="https://raidenbrundin.com" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/Raidenplays/valco-weave" />
+    <Property Id="ARPCOMMENTS" Value="Web design, the Vista way." />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLDIR" Name="Valco Weave">
+          <Component Id="MainExe" Guid="3B9D2E61-7A4C-4F18-8E5B-1C6D9A2F4E70" Win64="yes">
+            <File Id="ValcoWeaveExe" Name="ValcoWeave.exe" Source="ValcoWeave.exe" KeyPath="yes" />
+            <!-- Explorer: right-click a folder (or inside one) > "Open as site in Valco Weave" -->
+            <RegistryValue Root="HKLM" Key="Software\Classes\Directory\shell\ValcoWeave" Value="Open as site in Valco Weave" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\Directory\shell\ValcoWeave" Name="Icon" Value="[#ValcoWeaveExe]" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\Directory\shell\ValcoWeave\command" Value="&quot;[#ValcoWeaveExe]&quot; &quot;%V&quot;" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\Directory\Background\shell\ValcoWeave" Value="Open as site in Valco Weave" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\Directory\Background\shell\ValcoWeave" Name="Icon" Value="[#ValcoWeaveExe]" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\Directory\Background\shell\ValcoWeave\command" Value="&quot;[#ValcoWeaveExe]&quot; &quot;%V&quot;" Type="string" />
+            <!-- "Open with" for web pages, without taking over the default -->
+            <RegistryValue Root="HKLM" Key="Software\Classes\ValcoWeave.html" Value="Web Page (Valco Weave)" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\ValcoWeave.html\DefaultIcon" Value="[#ValcoWeaveExe],0" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\ValcoWeave.html\shell\open\command" Value="&quot;[#ValcoWeaveExe]&quot; &quot;%1&quot;" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\.html\OpenWithProgids" Name="ValcoWeave.html" Value="" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\.htm\OpenWithProgids" Name="ValcoWeave.html" Value="" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\.css\OpenWithProgids" Name="ValcoWeave.html" Value="" Type="string" />
+            <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoWeave.exe" Name="FriendlyAppName" Value="Valco Weave" Type="string" />
+          </Component>
+          <Component Id="WebView2Loader" Guid="2F6C8B14-9D3E-4A71-B5C0-7E1A3D9F2B86" Win64="yes">
+            <File Id="WebView2LoaderDll" Name="WebView2Loader.dll" Source="WebView2Loader.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="License" Guid="9A1F4C7E-2B5D-4E83-A6C9-0F3B7D1E5A24" Win64="yes">
+            <File Id="LicenseTxt" Name="LICENSE.txt" Source="LICENSE.txt" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Component Id="StartMenuShortcut" Guid="C4E8A2D6-1F7B-4935-B0D2-8E6A4C1F3B59" Win64="yes">
+          <Shortcut Id="StartMenuValcoWeave" Name="Valco Weave" Description="Visual web editor"
+                    Target="[INSTALLDIR]ValcoWeave.exe" WorkingDirectory="INSTALLDIR" Icon="ValcoWeaveIcon" />
+          <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Weave" Name="startmenu" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+      <Directory Id="DesktopFolder">
+        <Component Id="DesktopShortcut" Guid="7D3B9F15-6E2A-4C8D-91F4-5A0E2B7C6D38" Win64="yes">
+          <Shortcut Id="DesktopValcoWeave" Name="Valco Weave" Description="Visual web editor"
+                    Target="[INSTALLDIR]ValcoWeave.exe" WorkingDirectory="INSTALLDIR" Icon="ValcoWeaveIcon" />
+          <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Weave" Name="desktop" Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </Directory>
+
+    <Feature Id="Main" Title="Valco Weave" Level="1">
+      <ComponentRef Id="MainExe" />
+      <ComponentRef Id="License" />
+      <ComponentRef Id="WebView2Loader" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+  </Product>
+</Wix>

@@ -1,0 +1,78 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Package Name="Valco Word" Manufacturer="ItsRaiden" Version="1.0.0.0"
+           UpgradeCode="34BAD878-C15A-4342-A5B3-16B0CF2A5490" Scope="perMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="Valco Word Setup" Manufacturer="ItsRaiden" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="ValcoWordIcon.exe" SourceFile="$(var.AssetsDir)\ValcoWord.ico" />
+    <Property Id="ARPPRODUCTICON" Value="ValcoWordIcon.exe" />
+    <Property Id="ARPHELPLINK" Value="https://raidenbrundin.com" />
+    <Property Id="ARPCOMMENTS" Value="Documents, the Vista way." />
+
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.AssetsDir)\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.AssetsDir)\dialog.bmp" />
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Valco Word" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#ValcoWordExe]" />
+    <CustomAction Id="LaunchApplication" DllEntry="WixShellExec" Impersonate="yes" BinaryRef="Wix4UtilCA_X64" />
+
+    <UI>
+      <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed" />
+    </UI>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Valco Word" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="Main" Title="Valco Word" Level="1" ConfigurableDirectory="INSTALLFOLDER" AllowAbsent="no">
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="MainExe">
+        <File Id="ValcoWordExe" Source="$(var.PublishDir)\ValcoWord.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuValcoWord" Directory="ProgramMenuFolder" Name="Valco Word" Description="Create and edit documents"
+                    WorkingDirectory="INSTALLFOLDER" Icon="ValcoWordIcon.exe" Advertise="yes" />
+          <Shortcut Id="DesktopValcoWord" Directory="DesktopFolder" Name="Valco Word" Description="Create and edit documents"
+                    WorkingDirectory="INSTALLFOLDER" Icon="ValcoWordIcon.exe" Advertise="yes" />
+        </File>
+        <!-- Adds Valco Word to "Open with" for documents without stealing the current default app -->
+        <RegistryValue Root="HKLM" Key="Software\Classes\ValcoWord.Document" Value="Word Document (Valco Word)" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\ValcoWord.Document\DefaultIcon" Value="[#ValcoWordExe],0" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\ValcoWord.Document\shell\open\command" Value="&quot;[#ValcoWordExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.docx\OpenWithProgids" Name="ValcoWord.Document" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.doc\OpenWithProgids" Name="ValcoWord.Document" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.rtf\OpenWithProgids" Name="ValcoWord.Document" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.txt\OpenWithProgids" Name="ValcoWord.Document" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoWord.exe" Name="FriendlyAppName" Value="Valco Word" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoWord.exe\SupportedTypes" Name=".docx" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoWord.exe\SupportedTypes" Name=".doc" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoWord.exe\SupportedTypes" Name=".rtf" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoWord.exe\SupportedTypes" Name=".txt" Value="" Type="string" />
+        <!-- Default Programs registration so it can be picked as the default in Windows Settings -->
+        <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Word\Capabilities" Name="ApplicationName" Value="Valco Word" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Word\Capabilities" Name="ApplicationDescription" Value="A Vista-style word processor from the Valco suite." Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Word\Capabilities\FileAssociations" Name=".docx" Value="ValcoWord.Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Word\Capabilities\FileAssociations" Name=".doc" Value="ValcoWord.Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Word\Capabilities\FileAssociations" Name=".rtf" Value="ValcoWord.Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\RegisteredApplications" Name="Valco Word" Value="Software\ItsRaiden\Valco Word\Capabilities" Type="string" />
+      </Component>
+      <Files Include="$(var.PublishDir)\**">
+        <Exclude Files="$(var.PublishDir)\ValcoWord.exe" />
+        <Exclude Files="$(var.PublishDir)\**\*.pdb" />
+        <Exclude Files="$(var.PublishDir)\**\*.xml" />
+      </Files>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

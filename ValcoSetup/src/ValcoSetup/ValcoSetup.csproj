@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>setup</AssemblyName>
+    <RootNamespace>ValcoSetup</RootNamespace>
+    <ApplicationIcon>..\..\assets\ValcoOffice.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Valco Office</Product>
+    <Company>ItsRaiden</Company>
+    <Copyright>© 2026 ItsRaiden</Copyright>
+    <Description>Valco Office Setup</Description>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);CS1998;CS4014;CS0168;CS0219</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="..\..\assets\ValcoOffice.ico" Link="ValcoOffice.ico" />
+    <Resource Include="..\..\assets\ValcoOffice-mark.png" Link="ValcoOffice-mark.png" />
+    <Resource Include="..\..\assets\ValcoOffice-256.png" Link="ValcoOffice-256.png" />
+  </ItemGroup>
+</Project>

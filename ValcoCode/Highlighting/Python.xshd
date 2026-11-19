@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Python" extensions=".py;.pyw;.pyi" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Comment" foreground="#6b7380" />
+  <Color name="String" foreground="#98c379" />
+  <Color name="Number" foreground="#d19a66" />
+  <Color name="Keyword" foreground="#c678dd" />
+  <Color name="Control" foreground="#c678dd" />
+  <Color name="Storage" foreground="#c678dd" />
+  <Color name="Constant" foreground="#d19a66" />
+  <Color name="Type" foreground="#e5c07b" />
+  <Color name="Class" foreground="#e5c07b" />
+  <Color name="Function" foreground="#61afef" />
+  <Color name="Self" foreground="#e06c75" />
+  <Color name="Annotation" foreground="#36c2b4" />
+  <Color name="Operator" foreground="#56b6c2" />
+  <Color name="Punct" foreground="#abb2bf" />
+
+  <RuleSet ignoreCase="false">
+    <Span color="Comment" begin="\#" />
+    <!-- triple-quoted strings (docstrings, f-strings) -->
+    <Span color="String" multiline="true"><Begin>(?i)[rbuf]{0,2}"""</Begin><End>"""</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+    <Span color="String" multiline="true"><Begin>(?i)[rbuf]{0,2}'''</Begin><End>'''</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+    <Span color="String"><Begin>(?i)[rbuf]{0,2}"</Begin><End>"</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+    <Span color="String"><Begin>(?i)[rbuf]{0,2}'</Begin><End>'</End><RuleSet><Span begin="\\" end="." /></RuleSet></Span>
+
+    <Rule color="Annotation">@[\w.]+</Rule>
+
+    <Keywords color="Control">
+      <Word>if</Word><Word>elif</Word><Word>else</Word><Word>for</Word><Word>while</Word><Word>break</Word><Word>continue</Word>
+      <Word>return</Word><Word>try</Word><Word>except</Word><Word>finally</Word><Word>raise</Word><Word>with</Word><Word>yield</Word>
+      <Word>pass</Word><Word>match</Word><Word>case</Word><Word>await</Word><Word>assert</Word>
+    </Keywords>
+    <Keywords color="Storage">
+      <Word>def</Word><Word>class</Word><Word>lambda</Word><Word>global</Word><Word>nonlocal</Word><Word>async</Word><Word>del</Word>
+    </Keywords>
+    <Keywords color="Keyword">
+      <Word>import</Word><Word>from</Word><Word>as</Word><Word>in</Word><Word>is</Word><Word>not</Word><Word>and</Word><Word>or</Word>
+    </Keywords>
+    <Keywords color="Constant">
+      <Word>True</Word><Word>False</Word><Word>None</Word><Word>NotImplemented</Word><Word>Ellipsis</Word><Word>__name__</Word><Word>__main__</Word>
+    </Keywords>
+    <Keywords color="Self">
+      <Word>self</Word><Word>cls</Word>
+    </Keywords>
+    <Keywords color="Type">
+      <Word>int</Word><Word>float</Word><Word>str</Word><Word>bool</Word><Word>list</Word><Word>dict</Word><Word>set</Word><Word>tuple</Word>
+      <Word>bytes</Word><Word>object</Word><Word>type</Word><Word>complex</Word><Word>frozenset</Word><Word>range</Word>
+    </Keywords>
+
+    <!-- name after def/class -->
+    <Rule color="Function">(?&lt;=\bdef\s+)\w+</Rule>
+    <Rule color="Class">(?&lt;=\bclass\s+)\w+</Rule>
+    <!-- calls -->
+    <Rule color="Function">\b[A-Za-z_]\w*(?=\s*\()</Rule>
+    <Rule color="Class">\b[A-Z]\w*\b</Rule>
+
+    <Rule color="Number">\b0[xX][0-9a-fA-F_]+\b|\b0[bB][01_]+\b|\b0[oO][0-7_]+\b|\b\d[\d_]*(\.[\d_]*)?([eE][+-]?\d+)?[jJ]?\b|\.\d[\d_]*([eE][+-]?\d+)?\b</Rule>
+    <Rule color="Operator">[-+*/%=&lt;&gt;!&amp;|^~:]+</Rule>
+    <Rule color="Punct">[()\[\]{},.;]</Rule>
+  </RuleSet>
+</SyntaxDefinition>

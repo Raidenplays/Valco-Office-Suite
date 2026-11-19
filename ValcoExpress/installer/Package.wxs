@@ -1,0 +1,66 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Package Name="Valco Express" Manufacturer="ItsRaiden" Version="1.2.0.0"
+           UpgradeCode="6E0C8F7B-3B5D-4C0A-9D6E-5A1F2B7C9E41" Scope="perMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="Valco Express Setup" Manufacturer="ItsRaiden" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="ValcoIcon.exe" SourceFile="$(var.AssetsDir)\ValcoExpress.ico" />
+    <Property Id="ARPPRODUCTICON" Value="ValcoIcon.exe" />
+    <Property Id="ARPHELPLINK" Value="https://raidenbrundin.com" />
+    <Property Id="ARPCOMMENTS" Value="E-mail, the Vista way." />
+
+    <!-- Themed wizard: Vista aurora artwork -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.AssetsDir)\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.AssetsDir)\dialog.bmp" />
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Valco Express" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#ValcoExpressExe]" />
+    <CustomAction Id="LaunchApplication" DllEntry="WixShellExec" Impersonate="yes" BinaryRef="Wix4UtilCA_X64" />
+
+    <UI>
+      <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed" />
+    </UI>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Valco Express" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="Main" Title="Valco Express" Level="1" ConfigurableDirectory="INSTALLFOLDER" AllowAbsent="no">
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="MainExe">
+        <File Id="ValcoExpressExe" Source="$(var.PublishDir)\ValcoExpress.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuValco" Directory="ProgramMenuFolder" Name="Valco Express" Description="Read and send e-mail"
+                    WorkingDirectory="INSTALLFOLDER" Icon="ValcoIcon.exe" Advertise="yes" />
+          <Shortcut Id="DesktopValco" Directory="DesktopFolder" Name="Valco Express" Description="Read and send e-mail"
+                    WorkingDirectory="INSTALLFOLDER" Icon="ValcoIcon.exe" Advertise="yes" />
+        </File>
+        <!-- Shows up in "Open with" for .eml files without stealing the default -->
+        <RegistryValue Root="HKLM" Key="Software\Classes\ValcoExpress.eml" Value="E-mail Message (Valco Express)" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\ValcoExpress.eml\DefaultIcon" Value="[#ValcoExpressExe],0" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\ValcoExpress.eml\shell\open\command" Value="&quot;[#ValcoExpressExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.eml\OpenWithProgids" Name="ValcoExpress.eml" Value="ValcoExpress" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoExpress.exe" Name="FriendlyAppName" Value="Valco Express" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\ValcoExpress.exe\SupportedTypes" Name=".eml" Value="ValcoExpress" Type="string" />
+      </Component>
+      <Files Include="$(var.PublishDir)\**">
+        <Exclude Files="$(var.PublishDir)\ValcoExpress.exe" />
+        <Exclude Files="$(var.PublishDir)\**\*.pdb" />
+        <Exclude Files="$(var.PublishDir)\**\*.xml" />
+      </Files>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

@@ -1,0 +1,1632 @@
+{
+  "suiteVersion": "1.0.0",
+  "updateUrl": "https://github.com/Raidenplays/Valco-Office-Suite/releases/latest/download/valco-office.json",
+  "license": "..\\ValcoWord\\installer\\License.rtf",
+  "apps": [
+    {
+      "id": "word",
+      "name": "Valco Word",
+      "kind": "zip",
+      "source": "..\\ValcoWord\\publish",
+      "versionFrom": "..\\ValcoWord\\src\\ValcoWord\\ValcoWord.csproj",
+      "icon": "..\\ValcoWord\\assets\\ValcoWord.ico",
+      "folder": "Valco Word",
+      "exe": "ValcoWord.exe",
+      "process": "ValcoWord",
+      "description": "Create and edit documents, letters and reports with the Word 2007 Ribbon.",
+      "shortcutDescription": "Create and edit documents",
+      "upgradeCode": "34BAD878-C15A-4342-A5B3-16B0CF2A5490",
+      "registry": [
+        {
+          "key": "Software\\Classes\\ValcoWord.Document",
+          "value": "Word Document (Valco Word)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Document\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Document\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Template",
+          "value": "Word Template (Valco Word)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Template\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Template\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.OpenDocument",
+          "value": "OpenDocument Text (Valco Word)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.OpenDocument\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.OpenDocument\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Rtf",
+          "value": "Rich Text Document (Valco Word)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Rtf\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoWord.Rtf\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\.docx\\OpenWithProgids",
+          "name": "ValcoWord.Document",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.doc\\OpenWithProgids",
+          "name": "ValcoWord.Document",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.dotx\\OpenWithProgids",
+          "name": "ValcoWord.Template",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.odt\\OpenWithProgids",
+          "name": "ValcoWord.OpenDocument",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.rtf\\OpenWithProgids",
+          "name": "ValcoWord.Rtf",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.txt\\OpenWithProgids",
+          "name": "ValcoWord.Document",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe",
+          "name": "FriendlyAppName",
+          "value": "Valco Word",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe\\SupportedTypes",
+          "name": ".docx",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe\\SupportedTypes",
+          "name": ".doc",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe\\SupportedTypes",
+          "name": ".dotx",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe\\SupportedTypes",
+          "name": ".odt",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe\\SupportedTypes",
+          "name": ".rtf",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWord.exe\\SupportedTypes",
+          "name": ".txt",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities",
+          "name": "ApplicationName",
+          "value": "Valco Word",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "A word processor for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities",
+          "name": "ApplicationIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities\\FileAssociations",
+          "name": ".docx",
+          "value": "ValcoWord.Document",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities\\FileAssociations",
+          "name": ".doc",
+          "value": "ValcoWord.Document",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities\\FileAssociations",
+          "name": ".dotx",
+          "value": "ValcoWord.Template",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities\\FileAssociations",
+          "name": ".odt",
+          "value": "ValcoWord.OpenDocument",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Word\\Capabilities\\FileAssociations",
+          "name": ".rtf",
+          "value": "ValcoWord.Rtf",
+          "owned": true
+        },
+        {
+          "key": "Software\\RegisteredApplications",
+          "name": "Valco Word",
+          "value": "Software\\ItsRaiden\\Valco Word\\Capabilities"
+        }
+      ],
+      "defaultApps": "Valco Word"
+    },
+    {
+      "id": "express",
+      "name": "Valco Express",
+      "kind": "zip",
+      "source": "..\\ValcoExpress\\publish",
+      "versionFrom": "..\\ValcoExpress\\src\\ValcoExpress\\ValcoExpress.csproj",
+      "icon": "..\\ValcoExpress\\assets\\ValcoExpress.ico",
+      "folder": "Valco Express",
+      "exe": "ValcoExpress.exe",
+      "process": "ValcoExpress",
+      "description": "Read and send e-mail in the style of Windows Mail.",
+      "shortcutDescription": "Read and send e-mail",
+      "upgradeCode": "6E0C8F7B-3B5D-4C0A-9D6E-5A1F2B7C9E41",
+      "registry": [
+        {
+          "key": "Software\\Classes\\ValcoExpress.eml",
+          "value": "E-mail Message (Valco Express)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoExpress.eml\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoExpress.eml\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoExpress.mailto",
+          "value": "URL:MailTo Protocol",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoExpress.mailto\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoExpress.mailto\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoExpress.mailto",
+          "name": "URL Protocol",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\.eml\\OpenWithProgids",
+          "name": "ValcoExpress.eml",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoExpress.exe",
+          "name": "FriendlyAppName",
+          "value": "Valco Express",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoExpress.exe\\SupportedTypes",
+          "name": ".eml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Express\\Capabilities",
+          "name": "ApplicationName",
+          "value": "Valco Express",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Express\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "An e-mail program for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Express\\Capabilities",
+          "name": "ApplicationIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Express\\Capabilities\\FileAssociations",
+          "name": ".eml",
+          "value": "ValcoExpress.eml",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Express\\Capabilities\\URLAssociations",
+          "name": "mailto",
+          "value": "ValcoExpress.mailto",
+          "owned": true
+        },
+        {
+          "key": "Software\\RegisteredApplications",
+          "name": "Valco Express",
+          "value": "Software\\ItsRaiden\\Valco Express\\Capabilities"
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express",
+          "value": "Valco Express",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express",
+          "name": "LocalizedString",
+          "value": "Valco Express",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\shell\\open\\command",
+          "value": "\"{EXE}\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\Capabilities",
+          "name": "ApplicationName",
+          "value": "Valco Express",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "An e-mail program for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\Capabilities\\FileAssociations",
+          "name": ".eml",
+          "value": "ValcoExpress.eml",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\Capabilities\\URLAssociations",
+          "name": "mailto",
+          "value": "ValcoExpress.mailto",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\Mail\\Valco Express\\Capabilities\\StartMenu",
+          "name": "Mail",
+          "value": "Valco Express",
+          "owned": true
+        }
+      ],
+      "defaultApps": "Valco Express"
+    },
+    {
+      "id": "code",
+      "name": "Valco Code",
+      "kind": "zip",
+      "source": "..\\ValcoCode\\publish",
+      "versionFrom": "..\\ValcoCode\\ValcoCode.csproj",
+      "icon": "..\\ValcoCode\\Assets\\ValcoCode.ico",
+      "folder": "Valco Code",
+      "exe": "ValcoCode.exe",
+      "process": "ValcoCode",
+      "description": "Edit code with Python and Java support, formatting and Git.",
+      "shortcutDescription": "Code editor for Python and Java",
+      "upgradeCode": "387D110A-D001-40E9-9F61-937E2BD55991",
+      "registry": [
+        {
+          "key": "Software\\Classes\\*\\shell\\ValcoCode",
+          "value": "Open with Valco Code",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\*\\shell\\ValcoCode",
+          "name": "Icon",
+          "value": "{EXE}",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\*\\shell\\ValcoCode\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Directory\\shell\\ValcoCode",
+          "value": "Open with Valco Code",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Directory\\shell\\ValcoCode",
+          "name": "Icon",
+          "value": "{EXE}",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Directory\\shell\\ValcoCode\\command",
+          "value": "\"{EXE}\" \"%V\"",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Directory\\Background\\shell\\ValcoCode",
+          "value": "Open with Valco Code",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Directory\\Background\\shell\\ValcoCode",
+          "name": "Icon",
+          "value": "{EXE}",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Directory\\Background\\shell\\ValcoCode\\command",
+          "value": "\"{EXE}\" \"%V\"",
+          "owned": true,
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoCode.SourceFile",
+          "value": "Source File (Valco Code)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoCode.SourceFile\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoCode.SourceFile\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoCode.TextFile",
+          "value": "Text File (Valco Code)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoCode.TextFile\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoCode.TextFile\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\.py\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.pyw\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.java\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.js\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.mjs\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.cjs\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.ts\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.tsx\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.jsx\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.json\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.jsonc\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.css\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.scss\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.less\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xml\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xaml\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.yml\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.yaml\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.toml\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.ini\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.cfg\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.conf\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.md\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.markdown\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.c\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.h\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.cpp\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.hpp\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.cc\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.cs\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.csproj\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.sln\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.go\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.rs\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.rb\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.php\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.lua\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.sh\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.bash\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.ps1\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.psm1\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.bat\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.cmd\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.sql\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.kt\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.gradle\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.properties\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.log\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.csv\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.gitignore\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.gitattributes\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.editorconfig\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.env\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.txt\\OpenWithProgids",
+          "name": "ValcoCode.SourceFile",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe",
+          "name": "FriendlyAppName",
+          "value": "Valco Code",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".py",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".pyw",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".java",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".js",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".mjs",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".cjs",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".ts",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".tsx",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".jsx",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".json",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".jsonc",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".css",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".scss",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".less",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".xml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".xaml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".yml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".yaml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".toml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".ini",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".cfg",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".conf",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".md",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".markdown",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".c",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".h",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".cpp",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".hpp",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".cc",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".cs",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".csproj",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".sln",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".go",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".rs",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".rb",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".php",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".lua",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".sh",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".bash",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".ps1",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".psm1",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".bat",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".cmd",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".sql",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".kt",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".gradle",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".properties",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".log",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".csv",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".gitignore",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".gitattributes",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".editorconfig",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".env",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
+          "name": ".txt",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities",
+          "name": "ApplicationName",
+          "value": "Valco Code",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "A code editor for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities",
+          "name": "ApplicationIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".py",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".pyw",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".java",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".js",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".mjs",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".cjs",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".ts",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".tsx",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".jsx",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".json",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".jsonc",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".css",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".scss",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".less",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".xml",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".xaml",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".yml",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".yaml",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".toml",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".ini",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".cfg",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".conf",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".md",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".markdown",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".c",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".h",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".cpp",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".hpp",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".cc",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".cs",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".csproj",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".sln",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".go",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".rs",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".rb",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".php",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".lua",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".sh",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".bash",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".ps1",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".psm1",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".bat",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".cmd",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".sql",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".kt",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".gradle",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".properties",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".log",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".csv",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".gitignore",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".gitattributes",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".editorconfig",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".env",
+          "value": "ValcoCode.SourceFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
+          "name": ".txt",
+          "value": "ValcoCode.TextFile",
+          "owned": true
+        },
+        {
+          "key": "Software\\RegisteredApplications",
+          "name": "Valco Code",
+          "value": "Software\\ItsRaiden\\Valco Code\\Capabilities"
+        }
+      ],
+      "defaultApps": "Valco Code"
+    },
+    {
+      "id": "weave",
+      "name": "Valco Weave",
+      "kind": "msi",
+      "source": "..\\ValcoWeave\\dist\\ValcoWeave-Setup.msi",
+      "versionFrom": "..\\ValcoWeave\\package.json",
+      "icon": "..\\ValcoWeave\\packaging\\assets\\ValcoWeave.ico",
+      "folder": "Valco Weave",
+      "exe": "ValcoWeave.exe",
+      "process": "ValcoWeave",
+      "description": "Design web pages visually, in the style of Dreamweaver.",
+      "shortcutDescription": "Visual web editor",
+      "upgradeCode": "5E7A1C2B-8F3D-4B6A-9C1E-2D4F6A8B0C13",
+      "registry": [
+        {
+          "key": "Software\\Classes\\ValcoWeave.html",
+          "value": "Web Page (Valco Weave)"
+        },
+        {
+          "key": "Software\\Classes\\ValcoWeave.html\\DefaultIcon",
+          "value": "{EXE},0"
+        },
+        {
+          "key": "Software\\Classes\\ValcoWeave.html\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\""
+        },
+        {
+          "key": "Software\\Classes\\.html\\OpenWithProgids",
+          "name": "ValcoWeave.html",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.htm\\OpenWithProgids",
+          "name": "ValcoWeave.html",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xhtml\\OpenWithProgids",
+          "name": "ValcoWeave.html",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.shtml\\OpenWithProgids",
+          "name": "ValcoWeave.html",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.php\\OpenWithProgids",
+          "name": "ValcoWeave.html",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWeave.exe",
+          "name": "FriendlyAppName",
+          "value": "Valco Weave"
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWeave.exe\\SupportedTypes",
+          "name": ".html",
+          "value": ""
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWeave.exe\\SupportedTypes",
+          "name": ".htm",
+          "value": ""
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWeave.exe\\SupportedTypes",
+          "name": ".xhtml",
+          "value": ""
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWeave.exe\\SupportedTypes",
+          "name": ".shtml",
+          "value": ""
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoWeave.exe\\SupportedTypes",
+          "name": ".php",
+          "value": ""
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities",
+          "name": "ApplicationName",
+          "value": "Valco Weave",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "A visual web editor for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities",
+          "name": "ApplicationIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities\\FileAssociations",
+          "name": ".html",
+          "value": "ValcoWeave.html",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities\\FileAssociations",
+          "name": ".htm",
+          "value": "ValcoWeave.html",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities\\FileAssociations",
+          "name": ".xhtml",
+          "value": "ValcoWeave.html",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities\\FileAssociations",
+          "name": ".shtml",
+          "value": "ValcoWeave.html",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Weave\\Capabilities\\FileAssociations",
+          "name": ".php",
+          "value": "ValcoWeave.html",
+          "owned": true
+        },
+        {
+          "key": "Software\\RegisteredApplications",
+          "name": "Valco Weave",
+          "value": "Software\\ItsRaiden\\Valco Weave\\Capabilities"
+        }
+      ],
+      "defaultApps": "Valco Weave"
+    }
+  ],
+  "retired": [
+    {
+      "id": "shell",
+      "name": "Valco Shell",
+      "kind": "zip",
+      "folder": "Valco Shell",
+      "exe": "ValcoShell.exe",
+      "process": "ValcoShell",
+      "exitArgs": "--exit",
+      "upgradeCode": "9B3E4C21-7D5A-4F8E-A1C6-3E2D9F7B5A18",
+      "notes": "Discontinued. Removed automatically when Valco Office is installed or updated."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Valco Code" Manufacturer="ItsRaiden" Version="0.2.1.0"
+           UpgradeCode="387D110A-D001-40E9-9F61-937E2BD55991" Scope="perMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="Valco Code Setup" Manufacturer="ItsRaiden" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="ValcoCodeIcon.exe" SourceFile="$(var.PublishDir)\ValcoCode.exe" />
+    <Property Id="ARPPRODUCTICON" Value="ValcoCodeIcon.exe" />
+    <Property Id="ARPCOMMENTS" Value="Code, the Vista way." />
+    <Property Id="ARPHELPLINK" Value="https://raidenbrundin.com" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.AssetsDir)License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.AssetsDir)banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.AssetsDir)dialog.bmp" />
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Valco Code" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#ValcoCodeExe]" />
+    <CustomAction Id="LaunchApplication" DllEntry="WixShellExec" Impersonate="yes" BinaryRef="Wix4UtilCA_X64" />
+
+    <UI>
+      <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed" />
+    </UI>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Valco Code">
+        <Directory Id="TOOLSFOLDER" Name="tools" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+    <StandardDirectory Id="DesktopFolder" />
+
+    <Feature Id="Main" Title="Valco Code" Level="1" ConfigurableDirectory="INSTALLFOLDER" AllowAbsent="no">
+      <ComponentGroupRef Id="AppFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="MainExe">
+        <File Id="ValcoCodeExe" Source="$(var.PublishDir)\ValcoCode.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuValcoCode" Directory="ProgramMenuFolder" Name="Valco Code" Description="Code editor for Python and Java"
+                    WorkingDirectory="INSTALLFOLDER" Icon="ValcoCodeIcon.exe" Advertise="yes" />
+          <Shortcut Id="DesktopValcoCode" Directory="DesktopFolder" Name="Valco Code" Description="Code editor for Python and Java"
+                    WorkingDirectory="INSTALLFOLDER" Icon="ValcoCodeIcon.exe" Advertise="yes" />
+        </File>
+        <!-- "Open with Valco Code" on files and "Open folder in Valco Code" on folders, like VS Code -->
+        <RegistryValue Root="HKLM" Key="Software\Classes\*\shell\ValcoCode" Value="Open with Valco Code" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\*\shell\ValcoCode" Name="Icon" Value="[#ValcoCodeExe]" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\*\shell\ValcoCode\command" Value="&quot;[#ValcoCodeExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Directory\shell\ValcoCode" Value="Open with Valco Code" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Directory\shell\ValcoCode" Name="Icon" Value="[#ValcoCodeExe]" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Directory\shell\ValcoCode\command" Value="&quot;[#ValcoCodeExe]&quot; &quot;%V&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Directory\Background\shell\ValcoCode" Value="Open with Valco Code" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Directory\Background\shell\ValcoCode" Name="Icon" Value="[#ValcoCodeExe]" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Directory\Background\shell\ValcoCode\command" Value="&quot;[#ValcoCodeExe]&quot; &quot;%V&quot;" Type="string" />
+      </Component>
+      <Component Id="Ruff" Directory="TOOLSFOLDER">
+        <File Id="RuffExe" Source="$(var.PublishDir)\tools\ruff.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="JavaFormat" Directory="TOOLSFOLDER">
+        <File Id="GjfExe" Source="$(var.PublishDir)\tools\google-java-format.exe" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

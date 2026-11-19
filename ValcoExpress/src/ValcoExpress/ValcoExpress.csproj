@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>ValcoExpress</AssemblyName>
+    <RootNamespace>ValcoExpress</RootNamespace>
+    <ApplicationIcon>..\..\assets\ValcoExpress.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.2.0</Version>
+    <FileVersion>1.2.0.0</FileVersion>
+    <Product>Valco Express</Product>
+    <Company>ItsRaiden</Company>
+    <Copyright>© 2026 ItsRaiden</Copyright>
+    <Description>Valco Express</Description>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);CS1998;CS4014;CS0168;CS0219</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.*" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.*" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\..\assets\ValcoExpress.ico" Link="ValcoExpress.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- old copy, now shared in ValcoCommon -->
+    <Compile Remove="OfficeTheme.cs" />
+  </ItemGroup>
+  <Import Project="..\..\..\ValcoCommon\ValcoCommon.props" />
+</Project>

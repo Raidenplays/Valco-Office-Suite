@@ -1,0 +1,15 @@
+# build output
+bin/
+obj/
+publish/
+dist/
+out/
+release/
+target/
+node_modules/
+build.log
+_to_delete/
+_xfer/
+*.msi
+*.user
+.vs/

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>ValcoCode</AssemblyName>
+    <RootNamespace>ValcoCode</RootNamespace>
+    <ApplicationIcon>Assets\ValcoCode.ico</ApplicationIcon>
+    <Version>0.2.1</Version>
+    <Company>ItsRaiden</Company>
+    <Product>Valco Code</Product>
+    <Copyright>© 2026 ItsRaiden</Copyright>
+    <Description>Valco Code</Description>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
+    
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\ValcoCode.ico" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\ValcoOffice-mark.png" />
+    <Resource Include="Assets\ValcoOffice-256.png" />
+    <EmbeddedResource Include="Highlighting\*.xshd" />
+    <Compile Remove="installer\**;publish\**;dist\**" />
+    <None Remove="installer\**;publish\**;dist\**;tools\**;branding\**" />
+  </ItemGroup>
+  <Import Project="..\ValcoCommon\ValcoCommon.props" />
+</Project>
