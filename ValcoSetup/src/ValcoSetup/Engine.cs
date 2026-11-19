@@ -118,12 +118,27 @@ namespace ValcoSetup
         // =====================================================================================
         //  Running apps
         // =====================================================================================
+        /// <summary>
+        /// The app's running processes. "process" is an exe name (ValcoWord), or a path inside the app's folder
+        /// (engine\\firefox.exe for ValcoNet) so that only that copy is matched, never the user's own Firefox.
+        /// </summary>
+        Process[] Running(AppEntry a)
+        {
+            if (!a.Process.Contains('\\') && !a.Process.Contains('/')) return Process.GetProcessesByName(a.Process);
+            var full = Path.GetFullPath(Path.Combine(InstallRoot, a.Folder ?? a.Name, a.Process));
+            return Process.GetProcessesByName(Path.GetFileNameWithoutExtension(full)).Where(p =>
+            {
+                try { return string.Equals(p.MainModule?.FileName, full, StringComparison.OrdinalIgnoreCase); }
+                catch { return false; }
+            }).ToArray();
+        }
+
         void CloseApps(IEnumerable<AppEntry> apps)
         {
             var list = apps.Where(a => !string.IsNullOrEmpty(a.Process)).ToList();
             for (int attempt = 0; attempt < 5; attempt++)
             {
-                var running = list.Where(a => Process.GetProcessesByName(a.Process).Length > 0).ToList();
+                var running = list.Where(a => Running(a).Length > 0).ToList();
                 if (running.Count == 0) return;
                 foreach (var a in running)
                 {
@@ -134,16 +149,16 @@ namespace ValcoSetup
                             var exe = Path.Combine(InstallRoot, a.Folder ?? a.Name, a.Exe);
                             if (File.Exists(exe)) Process.Start(new ProcessStartInfo(exe, a.ExitArgs) { UseShellExecute = false })?.WaitForExit(8000);
                         }
-                        foreach (var p in Process.GetProcessesByName(a.Process)) { try { p.CloseMainWindow(); } catch { } }
+                        foreach (var p in Running(a)) { try { p.CloseMainWindow(); } catch { } }
                     }
                     catch { }
                 }
                 Thread.Sleep(2500);
-                running = list.Where(a => Process.GetProcessesByName(a.Process).Length > 0).ToList();
+                running = list.Where(a => Running(a).Length > 0).ToList();
                 if (running.Count == 0) return;
                 if (!AskCloseApps(running.Select(a => a.Name).ToArray()))
                 {
-                    foreach (var a in running) foreach (var p in Process.GetProcessesByName(a.Process)) { try { p.Kill(); p.WaitForExit(5000); } catch { } }
+                    foreach (var a in running) foreach (var p in Running(a)) { try { p.Kill(); p.WaitForExit(5000); } catch { } }
                     return;
                 }
             }

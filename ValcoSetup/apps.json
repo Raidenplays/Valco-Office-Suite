@@ -1,7 +1,7 @@
 {
   "suiteVersion": "1.0.0",
   "updateUrl": "https://github.com/Raidenplays/Valco-Office-Suite/releases/latest/download/valco-office.json",
-  "license": "..\\ValcoWord\\installer\\License.rtf",
+  "license": "assets\\License.rtf",
   "apps": [
     {
       "id": "word",
@@ -1614,6 +1614,279 @@
         }
       ],
       "defaultApps": "Valco Weave"
+    },
+    {
+      "id": "net",
+      "name": "ValcoNet",
+      "kind": "zip",
+      "source": "..\\ValcoNet\\dist\\ValcoNet",
+      "versionFrom": "..\\ValcoNet\\valconet.json",
+      "icon": "..\\ValcoNet\\assets\\ValcoNet.ico",
+      "folder": "ValcoNet",
+      "exe": "valconet.exe",
+      "process": "engine\\firefox.exe",
+      "description": "Browse the web with an Internet Explorer-style browser on the Gecko engine, with Firefox account sync.",
+      "shortcutDescription": "Browse the web",
+      "defaultApps": "ValcoNet",
+      "registry": [
+        {
+          "key": "Software\\Classes\\ValcoNetHTML",
+          "name": "",
+          "value": "ValcoNet HTML Document",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetHTML\\DefaultIcon",
+          "name": "",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetHTML\\shell\\open\\command",
+          "name": "",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetURL",
+          "name": "",
+          "value": "ValcoNet URL",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetURL\\DefaultIcon",
+          "name": "",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetURL\\shell\\open\\command",
+          "name": "",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetURL",
+          "name": "URL Protocol",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetPDF",
+          "name": "",
+          "value": "ValcoNet PDF Document",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetPDF\\DefaultIcon",
+          "name": "",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetPDF\\shell\\open\\command",
+          "name": "",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\.htm\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.html\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.shtml\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xht\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xhtml\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.svg\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.webp\\OpenWithProgids",
+          "name": "ValcoNetHTML",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.pdf\\OpenWithProgids",
+          "name": "ValcoNetPDF",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet",
+          "name": "",
+          "value": "ValcoNet",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\DefaultIcon",
+          "name": "",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\shell\\open\\command",
+          "name": "",
+          "value": "\"{EXE}\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities",
+          "name": "ApplicationName",
+          "value": "ValcoNet",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "A web browser for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities",
+          "name": "ApplicationIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\StartMenu",
+          "name": "StartMenuInternet",
+          "value": "ValcoNet",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".htm",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".html",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".shtml",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".xht",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".xhtml",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".svg",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".webp",
+          "value": "ValcoNetHTML",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\FileAssociations",
+          "name": ".pdf",
+          "value": "ValcoNetPDF",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\URLAssociations",
+          "name": "http",
+          "value": "ValcoNetURL",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\URLAssociations",
+          "name": "https",
+          "value": "ValcoNetURL",
+          "owned": true
+        },
+        {
+          "key": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities\\URLAssociations",
+          "name": "ftp",
+          "value": "ValcoNetURL",
+          "owned": true
+        },
+        {
+          "key": "Software\\RegisteredApplications",
+          "name": "ValcoNet",
+          "value": "Software\\Clients\\StartMenuInternet\\ValcoNet\\Capabilities"
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe",
+          "name": "FriendlyAppName",
+          "value": "ValcoNet",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".htm",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".html",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".xhtml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".svg",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".pdf",
+          "value": "",
+          "owned": true
+        }
+      ]
     }
   ],
   "retired": [
