@@ -89,7 +89,20 @@ namespace ValcoSpreadsheets.Model
                     wb = Delimited.Import(path, fmt == BookFormat.Csv ? ',' : '\t');
                     break;
                 case BookFormat.Xls:
-                    wb = LegacyXls.Import(path);
+                    VbaProject = null;
+                    UnkeptParts.Clear();
+                    try
+                    {
+                        var x = XlsFile.Import(path);
+                        wb = x.Workbook;
+                        VbaProject = x.VbaProject;
+                        if (x.HasCharts) UnkeptParts.Add("charts");
+                    }
+                    catch (NPOI.HSSF.OldExcelFormatException)
+                    {
+                        // Excel 5.0/95 files: values and number formats only
+                        wb = LegacyXls.Import(path);
+                    }
                     break;
                 default:
                     ReadExtras(path);
@@ -169,7 +182,7 @@ namespace ValcoSpreadsheets.Model
                 {
                     case BookFormat.Csv: Delimited.Export(ActiveSheetForExport, tmp, ','); break;
                     case BookFormat.Text: Delimited.Export(ActiveSheetForExport, tmp, '\t'); break;
-                    case BookFormat.Xls: throw new InvalidOperationException("Valco Spreadsheets saves in the Excel Workbook (.xlsx) format. Choose Save As to pick it.");
+                    case BookFormat.Xls: XlsFile.Export(this, tmp); break;
                     default:
                         // ClosedXML picks the package type from the extension, so save under a matching temporary name
                         var ext = fmt switch { BookFormat.Xlsm => ".xlsm", BookFormat.Xltx => ".xltx", BookFormat.Xltm => ".xltm", _ => ".xlsx" };

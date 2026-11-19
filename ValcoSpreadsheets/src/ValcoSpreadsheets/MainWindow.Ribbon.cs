@@ -464,7 +464,7 @@ namespace ValcoSpreadsheets
         void ShowValcoMenu()
         {
             if (G.IsEditing) CommitEdit(0, 0);
-            new AppMenu()
+            var menu = new AppMenu()
                 .Item("IconNew", "New", NewWorkbook, "New",
                     new AppMenuEntry("IconSheet", "Blank Workbook", "Create a new, empty workbook.", NewWorkbook),
                     new AppMenuEntry("IconOpen", "New from Existing...", "Create a new workbook from a template or an existing workbook.", NewFromTemplate))
@@ -473,6 +473,7 @@ namespace ValcoSpreadsheets
                 .Item("IconSaveAs", "Save As", () => SaveAs(), "Save a copy of the document",
                     new AppMenuEntry("IconSheet", "Excel Workbook", "Save the workbook in the default file format (.xlsx).", () => SaveAsFormat(BookFormat.Xlsx)),
                     new AppMenuEntry("IconMacro", "Excel Macro-Enabled Workbook", "Save the workbook in the XML-based, macro-enabled file format (.xlsm).", () => SaveAsFormat(BookFormat.Xlsm)),
+                    new AppMenuEntry("IconDoc", "Excel 97-2003 Workbook", "Save a copy of the workbook that is fully compatible with Excel 97-2003.", () => SaveAsFormat(BookFormat.Xls)),
                     new AppMenuEntry("IconTextToColumns", "CSV (Comma delimited)", "Save the active sheet as comma-separated values (.csv).", () => SaveAsFormat(BookFormat.Csv)),
                     new AppMenuEntry("IconPdf", "PDF or XPS", "Publish a copy of the workbook as a PDF or XPS file.", SaveAsPdf),
                     new AppMenuEntry("IconSaveAs", "Other Formats", "Open the Save As dialog box to select from all possible file types.", () => SaveAs()))
@@ -483,8 +484,11 @@ namespace ValcoSpreadsheets
                     new AppMenuEntry("IconPreview", "Print Preview", "Preview and make changes to pages before printing.", PrintPreview))
                 .Item("IconProperties", "Prepare", null, "Prepare the document for distribution",
                     new AppMenuEntry("IconProperties", "Properties", "View and edit workbook properties, such as Title, Author, and Keywords.", PropertiesDialog),
-                    new AppMenuEntry("IconProtect", "Encrypt Document", "Protect the structure of the workbook from changes (Review > Protect Workbook).", ProtectWorkbookToggle))
-                .Sep()
+                    new AppMenuEntry("IconProtect", "Encrypt Document", "Protect the structure of the workbook from changes (Review > Protect Workbook).", ProtectWorkbookToggle),
+                    new AppMenuEntry("IconInspect", "Run Compatibility Checker", "Check for features not supported by earlier versions of Excel.", RunCompatibilityChecker));
+            if (_book.Format == BookFormat.Xls) menu.Item("IconConvert", "Convert", ConvertWorkbook, "Convert the workbook to the newest file format",
+                    new AppMenuEntry("IconConvert", "Convert", "Convert this Excel 97-2003 workbook to the Excel Workbook format and use all the new features.", ConvertWorkbook));
+            menu.Sep()
                 .Item("IconExit", "Close", CloseWorkbook)
                 .Recent("Recent Documents", () => Settings.Current.Recent.Where(File.Exists).Take(17).Select(p => (System.IO.Path.GetFileName(p), p, (Action)(() => OpenPath(p)))))
                 .Footer("Valco Spreadsheets Options", "IconOptions", ShowOptions)

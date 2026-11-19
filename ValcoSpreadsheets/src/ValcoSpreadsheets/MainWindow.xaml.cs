@@ -1035,7 +1035,7 @@ namespace ValcoSpreadsheets
             else if (_book.UnkeptParts.Count > 0)
                 ShowMessageBar("Compatibility", "This workbook has " + string.Join(", ", _book.UnkeptParts) + " that Valco Spreadsheets can't keep. Saving over this file would remove them, so Save asks for a new name.", "IconInfo");
             else if (_book.Format == BookFormat.Xls)
-                ShowMessageBar("Compatibility Mode", "This is an Excel 97-2003 workbook. Save it as an Excel Workbook (.xlsx) to keep your changes.", "IconInfo");
+                ShowMessageBar("Compatibility Mode", "This workbook is in the Excel 97-2003 format and saves as an .xls file. Use Convert on the Valco menu to switch to the Excel Workbook format for charts and 1,048,576 rows.", "IconInfo");
             else MessageBar.Visibility = Visibility.Collapsed;
         }
 

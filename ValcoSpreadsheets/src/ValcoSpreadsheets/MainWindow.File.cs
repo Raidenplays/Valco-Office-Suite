@@ -24,6 +24,7 @@ namespace ValcoSpreadsheets
             ("Excel Macro-Enabled Workbook (*.xlsm)|*.xlsm", BookFormat.Xlsm, ".xlsm"),
             ("Excel Template (*.xltx)|*.xltx", BookFormat.Xltx, ".xltx"),
             ("Excel Macro-Enabled Template (*.xltm)|*.xltm", BookFormat.Xltm, ".xltm"),
+            ("Excel 97-2003 Workbook (*.xls)|*.xls", BookFormat.Xls, ".xls"),
             ("CSV (Comma delimited) (*.csv)|*.csv", BookFormat.Csv, ".csv"),
             ("Text (Tab delimited) (*.txt)|*.txt", BookFormat.Text, ".txt"),
         };
@@ -109,7 +110,7 @@ namespace ValcoSpreadsheets
         public bool Save()
         {
             if (G.IsEditing) CommitEdit(0, 0);
-            if (_book.FilePath == null || _book.Format == BookFormat.Xls || _book.IsTemplate) return SaveAs();
+            if (_book.FilePath == null || _book.IsTemplate) return SaveAs();
             if (_book.UnkeptParts.Count > 0)
             {
                 var r = VistaDialog.Show(this, $"This workbook has {string.Join(", ", _book.UnkeptParts)} that Valco Spreadsheets can't save. Saving over '{_book.DisplayName}' would remove them.\n\nClick Yes to save a copy under a new name instead, or No to save over the file anyway.", "Valco Spreadsheets", MessageBoxButton.YesNoCancel, DlgIcon.Warning);
@@ -130,7 +131,7 @@ namespace ValcoSpreadsheets
                 AddExtension = true,
                 OverwritePrompt = true,
             };
-            var fmt = _book.Format == BookFormat.Xls ? BookFormat.Xlsx : _book.Format;
+            var fmt = _book.Format;
             if (_book.HasMacros && fmt == BookFormat.Xlsx) fmt = BookFormat.Xlsm;
             dlg.FilterIndex = Math.Max(0, Array.FindIndex(SaveTypes, t => t.Format == fmt)) + 1;
             if (_book.FilePath != null) dlg.InitialDirectory = Path.GetDirectoryName(_book.FilePath);
@@ -144,6 +145,13 @@ namespace ValcoSpreadsheets
 
         bool SaveTo(string path, BookFormat fmt)
         {
+            // Excel 97-2003: say what the old format can't hold before saving, like Excel 2007's Compatibility Checker
+            if (fmt == BookFormat.Xls)
+            {
+                var issues = XlsFile.CheckCompatibility(_book);
+                if (issues.Count > 0 && !CompatibilityChecker(issues, true)) return false;
+            }
+            else
             // macros don't fit in a macro-free workbook
             if (_book.HasMacros && (fmt == BookFormat.Xlsx || fmt == BookFormat.Xltx))
             {
@@ -176,6 +184,79 @@ namespace ValcoSpreadsheets
             ShowBookMessages();
             StatusMsg.Text = "";
             return true;
+        }
+
+        /// <summary>Excel 2007's Compatibility Checker. When saving, returns true if the user chose Continue.</summary>
+        bool CompatibilityChecker(List<string> issues, bool saving)
+        {
+            var w = new Window
+            {
+                Title = "Valco Spreadsheets - Compatibility Checker",
+                Width = 520, SizeToContent = SizeToContent.Height, ResizeMode = ResizeMode.NoResize,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner, Owner = this, ShowInTaskbar = false,
+                Background = SystemColors.ControlBrush,
+            };
+            var root = new StackPanel { Margin = new Thickness(12) };
+            root.Children.Add(new TextBlock
+            {
+                Text = issues.Count == 0
+                    ? "No compatibility issues were found. This workbook can be saved in the Excel 97-2003 format without losing anything."
+                    : "The following features in this workbook are not supported by earlier versions of Excel. These features may be lost or degraded when you save this workbook in an earlier file format.",
+                TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 8),
+            });
+            if (issues.Count > 0)
+            {
+                var list = new StackPanel();
+                list.Children.Add(new System.Windows.Controls.Grid
+                {
+                    Background = new SolidColorBrush(Color.FromRgb(0xDB, 0xE7, 0xF6)),
+                    Children = { new TextBlock { Text = "Summary", FontWeight = FontWeights.Bold, Foreground = new SolidColorBrush(Color.FromRgb(0x15, 0x42, 0x8B)), Margin = new Thickness(6, 3, 6, 3) } },
+                });
+                foreach (var i in issues)
+                {
+                    var row = new DockPanel { Margin = new Thickness(6, 6, 6, 6) };
+                    var ic = new Image { Width = 16, Height = 16, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, 1, 6, 0) };
+                    if (TryFindResource("IconWarning") is ImageSource src) ic.Source = src;
+                    DockPanel.SetDock(ic, Dock.Left);
+                    row.Children.Add(ic);
+                    row.Children.Add(new TextBlock { Text = i, TextWrapping = TextWrapping.Wrap });
+                    list.Children.Add(row);
+                    list.Children.Add(new Border { Height = 1, Background = new SolidColorBrush(Color.FromRgb(0xE3, 0xE8, 0xEF)) });
+                }
+                root.Children.Add(new Border
+                {
+                    BorderBrush = new SolidColorBrush(Color.FromRgb(0xA0, 0xA0, 0xA0)), BorderThickness = new Thickness(1), Background = Brushes.White,
+                    Child = new ScrollViewer { MaxHeight = 260, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = list },
+                });
+            }
+            var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 12, 0, 0) };
+            bool ok = false;
+            if (saving && issues.Count > 0)
+            {
+                var cont = new Button { Content = "_Continue", MinWidth = 75, Margin = new Thickness(0, 0, 8, 0), IsDefault = true };
+                cont.Click += (s, e) => { ok = true; w.DialogResult = true; };
+                buttons.Children.Add(cont);
+                buttons.Children.Add(new Button { Content = "Cancel", MinWidth = 75, IsCancel = true });
+            }
+            else buttons.Children.Add(new Button { Content = "OK", MinWidth = 75, IsDefault = true, IsCancel = true });
+            root.Children.Add(buttons);
+            w.Content = root;
+            w.ShowDialog();
+            return ok;
+        }
+
+        void RunCompatibilityChecker() => CompatibilityChecker(XlsFile.CheckCompatibility(_book), false);
+
+        /// <summary>Convert (Excel 2007): turns a Compatibility Mode workbook into the current format.</summary>
+        void ConvertWorkbook()
+        {
+            if (_book.Format != BookFormat.Xls) return;
+            var r = VistaDialog.Show(this, "This action will convert the workbook to the current file format. This will allow you to use all the new features of Valco Spreadsheets, such as charts, 1,048,576 rows and new conditional formatting.\n\nThe original Excel 97-2003 file is kept; the converted workbook is saved next to it with the .xlsx extension.", "Valco Spreadsheets", MessageBoxButton.OKCancel, DlgIcon.Info);
+            if (r != MessageBoxResult.OK) return;
+            var fmt = _book.HasMacros ? BookFormat.Xlsm : BookFormat.Xlsx;
+            var path = _book.FilePath != null ? System.IO.Path.ChangeExtension(_book.FilePath, fmt == BookFormat.Xlsm ? ".xlsm" : ".xlsx") : null;
+            if (path == null || File.Exists(path)) { SaveAsFormat(fmt); return; }
+            SaveTo(path, fmt);
         }
 
         void CloseWorkbook()
@@ -271,7 +352,7 @@ namespace ValcoSpreadsheets
             sp.Children.Add(head);
             sp.Children.Add(new TextBlock { Text = "A spreadsheet program for Windows, from the Valco suite.", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 6) });
             sp.Children.Add(new TextBlock { Text = "© 2026 ItsRaiden", Margin = new Thickness(0, 0, 0, 6) });
-            sp.Children.Add(new TextBlock { Text = "Opens and saves Excel workbooks (.xlsx, .xlsm, .xltx), Excel 97-2003 workbooks (.xls, open only), CSV and text files. Workbook engine: ClosedXML (MIT).", TextWrapping = TextWrapping.Wrap, Foreground = Brushes.DimGray, MaxWidth = 380 });
+            sp.Children.Add(new TextBlock { Text = "Opens and saves Excel workbooks (.xlsx, .xlsm, .xltx), Excel 97-2003 workbooks (.xls), CSV and text files. Workbook engine: ClosedXML (MIT); Excel 97-2003 files: NPOI (Apache 2.0).", TextWrapping = TextWrapping.Wrap, Foreground = Brushes.DimGray, MaxWidth = 380 });
             var w = new VistaWindow { Title = "About Valco Spreadsheets", Owner = this, SizeToContent = SizeToContent.WidthAndHeight, ResizeMode = ResizeMode.NoResize, WindowStartupLocation = WindowStartupLocation.CenterOwner, ShowInTaskbar = false };
             w.Content = UI.DialogLayout(sp, UI.Strip(UI.Btn("OK", (s, e) => w.Close(), true, true)));
             w.ShowDialog();
