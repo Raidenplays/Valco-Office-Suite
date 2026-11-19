@@ -2,7 +2,7 @@ import logoUrl from '../assets/valco-weave.png';
 import suiteMarkUrl from '../assets/valco-office-mark.png';
 import suiteBadgeUrl from '../assets/valco-office-badge.png';
 export { suiteMarkUrl };
-export const SUITE_APPS = 'Valco Word · Valco Express · Valco Code · Valco Weave · ValcoNet';
+export const SUITE_APPS = 'Valco Word · Valco Spreadsheets · Valco Express · Valco Code · Valco Weave · ValcoNet';
 import { useState } from 'react';
 import { Field, Modal } from './ui';
 import { TEMPLATES, type DocTemplate } from '../lib/templates';

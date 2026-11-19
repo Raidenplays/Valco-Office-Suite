@@ -212,6 +212,236 @@
       "defaultApps": "Valco Word"
     },
     {
+      "id": "sheets",
+      "name": "Valco Spreadsheets",
+      "kind": "zip",
+      "source": "..\\ValcoSpreadsheets\\publish",
+      "versionFrom": "..\\ValcoSpreadsheets\\src\\ValcoSpreadsheets\\ValcoSpreadsheets.csproj",
+      "icon": "..\\ValcoSpreadsheets\\assets\\ValcoSpreadsheets.ico",
+      "folder": "Valco Spreadsheets",
+      "exe": "ValcoSpreadsheets.exe",
+      "process": "ValcoSpreadsheets",
+      "description": "Create, open and edit Excel workbooks, with formulas, charts and the Excel 2007 Ribbon.",
+      "shortcutDescription": "Create and edit spreadsheets",
+      "upgradeCode": "5C3E1B7A-4D2F-4F6B-9A1E-7B2C8D9E0F41",
+      "appUserModelId": "ItsRaiden.ValcoSpreadsheets",
+      "registry": [
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Workbook",
+          "value": "Microsoft Excel Worksheet (Valco Spreadsheets)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Workbook\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Workbook\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.MacroWorkbook",
+          "value": "Microsoft Excel Macro-Enabled Worksheet (Valco Spreadsheets)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.MacroWorkbook\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.MacroWorkbook\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Template",
+          "value": "Microsoft Excel Template (Valco Spreadsheets)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Template\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Template\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Workbook97",
+          "value": "Microsoft Excel 97-2003 Worksheet (Valco Spreadsheets)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Workbook97\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Workbook97\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Csv",
+          "value": "Microsoft Excel Comma Separated Values File (Valco Spreadsheets)",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Csv\\DefaultIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoSpreadsheets.Csv\\shell\\open\\command",
+          "value": "\"{EXE}\" \"%1\"",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\.xlsx\\OpenWithProgids",
+          "name": "ValcoSpreadsheets.Workbook",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xlsm\\OpenWithProgids",
+          "name": "ValcoSpreadsheets.MacroWorkbook",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xltx\\OpenWithProgids",
+          "name": "ValcoSpreadsheets.Template",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xltm\\OpenWithProgids",
+          "name": "ValcoSpreadsheets.Template",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.xls\\OpenWithProgids",
+          "name": "ValcoSpreadsheets.Workbook97",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\.csv\\OpenWithProgids",
+          "name": "ValcoSpreadsheets.Csv",
+          "value": "",
+          "associations": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe",
+          "name": "FriendlyAppName",
+          "value": "Valco Spreadsheets",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe\\SupportedTypes",
+          "name": ".xlsx",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe\\SupportedTypes",
+          "name": ".xlsm",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe\\SupportedTypes",
+          "name": ".xltx",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe\\SupportedTypes",
+          "name": ".xltm",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe\\SupportedTypes",
+          "name": ".xls",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\ValcoSpreadsheets.exe\\SupportedTypes",
+          "name": ".csv",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities",
+          "name": "ApplicationName",
+          "value": "Valco Spreadsheets",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities",
+          "name": "ApplicationDescription",
+          "value": "A spreadsheet program for Windows, from the Valco suite.",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities",
+          "name": "ApplicationIcon",
+          "value": "{EXE},0",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities\\FileAssociations",
+          "name": ".xlsx",
+          "value": "ValcoSpreadsheets.Workbook",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities\\FileAssociations",
+          "name": ".xlsm",
+          "value": "ValcoSpreadsheets.MacroWorkbook",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities\\FileAssociations",
+          "name": ".xltx",
+          "value": "ValcoSpreadsheets.Template",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities\\FileAssociations",
+          "name": ".xltm",
+          "value": "ValcoSpreadsheets.Template",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities\\FileAssociations",
+          "name": ".xls",
+          "value": "ValcoSpreadsheets.Workbook97",
+          "owned": true
+        },
+        {
+          "key": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities\\FileAssociations",
+          "name": ".csv",
+          "value": "ValcoSpreadsheets.Csv",
+          "owned": true
+        },
+        {
+          "key": "Software\\RegisteredApplications",
+          "name": "Valco Spreadsheets",
+          "value": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities"
+        }
+      ],
+      "defaultApps": "Valco Spreadsheets"
+    },
+    {
       "id": "express",
       "name": "Valco Express",
       "kind": "zip",

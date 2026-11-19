@@ -860,7 +860,7 @@ namespace ValcoExpress
             if (mark != null) suite.Children.Add(new Image { Source = mark, Width = 28, Height = 28, Margin = new Thickness(0, 0, 8, 0) });
             var suiteText = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
             suiteText.Children.Add(new TextBlock { Text = "Valco Office", FontWeight = FontWeights.SemiBold, Foreground = new SolidColorBrush(Color.FromRgb(0x15, 0x42, 0x8B)) });
-            suiteText.Children.Add(new TextBlock { Text = "Valco Express · Valco Word · Valco Code", Foreground = Brushes.DimGray, FontSize = 11 });
+            suiteText.Children.Add(new TextBlock { Text = "Valco Express · Valco Word · Valco Spreadsheets · Valco Code", Foreground = Brushes.DimGray, FontSize = 11 });
             suite.Children.Add(suiteText);
             info.Children.Add(suite);
             info.Children.Add(UI.Text("© 2026 ItsRaiden", 12));

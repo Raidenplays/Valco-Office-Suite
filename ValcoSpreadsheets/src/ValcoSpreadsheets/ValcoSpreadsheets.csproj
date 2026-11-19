@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>ValcoSpreadsheets</AssemblyName>
+    <RootNamespace>ValcoSpreadsheets</RootNamespace>
+    <ApplicationIcon>..\..\assets\ValcoSpreadsheets.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Valco Spreadsheets</Product>
+    <Company>ItsRaiden</Company>
+    <Copyright>© 2026 ItsRaiden</Copyright>
+    <Description>Valco Spreadsheets</Description>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);CS1998;CS4014;CS0168;CS0219;CS8632</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="ExcelDataReader" Version="3.7.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="..\..\assets\ValcoSpreadsheets.ico" Link="ValcoSpreadsheets.ico" />
+  </ItemGroup>
+  <Import Project="..\..\..\ValcoCommon\ValcoCommon.props" />
+</Project>

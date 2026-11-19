@@ -1,6 +1,6 @@
 # ValcoCommon
 
-Shared source for every native Valco Office app (Valco Word, Valco Express, Valco Code).
+Shared source for every native Valco Office app (Valco Word, Valco Spreadsheets, Valco Express, Valco Code).
 Apps link these files from their .csproj, so there is one copy of:
 
 - `Ribbon.cs` — Office 2007 Ribbon (`RibbonBar`, `RibbonTab`, `RB` control factory) and `OfficeTheme` (Blue / Silver / Black schemes).
