@@ -29,12 +29,15 @@ import type { DocTemplate } from './lib/templates';
 
 import CodeEditor from './components/CodeEditor';
 import { Ribbon, groupsFromMenu, type RibbonTabDef, type AppMenuDef } from './components/Ribbon';
+
+interface UpdateInfo { ok: boolean; available: boolean; latest?: string; installed: string; error?: string }
+const RELEASE_PAGE = 'https://github.com/Raidenplays/Valco-Office-Suite/releases/latest';
 import DesignView, { type DesignApi } from './components/DesignView';
 import PropertiesPanel from './components/PropertiesPanel';
 import CssDesigner, { type CssSource } from './components/CssDesigner';
 import FilesPanel from './components/FilesPanel';
 import { DomPanel, InsertPanel, ProblemsPanel, SearchPanel, type InsertPos, type SearchHit } from './components/Panels';
-import { AboutDialog, InsertDialog, Logo, SuiteMark, NewDocDialog, PromptDialog, PublishDialog, SiteDialog, type SiteConfig } from './components/Dialogs';
+import { AboutDialog, InsertDialog, Logo, SuiteMark, suiteMarkUrl, NewDocDialog, PromptDialog, PublishDialog, SiteDialog, type SiteConfig } from './components/Dialogs';
 import { ContextMenu, type MenuItem } from './components/ui';
 
 type ViewMode = 'code' | 'split' | 'design' | 'live';
@@ -255,6 +258,16 @@ function Workspace({ platform }: { platform: Platform }) {
     document.documentElement.style.setProperty('--code-size', codeSize + 'px');
     viewRef.current?.requestMeasure();
   }, [codeSize]);
+
+  // Valco Office Update: checks github.com/Raidenplays/Valco-Office-Suite once a day
+  const [update, setUpdate] = useState<UpdateInfo | null>(null);
+  const checkRef = useRef<(manual?: boolean) => void>(() => {});
+  useEffect(() => {
+    const last = Number(localStorage.getItem('valco.update.last') ?? 0);
+    if (localStorage.getItem('valco.update.auto') === '0' || Date.now() - last < 20 * 3600 * 1000) return;
+    const t = window.setTimeout(() => { localStorage.setItem('valco.update.last', String(Date.now())); checkRef.current(false); }, 8000);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const flash = useCallback((msg: string) => {
     setToast(msg);
@@ -1928,12 +1941,23 @@ function Workspace({ platform }: { platform: Platform }) {
 
   /* ------------------------------------------------------- ribbon */
   const find = (menu: string, label: string): MenuItem => menus[menu]?.find((m) => m.label === label) ?? { label, disabled: true };
-  const checkForUpdates = async () => {
-    if (platform.kind !== 'tauri') { flash('Valco Office Update is part of the desktop install of Valco Office.'); return; }
+  const installUpdates = async () => {
+    setUpdate(null);
     const { invoke } = await import('@tauri-apps/api/core');
     const ok = await invoke<boolean>('valco_check_updates').catch(() => false);
-    if (!ok) flash('Valco Office Update comes with Valco Office Setup. Install Valco Office to get updates automatically.');
+    if (!ok) platform.openExternal(RELEASE_PAGE).catch(() => {});
   };
+  const checkForUpdates = async (manual = true) => {
+    if (platform.kind !== 'tauri') { if (manual) platform.openExternal(RELEASE_PAGE).catch(() => {}); return; }
+    const { invoke } = await import('@tauri-apps/api/core');
+    const r = await invoke<UpdateInfo>('valco_update_check').catch(() => null);
+    if (!r || !r.ok) { if (manual) flash("Valco Office Update couldn't reach the update server. Check your Internet connection."); return; }
+    if (r.available) {
+      if (!manual && localStorage.getItem('valco.update.skip') === r.latest) return;
+      setUpdate(r);
+    } else if (manual) flash(`Valco Weave is up to date (version ${r.installed}).`);
+  };
+  checkRef.current = checkForUpdates;
   const ribbonTabs: RibbonTabDef[] = [
     {
       name: 'Home',
@@ -1953,7 +1977,7 @@ function Workspace({ platform }: { platform: Platform }) {
     { name: 'Site', groups: groupsFromMenu(menus.Site ?? [], ['Site', 'Validate & Export', 'Files']) },
     {
       name: 'Help',
-      groups: [{ caption: 'Help', items: [{ label: 'Keyboard Shortcuts', action: () => setDialog({ kind: 'about' }) }, { label: 'Check for Updates', action: checkForUpdates }, { label: 'About Valco Weave', action: () => setDialog({ kind: 'about' }) }] }],
+      groups: [{ caption: 'Help', items: [{ label: 'Keyboard Shortcuts', action: () => setDialog({ kind: 'about' }) }, { label: 'Check for Updates', action: () => checkForUpdates(true) }, { label: 'About Valco Weave', action: () => setDialog({ kind: 'about' }) }] }],
     },
   ];
   const qatItems: MenuItem[] = [find('File', 'Save'), find('Edit', 'Undo'), find('Edit', 'Redo'), find('File', 'Preview in Browser')];
@@ -2076,6 +2100,16 @@ function Workspace({ platform }: { platform: Platform }) {
         <button className="btn sm accent" onClick={() => setDialog({ kind: 'publish' })} title="Publish site">⇪ Publish</button>
       </>} />
 
+      {update && (
+        <div className="update-bar">
+          <img src={suiteMarkUrl} alt="" />
+          <span><b>An update for Valco Weave is available.</b> Version {update.latest} is ready to download (you have {update.installed}).</span>
+          <span className="grow" />
+          <button className="btn sm accent" onClick={installUpdates}>Install Updates</button>
+          <button className="btn sm" onClick={() => { localStorage.setItem('valco.update.skip', update.latest ?? ''); setUpdate(null); }}>Skip This Version</button>
+          <button className="btn sm" onClick={() => setUpdate(null)}>Remind Me Later</button>
+        </div>
+      )}
       <div className="workspace">
         <div className="main-col">
           {/* tabs */}

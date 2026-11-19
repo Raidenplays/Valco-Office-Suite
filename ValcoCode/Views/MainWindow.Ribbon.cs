@@ -152,6 +152,7 @@ public partial class MainWindow
             l => { Settings.QuickAccess = string.Join(",", l); Settings.Save(); },
             ribbon, m => { Settings.RibbonMinimized = m; Settings.Save(); });
         SyncRibbon();
+        Loaded += (_, _) => Updates.CheckOnStartup(this, "code", "Valco Code");
     }
 
     /// <summary>Keeps the ribbon's toggle buttons in step with the settings (called whenever the menus are rebuilt).</summary>
@@ -166,11 +167,7 @@ public partial class MainWindow
         syncingRibbon = false;
     }
 
-    void CheckForUpdates()
-    {
-        if (!Suite.CheckForUpdates())
-            Notify("Valco Office Update comes with Valco Office Setup. Install Valco Office to get updates automatically.");
-    }
+    void CheckForUpdates() => Updates.CheckNow(this, "code", "Valco Code");
 
     void ShowValcoMenu()
     {

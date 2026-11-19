@@ -23,6 +23,7 @@ namespace ValcoWord
         // =====================================================================================
         void InitFeatures()
         {
+            Loaded += (s, e) => Updates.CheckOnStartup(this, "word", "Valco Word");
             Editor.PreviewTextInput += (s, e) =>
             {
                 if (_recording != null && e.Text.Length > 0 && !char.IsControl(e.Text[0])) _recording.Add("type:" + e.Text);
@@ -845,6 +846,7 @@ namespace ValcoWord
             var size = D.Box(s.DefaultSizePt.ToString(CultureInfo.InvariantCulture), 50);
             var units = new ComboBox { Width = 120, ItemsSource = new[] { "Inches", "Centimeters" }, SelectedItem = s.Custom.TryGetValue("units", out var u) ? u : "Inches" };
             var recentCount = D.Box(s.Custom.TryGetValue("recentCount", out var rc) ? rc : "17", 50);
+            var autoUpd = new CheckBox { Content = "Check for Valco Office updates automatically (from GitHub)", IsChecked = Updates.AutoCheck, Margin = new Thickness(0, 6, 0, 0) };
             var smartCut = new CheckBox { Content = "Use smart cut and paste", IsChecked = true };
             var dict = UI.Btn("Custom Dictionaries...", (o, e) => CustomDictionaryEditor(d)); dict.HorizontalAlignment = HorizontalAlignment.Left;
             var qatList = new ListBox { Height = 200, Width = 200 };
@@ -878,6 +880,7 @@ namespace ValcoWord
                         sp.Children.Add(new TextBlock { Text = "Part of the Valco Office suite.", Margin = new Thickness(0, 0, 0, 6) });
                         var about = UI.Btn("About", (o, e) => InfoDialogs.About(d)); about.HorizontalAlignment = HorizontalAlignment.Left; sp.Children.Add(about);
                         var upd = UI.Btn("Check for Updates", (o, e) => CheckForUpdates()); upd.HorizontalAlignment = HorizontalAlignment.Left; upd.Margin = new Thickness(0, 6, 0, 0); sp.Children.Add(upd);
+                        sp.Children.Add(autoUpd);
                         sp.Children.Add(new TextBlock { Text = "Thesaurus data: WordNet 3.0 © Princeton University. Research uses Wikipedia; translation uses MyMemory (internet connection required).", TextWrapping = TextWrapping.Wrap, Foreground = Brushes.DimGray, Margin = new Thickness(0, 10, 0, 0) });
                         break;
                     default:
@@ -912,19 +915,14 @@ namespace ValcoWord
             if (font.Text.Trim().Length > 0) s.DefaultFont = font.Text.Trim();
             s.DefaultSizePt = Math.Max(1, Math.Min(400, D.ParseNum(size.Text) ?? 11));
             s.Custom["units"] = (string)units.SelectedItem ?? "Inches"; s.Custom["recentCount"] = ((int)Math.Max(0, Math.Min(50, D.ParseNum(recentCount.Text) ?? 17))).ToString();
+            Updates.AutoCheck = autoUpd.IsChecked == true;
             Settings.Save();
             foreach (var w in Application.Current.Windows.OfType<MainWindow>()) w.ApplyViewSettings();
             DrawOverlay();
         }
 
-        /// <summary>Opens Valco Office Update (installed with Valco Office Setup).</summary>
-        void CheckForUpdates()
-        {
-            string setup = null;
-            try { using var k = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Valco\Office"); if (k?.GetValue("InstallRoot") is string root) setup = System.IO.Path.Combine(root, "Setup", "setup.exe"); } catch { }
-            if (setup == null || !File.Exists(setup)) { VistaDialog.Show(this, "Valco Office Update is installed with Valco Office Setup. Install Valco Word with Valco Office Setup to get automatic updates.", "Valco Word", MessageBoxButton.OK, DlgIcon.Info); return; }
-            try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(setup, "/update") { UseShellExecute = true }); } catch (Exception ex) { VistaDialog.Error(this, ex.Message); }
-        }
+        /// <summary>Checks GitHub for a newer Valco Word and offers Valco Office Update.</summary>
+        void CheckForUpdates() => Updates.CheckNow(this, "word", "Valco Word");
 
         void CustomDictionaryEditor(Window owner)
         {

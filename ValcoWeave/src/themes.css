@@ -952,3 +952,10 @@
 .rb-appmenu-none { color: #777; padding: 4px; }
 .rb-appmenu-foot { display: flex; justify-content: flex-end; gap: 4px; padding: 4px; }
 .rb-appmenu-footbtn { width: auto; background: #fff; border-color: #999; padding: 2px 8px; }
+
+/* Valco Office Update info bar */
+.update-bar {
+  display: flex; align-items: center; gap: 8px; padding: 5px 10px; flex-shrink: 0;
+  background: linear-gradient(#fffbe0, #fff1b0); border-bottom: 1px solid #e3c86a; color: #000; font-size: 12px;
+}
+.update-bar img { width: 20px; height: 20px; }

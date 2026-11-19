@@ -22,7 +22,15 @@ namespace ValcoSetup
         static readonly HttpClient Http = new HttpClient { Timeout = TimeSpan.FromMinutes(30) };
         static UpdateFeed() { Http.DefaultRequestHeaders.UserAgent.ParseAdd("ValcoOfficeUpdate/1.0"); }
 
-        public static string FeedUrl => Engine.GetOption("UpdateUrl", null) is string u && u.Length > 0 ? u : (Engine.InstalledManifest()?.UpdateUrl ?? new SuiteManifest().UpdateUrl);
+        public static string FeedUrl
+        {
+            get
+            {
+                var u = Engine.GetOption("UpdateUrl", null) is string o && o.Length > 0 ? o : (Engine.InstalledManifest()?.UpdateUrl ?? new SuiteManifest().UpdateUrl);
+                // the suite moved to github.com/Raidenplays/Valco-Office-Suite
+                return u.Replace("/Raidenplays/valco-office/", "/Raidenplays/Valco-Office-Suite/", StringComparison.OrdinalIgnoreCase);
+            }
+        }
 
         public static async Task<SuiteManifest> FetchAsync(CancellationToken ct = default)
         {

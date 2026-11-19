@@ -343,13 +343,67 @@ fn launch_arg() -> Option<String> {
 }
 
 
+/// Checks the Valco Office GitHub releases for a newer Valco Weave.
+/// Returns { ok, available, latest, installed, error }.
+#[tauri::command]
+fn valco_update_check() -> serde_json::Value {
+    const FEED: &str = "https://github.com/Raidenplays/Valco-Office-Suite/releases/latest/download/valco-office.json";
+    let installed = installed_version().unwrap_or_else(|| env!("CARGO_PKG_VERSION").to_string());
+    let fetched = ureq::get(FEED)
+        .set("User-Agent", "ValcoOffice/1.0")
+        .timeout(std::time::Duration::from_secs(20))
+        .call()
+        .map_err(|e| e.to_string())
+        .and_then(|r| r.into_string().map_err(|e| e.to_string()));
+    match fetched {
+        Err(e) => serde_json::json!({ "ok": false, "available": false, "installed": installed, "error": e }),
+        Ok(body) => {
+            let body = body.trim_start_matches('\u{feff}');
+            let latest = serde_json::from_str::<serde_json::Value>(body).ok().and_then(|v| {
+                v["apps"].as_array()?.iter().find(|a| a["id"] == "weave").and_then(|a| a["version"].as_str().map(|s| s.to_string()))
+            });
+            let available = latest.as_deref().map(|l| parse_ver(l) > parse_ver(&installed)).unwrap_or(false);
+            serde_json::json!({ "ok": true, "available": available, "latest": latest, "installed": installed })
+        }
+    }
+}
+
+fn parse_ver(v: &str) -> Vec<u64> {
+    let mut p: Vec<u64> = v.split(|c| c == '.' || c == '-' || c == '+').take(4).map(|x| x.parse().unwrap_or(0)).collect();
+    while p.len() < 4 { p.push(0); }
+    p
+}
+
+/// Version recorded by Valco Office Setup (HKLM\SOFTWARE\Valco\Office\Apps\weave).
+fn installed_version() -> Option<String> {
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        let o = std::process::Command::new("reg")
+            .args(["query", r"HKLM\SOFTWARE\Valco\Office\Apps\weave", "/v", "Version", "/reg:64"])
+            .creation_flags(0x0800_0000) // CREATE_NO_WINDOW
+            .output()
+            .ok()?;
+        let text = String::from_utf8_lossy(&o.stdout).to_string();
+        let line = text.lines().find(|l| l.contains("REG_SZ"))?;
+        let idx = line.find("REG_SZ")?;
+        Some(line[idx + 6..].trim().to_string()).filter(|s| !s.is_empty())
+    }
+    #[cfg(not(windows))]
+    {
+        None
+    }
+}
+
 /// Opens Valco Office Update (`<InstallRoot>\Setup\setup.exe /update`). Returns false when Valco Office Setup isn't installed.
 #[tauri::command]
 fn valco_check_updates() -> bool {
     #[cfg(windows)]
     {
+        use std::os::windows::process::CommandExt;
         let out = std::process::Command::new("reg")
             .args(["query", r"HKLM\SOFTWARE\Valco\Office", "/v", "InstallRoot", "/reg:64"])
+            .creation_flags(0x0800_0000)
             .output();
         if let Ok(o) = out {
             let text = String::from_utf8_lossy(&o.stdout);
@@ -398,7 +452,8 @@ pub fn run() {
             git::gh_api,
             w3c::w3c_validate,
             launch_arg,
-            valco_check_updates
+            valco_check_updates,
+            valco_update_check
         ])
         .run(tauri::generate_context!())
         .expect("error while running Valco Weave");

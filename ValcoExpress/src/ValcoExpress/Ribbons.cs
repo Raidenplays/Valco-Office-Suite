@@ -126,6 +126,7 @@ namespace ValcoExpress
                 .QatOption("Print", "IconPrint", "Print", () => Print_Click(null, NoArgs))
                 .QatOption("Contacts", "IconContacts", "Contacts", () => Contacts_Click(null, NoArgs))
                 .QatOption("Find", "IconFind", "Find Message", () => Find_Click(null, NoArgs));
+            Loaded += (s, e) => Updates.CheckOnStartup(this, "express", "Valco Express");
             _title.InitQat(
                 () => (Storage.Settings.QuickAccess ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
                 l => { Storage.Settings.QuickAccess = string.Join(",", l); Storage.SaveSettings(); },
@@ -173,11 +174,7 @@ namespace ValcoExpress
             finally { _syncing = false; }
         }
 
-        void CheckForUpdates()
-        {
-            if (!Suite.CheckForUpdates())
-                VistaDialog.Show(this, "Valco Office Update is installed with Valco Office Setup. Install Valco Office to get updates automatically.", "Valco Express");
-        }
+        void CheckForUpdates() => Updates.CheckNow(this, "express", "Valco Express");
 
         void ShowValcoMenu()
         {
