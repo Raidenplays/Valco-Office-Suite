@@ -6,8 +6,9 @@
              Description="Valco Weave Setup" Manufacturer="ItsRaiden" />
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of Valco Weave is already installed." />
     <Media Id="1" Cabinet="valcoweave.cab" EmbedCab="yes" />
-    <Icon Id="ValcoWeaveIcon" SourceFile="icon.ico" />
-    <Property Id="ARPPRODUCTICON" Value="ValcoWeaveIcon" />
+    <!-- Windows Installer needs the Icon Id to end in .ico/.exe, or shortcut and Programs-list icons come out blank -->
+    <Icon Id="ValcoWeave.ico" SourceFile="icon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="ValcoWeave.ico" />
     <Property Id="ARPHELPLINK" Value="https://raidenbrundin.com" />
     <Property Id="ARPURLINFOABOUT" Value="https://github.com/Raidenplays/valco-weave" />
     <Property Id="ARPCOMMENTS" Value="Web design, the Vista way." />
@@ -44,14 +45,14 @@
       <Directory Id="ProgramMenuFolder">
         <Component Id="StartMenuShortcut" Guid="C4E8A2D6-1F7B-4935-B0D2-8E6A4C1F3B59" Win64="yes">
           <Shortcut Id="StartMenuValcoWeave" Name="Valco Weave" Description="Visual web editor"
-                    Target="[INSTALLDIR]ValcoWeave.exe" WorkingDirectory="INSTALLDIR" Icon="ValcoWeaveIcon" />
+                    Target="[INSTALLDIR]ValcoWeave.exe" WorkingDirectory="INSTALLDIR" Icon="ValcoWeave.ico" />
           <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Weave" Name="startmenu" Type="integer" Value="1" KeyPath="yes" />
         </Component>
       </Directory>
       <Directory Id="DesktopFolder">
         <Component Id="DesktopShortcut" Guid="7D3B9F15-6E2A-4C8D-91F4-5A0E2B7C6D38" Win64="yes">
           <Shortcut Id="DesktopValcoWeave" Name="Valco Weave" Description="Visual web editor"
-                    Target="[INSTALLDIR]ValcoWeave.exe" WorkingDirectory="INSTALLDIR" Icon="ValcoWeaveIcon" />
+                    Target="[INSTALLDIR]ValcoWeave.exe" WorkingDirectory="INSTALLDIR" Icon="ValcoWeave.ico" />
           <RegistryValue Root="HKLM" Key="Software\ItsRaiden\Valco Weave" Name="desktop" Type="integer" Value="1" KeyPath="yes" />
         </Component>
       </Directory>
