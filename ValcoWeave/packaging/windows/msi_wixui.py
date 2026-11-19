@@ -133,9 +133,16 @@ for r in file_rows:
 write_idt(tmp, 'File', ['File', 'Component_', 'FileName', 'FileSize', 'Version', 'Language', 'Attributes', 'Sequence'],
           ['s72', 's72', 'l255', 'i4', 'S72', 'S20', 'I2', 'i2'], ['File'], file_rows)
 
+# Taskbar identity: the shortcuts carry the same AppUserModelID the app sets at startup (lib.rs set_app_id),
+# so a pinned Valco Weave and its running window are one button with the Valco Weave icon.
+write_idt(tmp, 'MsiShortcutProperty', ['MsiShortcutProperty', 'Shortcut_', 'PropertyKey', 'PropVariantValue'],
+          ['s72', 's72', 'l0', 'l0'], ['MsiShortcutProperty'],
+          [['AumidStart', 'StartMenuValcoWeave', '{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3} 5', 'ItsRaiden.ValcoWeave'],
+           ['AumidDesktop', 'DesktopValcoWeave', '{9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3} 5', 'ItsRaiden.ValcoWeave']])
+
 cwd = os.getcwd()
 os.chdir(tmp)
-for t in ['File', 'Binary', 'TextStyle', 'UIText', 'Dialog', 'Control', 'ControlEvent', 'EventMapping', 'ControlCondition',
+for t in ['MsiShortcutProperty', 'File', 'Binary', 'TextStyle', 'UIText', 'Dialog', 'Control', 'ControlEvent', 'EventMapping', 'ControlCondition',
           'RadioButton', 'CheckBox', 'ListBox', 'CustomAction', 'Property', 'InstallUISequence', 'AdminUISequence']:
     subprocess.run(['msibuild', MSI, '-i', t + '.idt'], check=True)
 os.chdir(cwd)

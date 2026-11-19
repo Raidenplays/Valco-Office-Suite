@@ -439,7 +439,16 @@ fn keep_opaque(h: isize) {
     if h == 0 {
         return;
     }
+    // Valco Weave draws its own frame (decorations: false); make sure Windows still treats it as a normal
+    // top-level app window with its own taskbar button, whatever a shell mod did to the style.
+    const WS_EX_APPWINDOW: isize = 0x0004_0000;
+    const WS_EX_TOOLWINDOW: isize = 0x0000_0080;
     unsafe {
+        let ex = GetWindowLongPtrW(h, GWL_EXSTYLE);
+        if ex & WS_EX_APPWINDOW == 0 || ex & WS_EX_TOOLWINDOW != 0 {
+            SetWindowLongPtrW(h, GWL_EXSTYLE, (ex | WS_EX_APPWINDOW) & !WS_EX_TOOLWINDOW);
+            SetWindowPos(h, 0, 0, 0, 0, 0, 0x1 | 0x2 | 0x4 | 0x10 | 0x20);
+        }
         let ex = GetWindowLongPtrW(h, GWL_EXSTYLE);
         if ex & WS_EX_LAYERED != 0 {
             SetLayeredWindowAttributes(h, 0, 255, 0x2);
@@ -451,7 +460,24 @@ fn keep_opaque(h: isize) {
 #[cfg(not(windows))]
 fn keep_opaque(_h: isize) {}
 
+/// Valco Weave's own AppUserModelID. Without one, Windows (and taskbar/dock mods) guess which app a WebView2
+/// window belongs to and can show it under another program's icon.
+#[cfg(windows)]
+fn set_app_id() {
+    #[link(name = "shell32")]
+    extern "system" {
+        fn SetCurrentProcessExplicitAppUserModelID(id: *const u16) -> i32;
+    }
+    let id: Vec<u16> = "ItsRaiden.ValcoWeave".encode_utf16().chain(std::iter::once(0)).collect();
+    unsafe {
+        SetCurrentProcessExplicitAppUserModelID(id.as_ptr());
+    }
+}
+#[cfg(not(windows))]
+fn set_app_id() {}
+
 pub fn run() {
+    set_app_id();
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
@@ -484,6 +510,7 @@ pub fn run() {
         .setup(|app| {
             use tauri::Manager;
             for w in app.webview_windows().values() {
+                let _ = w.set_skip_taskbar(false);
                 #[cfg(windows)]
                 if let Ok(h) = w.hwnd() {
                     keep_opaque(h.0 as isize);
