@@ -25,4 +25,7 @@
     <Resource Include="..\..\assets\ValcoOffice-mark.png" Link="ValcoOffice-mark.png" />
     <Resource Include="..\..\assets\ValcoOffice-256.png" Link="ValcoOffice-256.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\ValcoCommon\OpaqueWindows.cs" Link="ValcoCommon\OpaqueWindows.cs" />
+  </ItemGroup>
 </Project>

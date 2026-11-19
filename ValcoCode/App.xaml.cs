@@ -13,6 +13,7 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (_, a) => LogCrash(a.ExceptionObject as Exception);
         TaskScheduler.UnobservedTaskException += (_, a) => { LogCrash(a.Exception); a.SetObserved(); };
         base.OnStartup(e);
+        Valco.UI.OpaqueWindows.Install();   // stay readable under transparency mods (Windhawk etc.)
         ThemeManager.Apply(ThemeManager.ById(AppSettings.Load().Theme));
         var w = new Views.MainWindow();
         MainWindow = w;

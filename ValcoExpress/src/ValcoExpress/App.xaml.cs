@@ -23,6 +23,7 @@ namespace ValcoExpress
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            Valco.UI.OpaqueWindows.Install();   // stay readable under transparency mods (Windhawk etc.)
             DispatcherUnhandledException += (s, a) =>
             {
                 a.Handled = true;
