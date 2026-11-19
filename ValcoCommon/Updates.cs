@@ -54,7 +54,7 @@ namespace Valco.UI
         {
             using var resp = await Http.GetAsync(ReleasePage, HttpCompletionOption.ResponseHeadersRead);
             var loc = resp.Headers.Location?.ToString();
-            if (loc == null || !loc.Contains("/releases/tag/")) throw new Exception("No Valco Office release has been published yet.");
+            if (loc == null || !loc.Contains("/releases/tag/")) return null; // nothing published yet
             return Uri.UnescapeDataString(loc.Substring(loc.LastIndexOf('/') + 1)).TrimStart('v', 'V');
         }
 
@@ -64,6 +64,7 @@ namespace Valco.UI
             try
             {
                 var latest = await LatestVersionAsync();
+                if (latest == null) return new Result(true, false, installed, installed ?? "not installed with Valco Office Setup", null, null);
                 return new Result(true, installed == null || Parse(latest) > Parse(installed), latest, installed ?? "not installed with Valco Office Setup", null, null);
             }
             catch (Exception ex) { return new Result(false, false, null, installed, null, ex.Message); }

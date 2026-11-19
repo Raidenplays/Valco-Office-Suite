@@ -43,7 +43,11 @@ namespace ValcoSetup
             using var resp = await NoRedirect.GetAsync(LatestPage, HttpCompletionOption.ResponseHeadersRead, ct);
             var loc = resp.Headers.Location?.ToString();
             if (loc == null || !loc.Contains("/releases/tag/"))
-                throw new Exception(resp.IsSuccessStatusCode || (int)resp.StatusCode == 302 ? "No Valco Office release has been published yet." : $"The update server answered {(int)resp.StatusCode} {resp.ReasonPhrase}.");
+            {
+                // Nothing published yet (GitHub sends us to /releases): treat as up to date rather than an error.
+                if (resp.IsSuccessStatusCode || (int)resp.StatusCode is 301 or 302 or 404) return (InstalledVersion, null);
+                throw new Exception($"The update server answered {(int)resp.StatusCode} {resp.ReasonPhrase}.");
+            }
             var tag = Uri.UnescapeDataString(loc.Substring(loc.LastIndexOf('/') + 1));
             return (tag.TrimStart('v', 'V'), tag);
         }

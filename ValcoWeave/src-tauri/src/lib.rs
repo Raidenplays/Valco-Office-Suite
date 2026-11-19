@@ -357,7 +357,7 @@ fn valco_update_check() -> serde_json::Value {
         Err(e) => return serde_json::json!({ "ok": false, "available": false, "installed": installed, "error": e.to_string() }),
     };
     match loc.filter(|l| l.contains("/releases/tag/")) {
-        None => serde_json::json!({ "ok": false, "available": false, "installed": installed, "error": "No Valco Office release has been published yet." }),
+        None => serde_json::json!({ "ok": true, "available": false, "installed": installed, "latest": installed }),
         Some(l) => {
             let latest = l.rsplit('/').next().unwrap_or("").trim_start_matches(|c| c == 'v' || c == 'V').to_string();
             let available = match &installed { Some(i) => parse_ver(&latest) > parse_ver(i), None => true };
