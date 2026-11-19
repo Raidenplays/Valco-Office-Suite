@@ -299,6 +299,17 @@ namespace ValcoSetup
                 using (var rk = Registry.LocalMachine.CreateSubKey(k)) rk.SetValue(Expand(r.Name, app), Expand(r.Value, app));
                 if (r.Owned) owned.Add(k); else values.Add(k + "|" + Expand(r.Name, app));
             }
+            // an update can drop registrations (e.g. a file type): remove what the previous version added and this one doesn't
+            foreach (var v in (key.GetValue("Values") as string[] ?? new string[0]).Except(values, StringComparer.OrdinalIgnoreCase))
+            {
+                var i = v.LastIndexOf('|');
+                if (i < 0) continue;
+                try { using var rk = Registry.LocalMachine.OpenSubKey(v.Substring(0, i), true); rk?.DeleteValue(v.Substring(i + 1), false); } catch { }
+            }
+            foreach (var k in (key.GetValue("OwnedKeys") as string[] ?? new string[0]).Except(owned, StringComparer.OrdinalIgnoreCase).OrderByDescending(x => x.Length))
+            {
+                try { Registry.LocalMachine.DeleteSubKeyTree(k, false); } catch { }
+            }
             if (app.Kind != "msi")
             {
                 var exe = Path.Combine(AppDir(app), app.Exe ?? "");
