@@ -716,18 +716,6 @@
           "associations": true
         },
         {
-          "key": "Software\\Classes\\.bat\\OpenWithProgids",
-          "name": "ValcoCode.SourceFile",
-          "value": "",
-          "associations": true
-        },
-        {
-          "key": "Software\\Classes\\.cmd\\OpenWithProgids",
-          "name": "ValcoCode.SourceFile",
-          "value": "",
-          "associations": true
-        },
-        {
           "key": "Software\\Classes\\.sql\\OpenWithProgids",
           "name": "ValcoCode.SourceFile",
           "value": "",
@@ -1042,18 +1030,6 @@
         {
           "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
           "name": ".psm1",
-          "value": "",
-          "owned": true
-        },
-        {
-          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
-          "name": ".bat",
-          "value": "",
-          "owned": true
-        },
-        {
-          "key": "Software\\Classes\\Applications\\ValcoCode.exe\\SupportedTypes",
-          "name": ".cmd",
           "value": "",
           "owned": true
         },
@@ -1384,18 +1360,6 @@
         {
           "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
           "name": ".psm1",
-          "value": "ValcoCode.SourceFile",
-          "owned": true
-        },
-        {
-          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
-          "name": ".bat",
-          "value": "ValcoCode.SourceFile",
-          "owned": true
-        },
-        {
-          "key": "Software\\ItsRaiden\\Valco Code\\Capabilities\\FileAssociations",
-          "name": ".cmd",
           "value": "ValcoCode.SourceFile",
           "owned": true
         },
