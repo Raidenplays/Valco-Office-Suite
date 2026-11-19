@@ -78,6 +78,8 @@ namespace ValcoWord
         public string Initials { get; set; } = "";
         public string ColorScheme { get; set; } = "Blue";
         public bool MiniToolbar { get; set; } = true;
+        // Word 2007 default: the Insert key does NOT switch to overtype unless this is turned on
+        public bool InsertKeyOvertype { get; set; }
         public bool ShowMarks { get; set; }
         public bool RibbonMinimized { get; set; }
         public List<string> Pinned { get; set; } = new List<string>();

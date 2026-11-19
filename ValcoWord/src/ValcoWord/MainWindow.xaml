@@ -53,6 +53,10 @@
                         <TextBlock x:Name="TrackStatusText" Text="Track Changes: Off" Foreground="{DynamicResource Rb.StatusText}" Margin="4,0"/>
                     </Button>
                     <Border Style="{StaticResource StatusSep}"/>
+                    <Button x:Name="OvertypeStatus" Style="{StaticResource StatusButton}" Click="OvertypeStatus_Click" ToolTip="Insert or Overtype mode. Click to switch.">
+                        <TextBlock x:Name="OvertypeStatusText" Text="Insert" Foreground="{DynamicResource Rb.StatusText}" Margin="4,0"/>
+                    </Button>
+                    <Border Style="{StaticResource StatusSep}"/>
                     <TextBlock x:Name="StatusMsg" Text="" VerticalAlignment="Center" Margin="8,0"/>
                 </StackPanel>
             </DockPanel>

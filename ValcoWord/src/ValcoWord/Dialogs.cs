@@ -710,11 +710,13 @@ namespace ValcoWord
             font.ItemTemplate = FontDialog.FontItemTemplate();
             var size = new ComboBox { Width = 70, IsEditable = true, ItemsSource = MainWindow.Sizes, Text = s.DefaultSizePt.ToString(D.Inv) };
             var spell = new CheckBox { Content = "Check _spelling as you type", IsChecked = s.SpellCheck };
+            var insKey = new CheckBox { Content = "Use the _Insert key to control overtype mode", IsChecked = s.InsertKeyOvertype };
             var mins = D.Box(s.AutoRecoverMinutes.ToString(D.Inv), 50);
             var arRow = new StackPanel { Orientation = Orientation.Horizontal };
             arRow.Children.Add(mins); arRow.Children.Add(new TextBlock { Text = " minutes (0 turns it off)", VerticalAlignment = VerticalAlignment.Center });
             var sp = new StackPanel();
             sp.Children.Add(D.Group("New documents", D.Form(("Default _font:", font), ("Default si_ze:", size))));
+            sp.Children.Add(D.Group("Editing", insKey));
             sp.Children.Add(D.Group("Proofing", spell));
             sp.Children.Add(D.Group("Save", D.Form(("Save AutoRecover info every:", arRow))));
             Build(sp, Ok(() =>
@@ -722,7 +724,7 @@ namespace ValcoWord
                 var sz = D.ParseNum(size.Text);
                 if (sz == null || sz < 1 || sz > 400 || string.IsNullOrWhiteSpace(font.Text) || !int.TryParse(mins.Text, out var m) || m < 0)
                 { VistaDialog.Show(this, "Check the font size and AutoRecover minutes.", "Options", MessageBoxButton.OK, DlgIcon.Warning); return false; }
-                s.DefaultFont = font.Text.Trim(); s.DefaultSizePt = sz.Value; s.SpellCheck = spell.IsChecked == true; s.AutoRecoverMinutes = m;
+                s.DefaultFont = font.Text.Trim(); s.DefaultSizePt = sz.Value; s.SpellCheck = spell.IsChecked == true; s.InsertKeyOvertype = insKey.IsChecked == true; s.AutoRecoverMinutes = m;
                 Settings.Save();
                 StyleDef.Init();
                 return true;

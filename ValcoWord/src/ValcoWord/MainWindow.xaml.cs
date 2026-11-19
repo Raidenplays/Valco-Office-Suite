@@ -608,6 +608,14 @@ namespace ValcoWord
         void Editor_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var mods = Keyboard.Modifiers;
+            if (e.Key == Key.Insert && mods == ModifierKeys.None)
+            {
+                // RichTextBox would silently flip into overtype here (numpad 0 with Num Lock off does it too).
+                // Like Word 2007, only let Insert switch modes when the option is on, and always show the mode.
+                if (Settings.Current.InsertKeyOvertype) SetOvertype(!_overtype);
+                e.Handled = true;
+                return;
+            }
             if (e.Key == Key.Enter && mods == ModifierKeys.None)
             {
                 var p = Editor.CaretPosition.Paragraph;
@@ -639,6 +647,26 @@ namespace ValcoWord
             {
                 RemoveImageAdorner();
             }
+        }
+
+        // ---- Insert / Overtype ----------------------------------------------------------
+        bool _overtype;
+
+        void SetOvertype(bool on)
+        {
+            if (on != _overtype)
+            {
+                // WPF keeps the real flag internally; ToggleInsert is the only public way to flip it
+                EditingCommands.ToggleInsert.Execute(null, Editor);
+                _overtype = on;
+            }
+            if (OvertypeStatusText != null) OvertypeStatusText.Text = _overtype ? "Overtype" : "Insert";
+        }
+
+        void OvertypeStatus_Click(object sender, RoutedEventArgs e)
+        {
+            SetOvertype(!_overtype);
+            Editor.Focus();
         }
 
         void MoveCell(TableCell cell, bool back)
