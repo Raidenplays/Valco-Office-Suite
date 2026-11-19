@@ -22,6 +22,7 @@ namespace Valco.UI
         {
             if (_installed) return;
             _installed = true;
+            PinSystemColors();
             EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler((s, e) =>
             {
                 if (s is not Window w || e.OriginalSource != w) return;
@@ -30,6 +31,35 @@ namespace Valco.UI
                 w.SizeChanged -= OnSized; w.SizeChanged += OnSized;
                 w.StateChanged -= OnActivated; w.StateChanged += OnActivated;
             }));
+        }
+
+        /// <summary>
+        /// Translucent-window mods hook GetSysColor so Win32 windows paint black (which they then turn into blur).
+        /// WPF's own controls read the same system colours, so text boxes and combo boxes came out black.
+        /// Valco apps pin the standard Windows colours instead (left alone in High Contrast, which users rely on).
+        /// </summary>
+        static void PinSystemColors()
+        {
+            if (Application.Current == null || SystemParameters.HighContrast) return;
+            var r = Application.Current.Resources;
+            void Set(object key, string hex) { var b = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex)); b.Freeze(); r[key] = b; }
+            void SetC(object key, string hex) => r[key] = (Color)ColorConverter.ConvertFromString(hex);
+            Set(SystemColors.WindowBrushKey, "#FFFFFFFF"); SetC(SystemColors.WindowColorKey, "#FFFFFFFF");
+            Set(SystemColors.WindowTextBrushKey, "#FF000000"); SetC(SystemColors.WindowTextColorKey, "#FF000000");
+            Set(SystemColors.ControlBrushKey, "#FFF0F0F0"); SetC(SystemColors.ControlColorKey, "#FFF0F0F0");
+            Set(SystemColors.ControlTextBrushKey, "#FF000000"); SetC(SystemColors.ControlTextColorKey, "#FF000000");
+            Set(SystemColors.ControlLightBrushKey, "#FFE3E3E3"); Set(SystemColors.ControlLightLightBrushKey, "#FFFFFFFF");
+            Set(SystemColors.ControlDarkBrushKey, "#FFA0A0A0"); Set(SystemColors.ControlDarkDarkBrushKey, "#FF696969");
+            Set(SystemColors.MenuBrushKey, "#FFF0F0F0"); Set(SystemColors.MenuTextBrushKey, "#FF000000");
+            Set(SystemColors.MenuBarBrushKey, "#FFF0F0F0");
+            Set(SystemColors.InfoBrushKey, "#FFFFFFE1"); Set(SystemColors.InfoTextBrushKey, "#FF000000");
+            Set(SystemColors.HighlightBrushKey, "#FF3399FF"); SetC(SystemColors.HighlightColorKey, "#FF3399FF");
+            Set(SystemColors.HighlightTextBrushKey, "#FFFFFFFF"); SetC(SystemColors.HighlightTextColorKey, "#FFFFFFFF");
+            Set(SystemColors.InactiveSelectionHighlightBrushKey, "#FFF0F0F0"); Set(SystemColors.InactiveSelectionHighlightTextBrushKey, "#FF000000");
+            Set(SystemColors.GrayTextBrushKey, "#FF6D6D6D"); SetC(SystemColors.GrayTextColorKey, "#FF6D6D6D");
+            Set(SystemColors.HotTrackBrushKey, "#FF0066CC");
+            Set(SystemColors.AppWorkspaceBrushKey, "#FFABABAB");
+            Set(SystemColors.ScrollBarBrushKey, "#FFC8C8C8");
         }
 
         static void OnActivated(object sender, EventArgs e) { if (sender is Window w) Apply(w); }
