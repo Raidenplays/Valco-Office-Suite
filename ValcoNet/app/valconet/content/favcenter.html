@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Favorites Center</title>
+<link rel="stylesheet" href="chrome://valconet/content/pages.css">
+<link rel="stylesheet" href="chrome://valconet/content/favcenter.css">
+</head>
+<body>
+<div id="top">
+  <button id="add" class="tb">Add to Favorites <span class="dd"></span></button>
+  <span class="spacer"></span>
+  <button id="pin" class="tb icon" title="Pin the Favorites Center"><img src="chrome://valconet/skin/icons/pin.svg" alt=""></button>
+  <button id="close" class="tb icon" title="Close the Favorites Center" hidden>✕</button>
+</div>
+<div id="sections" role="tablist">
+  <button data-section="favorites" role="tab"><img src="chrome://valconet/skin/icons/fav-star.svg" alt="">Favorites</button>
+  <button data-section="feeds" role="tab"><img src="chrome://valconet/skin/icons/feeds.svg" alt="">Feeds</button>
+  <button data-section="history" role="tab"><img src="chrome://valconet/skin/icons/history-day.svg" alt="">History</button>
+</div>
+<div id="history-bar" hidden>
+  <select id="history-view" class="vn-input">
+    <option value="date">View By Date</option>
+    <option value="site">View By Site</option>
+    <option value="most">View By Most Visited</option>
+    <option value="today">View By Order Visited Today</option>
+    <option value="search">Search History</option>
+  </select>
+  <input id="history-search" class="vn-input" type="search" placeholder="Search history" hidden>
+</div>
+<div id="list" tabindex="0"></div>
+<div id="menu" hidden></div>
+<script src="chrome://valconet/content/favcenter.js"></script>
+</body>
+</html>

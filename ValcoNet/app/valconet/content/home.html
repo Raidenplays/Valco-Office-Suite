@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src chrome: moz-icon: page-icon: data: blob:; img-src chrome: moz-icon: page-icon: data: blob: https: http:; style-src chrome: 'unsafe-inline'">
+<title>ValcoNet Home</title>
+<link rel="icon" href="chrome://valconet/skin/icons/valconet.svg">
+<link rel="stylesheet" href="chrome://valconet/content/pages.css">
+<style>
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 115%, rgba(120, 220, 110, .55), transparent 70%),
+      radial-gradient(ellipse 90% 70% at 15% -10%, rgba(255,255,255,.9), transparent 60%),
+      linear-gradient(160deg, #0d3c78 0%, #1b6dbd 48%, #2aa6c4 100%);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .swoosh { position: fixed; inset: auto 0 0 0; height: 260px; pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 40% at 40% 100%, rgba(255,255,255,.18), transparent 70%),
+      radial-gradient(ellipse 120% 35% at 60% 110%, rgba(140, 230, 90, .45), transparent 60%); }
+  header { margin-top: 9vh; display: flex; align-items: center; gap: 16px; color: #fff; }
+  header img { width: 72px; height: 72px; filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+  header h1 { font: 300 34pt "Segoe UI Light", "Segoe UI", sans-serif; text-shadow: 0 2px 6px rgba(0,0,0,.3); }
+  header p { margin: 2px 0 0; opacity: .85; font-size: 10pt; }
+  .card {
+    margin-top: 28px; width: min(640px, 90vw);
+    background: linear-gradient(rgba(255,255,255,.96), rgba(240,246,252,.96));
+    border: 1px solid rgba(255,255,255,.8); border-radius: 6px;
+    box-shadow: 0 8px 30px rgba(0, 20, 60, .35), inset 0 1px 0 #fff;
+    padding: 18px 20px;
+  }
+  form { display: flex; gap: 6px; }
+  #q { flex: 1; height: 28px; font-size: 11pt; }
+  #engine { color: #4d6380; margin: 6px 2px 0; font-size: 8pt; }
+  h2 { font-size: 11pt; color: #15428b; margin: 18px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #d5e0ee; }
+  #tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
+  .tile { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid #dbe5f1; border-radius: 3px;
+    background: linear-gradient(#fff, #f3f7fc); color: #000; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .tile:hover { border-color: #8fb1dc; background: linear-gradient(#fbfdff, #dfecfb); text-decoration: none; }
+  .tile img { width: 16px; height: 16px; flex: none; }
+  .tile span { overflow: hidden; text-overflow: ellipsis; }
+  #news li { margin: 3px 0; }
+  #news .src { color: #6b7d93; font-size: 8pt; }
+  footer { margin: 22px 0 30px; color: rgba(255,255,255,.8); font-size: 8pt; z-index: 1; }
+  footer a { color: #fff; }
+</style>
+</head>
+<body>
+<div class="swoosh"></div>
+<header>
+  <img src="chrome://valconet/skin/icons/valconet.svg" alt="">
+  <div><h1>ValcoNet</h1><p id="date"></p></div>
+</header>
+<div class="card">
+  <form id="search">
+    <input id="q" class="vn-input" type="search" autofocus placeholder="Search the web" autocomplete="off">
+    <button class="vn-button" type="submit">Search</button>
+  </form>
+  <div id="engine"></div>
+  <h2>Favorites Bar</h2>
+  <div id="tiles"></div>
+  <section id="news-section" hidden>
+    <h2>Your feeds</h2>
+    <ul id="news"></ul>
+  </section>
+</div>
+<footer>A web browser for Windows, from the Valco suite · Gecko engine · <a href="https://github.com/Raidenplays/valconet">ValcoNet on GitHub</a></footer>
+<script src="chrome://valconet/content/home.js"></script>
+</body>
+</html>

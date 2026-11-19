@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ValcoNet standalone MSI (WiX v5). Built by ..\build.ps1 -Msi via ValcoNet.Installer.wixproj. -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Package Name="ValcoNet" Manufacturer="ItsRaiden" Version="$(var.Version)" UpgradeCode="{8A7429D3-1CD1-4135-8729-6EA0E8AE8C0B}"
+           Scope="perMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="ValcoNet web browser" Manufacturer="ItsRaiden" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of ValcoNet is already installed." AllowSameVersionUpgrades="yes" />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="ValcoNetIcon.exe" SourceFile="$(var.AssetsDir)\ValcoNet.ico" />
+    <Property Id="ARPPRODUCTICON" Value="ValcoNetIcon.exe" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/Raidenplays/valconet" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/Raidenplays/valconet/issues" />
+    <Property Id="ARPCOMMENTS" Value="A web browser for Windows, from the Valco suite." />
+
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.AssetsDir)\dialog.bmp" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.AssetsDir)\banner.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <!-- Launch ValcoNet from the last page of setup. -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Start ValcoNet" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#ValcoNetExe]" />
+    <CustomAction Id="LaunchValcoNet" DllEntry="WixShellExec" Impersonate="yes" BinaryRef="Wix4UtilCA_X64" />
+    <UI>
+      <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchValcoNet"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed" />
+    </UI>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="ValcoNet">
+        <Directory Id="ENGINEDIR" Name="engine" />
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="ValcoNet" Level="1" ConfigurableDirectory="INSTALLFOLDER" AllowAbsent="no">
+      <ComponentGroupRef Id="Launcher" />
+      <ComponentGroupRef Id="Engine" />
+    </Feature>
+
+    <ComponentGroup Id="Engine" Directory="ENGINEDIR">
+      <Files Include="$(var.Dist)\engine\**" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="Launcher" Directory="INSTALLFOLDER">
+      <Component Id="LauncherExe" Bitness="always64">
+        <File Id="ValcoNetExe" Source="$(var.Dist)\valconet.exe" KeyPath="yes" />
+        <File Id="LicenseTxt" Source="$(var.Dist)\LICENSE.txt" />
+        <File Id="NoticeTxt" Source="$(var.Dist)\NOTICE.txt" />
+        <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="ValcoNet"
+                  Description="Browse the web with ValcoNet" Target="[#ValcoNetExe]"
+                  WorkingDirectory="INSTALLFOLDER" Icon="ValcoNetIcon.exe">
+          <ShortcutProperty Key="System.AppUserModel.ID" Value="ItsRaiden.ValcoNet" />
+        </Shortcut>
+        <Shortcut Id="InPrivateShortcut" Directory="ProgramMenuFolder" Name="ValcoNet (InPrivate)"
+                  Description="Browse InPrivate with ValcoNet" Target="[#ValcoNetExe]" Arguments="-private-window"
+                  WorkingDirectory="INSTALLFOLDER" Icon="ValcoNetIcon.exe">
+          <ShortcutProperty Key="System.AppUserModel.ID" Value="ItsRaiden.ValcoNet" />
+        </Shortcut>
+
+        <!-- App Paths: "Win+R valconet" works. -->
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\valconet.exe">
+          <RegistryValue Type="string" Value="[#ValcoNetExe]" />
+          <RegistryValue Name="Path" Type="string" Value="[INSTALLFOLDER]" />
+        </RegistryKey>
+
+        <!-- Register as a web browser (Windows 11 Default apps). -->
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Clients\StartMenuInternet\ValcoNet">
+          <RegistryValue Type="string" Value="ValcoNet" />
+          <RegistryValue Key="DefaultIcon" Type="string" Value="&quot;[#ValcoNetExe]&quot;,0" />
+          <RegistryValue Key="shell\open\command" Type="string" Value="&quot;[#ValcoNetExe]&quot;" />
+          <RegistryValue Key="InstallInfo" Name="IconsVisible" Type="integer" Value="1" />
+          <RegistryKey Key="Capabilities">
+            <RegistryValue Name="ApplicationName" Type="string" Value="ValcoNet" />
+            <RegistryValue Name="ApplicationDescription" Type="string" Value="A web browser for Windows, from the Valco suite." />
+            <RegistryValue Name="ApplicationIcon" Type="string" Value="&quot;[#ValcoNetExe]&quot;,0" />
+            <RegistryValue Key="StartMenu" Name="StartMenuInternet" Type="string" Value="ValcoNet" />
+            <RegistryValue Key="URLAssociations" Name="http" Type="string" Value="ValcoNetURL" />
+            <RegistryValue Key="URLAssociations" Name="https" Type="string" Value="ValcoNetURL" />
+            <RegistryValue Key="FileAssociations" Name=".htm" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".html" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".shtml" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".xht" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".xhtml" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".svg" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".webp" Type="string" Value="ValcoNetHTML" />
+            <RegistryValue Key="FileAssociations" Name=".pdf" Type="string" Value="ValcoNetPDF" />
+          </RegistryKey>
+        </RegistryKey>
+        <RegistryValue Root="HKLM" Key="SOFTWARE\RegisteredApplications" Name="ValcoNet" Type="string"
+                       Value="Software\Clients\StartMenuInternet\ValcoNet\Capabilities" />
+
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\ValcoNetURL">
+          <RegistryValue Type="string" Value="ValcoNet URL" />
+          <RegistryValue Name="FriendlyTypeName" Type="string" Value="ValcoNet URL" />
+          <RegistryValue Name="URL Protocol" Type="string" Value="" />
+          <RegistryValue Name="EditFlags" Type="integer" Value="2" />
+          <RegistryValue Key="DefaultIcon" Type="string" Value="&quot;[#ValcoNetExe]&quot;,0" />
+          <RegistryValue Key="shell\open\command" Type="string" Value="&quot;[#ValcoNetExe]&quot; -osint -url &quot;%1&quot;" />
+        </RegistryKey>
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\ValcoNetHTML">
+          <RegistryValue Type="string" Value="ValcoNet HTML Document" />
+          <RegistryValue Name="FriendlyTypeName" Type="string" Value="ValcoNet HTML Document" />
+          <RegistryValue Key="DefaultIcon" Type="string" Value="&quot;[#ValcoNetExe]&quot;,0" />
+          <RegistryValue Key="shell\open\command" Type="string" Value="&quot;[#ValcoNetExe]&quot; -osint -url &quot;%1&quot;" />
+        </RegistryKey>
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\ValcoNetPDF">
+          <RegistryValue Type="string" Value="ValcoNet PDF Document" />
+          <RegistryValue Name="FriendlyTypeName" Type="string" Value="ValcoNet PDF Document" />
+          <RegistryValue Key="DefaultIcon" Type="string" Value="&quot;[#ValcoNetExe]&quot;,0" />
+          <RegistryValue Key="shell\open\command" Type="string" Value="&quot;[#ValcoNetExe]&quot; -osint -url &quot;%1&quot;" />
+        </RegistryKey>
+        <!-- "Open with" lists for these types. -->
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\.htm\OpenWithProgids" Name="ValcoNetHTML" Type="string" Value="" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\.html\OpenWithProgids" Name="ValcoNetHTML" Type="string" Value="" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\.pdf\OpenWithProgids" Name="ValcoNetPDF" Type="string" Value="" />
+      </Component>
+    </ComponentGroup>
+  </Package>
+</Wix>

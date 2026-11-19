@@ -1592,6 +1592,15 @@
       "description": "Browse the web with an Internet Explorer-style browser on the Gecko engine, with Firefox account sync.",
       "shortcutDescription": "Browse the web",
       "defaultApps": "ValcoNet",
+      "upgradeCode": "8A7429D3-1CD1-4135-8729-6EA0E8AE8C0B",
+      "appUserModelId": "ItsRaiden.ValcoNet",
+      "shortcuts": [
+        {
+          "name": "ValcoNet (InPrivate)",
+          "args": "-private-window",
+          "description": "Browse InPrivate with ValcoNet"
+        }
+      ],
       "registry": [
         {
           "key": "Software\\Classes\\ValcoNetHTML",
@@ -1608,7 +1617,7 @@
         {
           "key": "Software\\Classes\\ValcoNetHTML\\shell\\open\\command",
           "name": "",
-          "value": "\"{EXE}\" \"%1\"",
+          "value": "\"{EXE}\" -osint -url \"%1\"",
           "owned": true
         },
         {
@@ -1626,7 +1635,7 @@
         {
           "key": "Software\\Classes\\ValcoNetURL\\shell\\open\\command",
           "name": "",
-          "value": "\"{EXE}\" \"%1\"",
+          "value": "\"{EXE}\" -osint -url \"%1\"",
           "owned": true
         },
         {
@@ -1650,7 +1659,7 @@
         {
           "key": "Software\\Classes\\ValcoNetPDF\\shell\\open\\command",
           "name": "",
-          "value": "\"{EXE}\" \"%1\"",
+          "value": "\"{EXE}\" -osint -url \"%1\"",
           "owned": true
         },
         {
@@ -1848,6 +1857,53 @@
           "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
           "name": ".pdf",
           "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetURL",
+          "name": "FriendlyTypeName",
+          "value": "ValcoNet URL",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetHTML",
+          "name": "FriendlyTypeName",
+          "value": "ValcoNet HTML Document",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\ValcoNetPDF",
+          "name": "FriendlyTypeName",
+          "value": "ValcoNet PDF Document",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".shtml",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".xht",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Classes\\Applications\\valconet.exe\\SupportedTypes",
+          "name": ".webp",
+          "value": "",
+          "owned": true
+        },
+        {
+          "key": "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\valconet.exe",
+          "value": "{EXE}",
+          "owned": true
+        },
+        {
+          "key": "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\valconet.exe",
+          "name": "Path",
+          "value": "{DIR}",
           "owned": true
         }
       ]

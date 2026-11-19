@@ -101,7 +101,7 @@ foreach ($a in $cfg.apps) {
         sha256 = (Sha $dest); downloadSize = (Get-Item $dest).Length; installSize = [long]$installSize
         folder = $a.folder; exe = $a.exe; process = $a.process; exitArgs = $a.exitArgs; icon = $iconName
         shortcutDescription = $a.shortcutDescription; defaultSelected = $(if ($null -eq $a.defaultSelected) { $true } else { [bool]$a.defaultSelected })
-        desktop = $(if ($null -eq $a.desktop) { $true } else { [bool]$a.desktop }); upgradeCode = $a.upgradeCode; notes = $a.notes; defaultApps = $a.defaultApps
+        desktop = $(if ($null -eq $a.desktop) { $true } else { [bool]$a.desktop }); upgradeCode = $a.upgradeCode; notes = $a.notes; defaultApps = $a.defaultApps; appUserModelId = $a.appUserModelId
         registry = @($a.registry | Where-Object { $_ } | ForEach-Object { [ordered]@{ key = $_.key; name = $(if ($_.name) { $_.name } else { '' }); value = $(if ($null -ne $_.value) { $_.value } else { '' }); owned = [bool]$_.owned; associations = [bool]$_.associations } })
         shortcuts = @($a.shortcuts | Where-Object { $_ })
     }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src chrome: page-icon: data:; img-src chrome: page-icon: moz-icon: data: https: http:; style-src chrome: 'unsafe-inline'">
+<title>New Tab</title>
+<link rel="icon" href="chrome://valconet/skin/icons/new-tab.svg">
+<link rel="stylesheet" href="chrome://valconet/content/pages.css">
+<style>
+  body { padding: 34px 48px; background: linear-gradient(#fff 70%, #f1f5fa); min-height: calc(100vh - 68px); }
+  h1 { font: 300 18pt "Segoe UI Light", "Segoe UI", sans-serif; color: #1e395b; margin-bottom: 22px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 980px; }
+  h2 { font-size: 11pt; color: #1e395b; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  h2 img { width: 24px; height: 24px; }
+  .desc { color: #555; margin: 0 0 10px 32px; }
+  ul { list-style: none; margin: 0 0 22px 24px; padding: 0; }
+  li { margin: 1px 0; }
+  .empty { color: #777; margin-left: 8px; }
+  .clip { margin-left: 32px; padding: 8px 10px; border: 1px solid #dde6f1; background: #f7faff; border-radius: 3px; color: #333;
+    max-height: 60px; overflow: hidden; word-break: break-all; }
+  footer { margin-top: 30px; max-width: 980px; padding-top: 10px; border-top: 1px solid #dde6f1; display: flex; gap: 22px; color: #555; }
+  /* InPrivate variant */
+  body.inprivate { background: linear-gradient(#f4f9ff, #e3eefb); }
+  .ip { max-width: 760px; }
+  .ip-badge { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 6px; border-radius: 4px;
+    background: linear-gradient(#6fb0f2, #1d5fb4); border: 1px solid #123f80; color: #fff; font: 600 14pt "Segoe UI", sans-serif; }
+  .ip-badge img { width: 32px; height: 32px; }
+  .ip h1 { margin-top: 18px; }
+  .ip p { font-size: 10pt; line-height: 1.5; color: #222; }
+</style>
+</head>
+<body>
+<div id="normal">
+  <h1>What do you want to do next?</h1>
+  <div class="cols">
+    <section>
+      <h2><img src="chrome://valconet/skin/icons/refresh.svg" alt="">Reopen closed tabs</h2>
+      <p class="desc">Tabs you've closed in this window. Click one to bring it back.</p>
+      <ul id="closed"></ul>
+      <h2><img src="chrome://valconet/skin/icons/quicktabs.svg" alt="">Reopen last browsing session</h2>
+      <p class="desc">Open the tabs and windows from the last time you closed ValcoNet.</p>
+      <ul><li><button class="vn-link-button" id="restore">Reopen last browsing session</button></li></ul>
+    </section>
+    <section>
+      <h2><img src="chrome://valconet/skin/icons/page.svg" alt="">Use copied text</h2>
+      <p class="desc">Do something with the text on your clipboard.</p>
+      <div class="clip" id="clip"></div>
+      <ul id="clip-actions"></ul>
+      <h2><img src="chrome://valconet/skin/icons/inprivate.svg" alt="">Browse with InPrivate</h2>
+      <p class="desc">InPrivate Browsing keeps ValcoNet from storing data about your browsing session — cookies, history and form data.</p>
+      <ul><li><button class="vn-link-button" id="inprivate"><img src="chrome://valconet/skin/icons/inprivate.svg" alt="">Open an InPrivate Browsing window</button></li></ul>
+    </section>
+  </div>
+  <footer>
+    <label><input type="checkbox" id="show" checked> Show this page when I open a new tab</label>
+    <a href="https://github.com/Raidenplays/valconet#tabs">Learn more about tabs</a>
+  </footer>
+</div>
+<div id="private" class="ip" hidden>
+  <div class="ip-badge"><img src="chrome://valconet/skin/icons/inprivate.svg" alt="">InPrivate</div>
+  <h1>InPrivate is turned on</h1>
+  <p>When InPrivate Browsing is turned on, you will see this indicator in the address bar and the title bar.</p>
+  <p>InPrivate Browsing helps prevent ValcoNet from storing data about your browsing session. This includes cookies,
+     temporary Internet files, history, and other data. Toolbars and extensions are disabled unless you've allowed them in private windows.</p>
+  <p>To turn off InPrivate Browsing, close this browser window.</p>
+</div>
+<script src="chrome://valconet/content/newtab.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+/* Shared styling for ValcoNet's built-in pages. */
+:root {
+  color-scheme: light;
+  font: 9pt "Segoe UI", system-ui, sans-serif;
+  color: #000;
+  background: #fff;
+}
+body { margin: 0; }
+a { color: #0b4ea2; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { font-weight: normal; margin: 0; }
+button, select, input { font: inherit; }
+.vn-button {
+  min-width: 75px;
+  height: 23px;
+  padding: 0 10px;
+  border: 1px solid #707070;
+  border-radius: 3px;
+  background: linear-gradient(#f2f2f2, #ebebeb 50%, #dddddd 51%, #cfcfcf);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+  color: #000;
+}
+.vn-button:hover {
+  border-color: #3c7fb1;
+  background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bee6fd 51%, #a7d9f5);
+}
+.vn-button:active {
+  border-color: #2c628b;
+  background: linear-gradient(#e5f4fc, #c4e5f6 50%, #98d1ef 51%, #68b3db);
+}
+.vn-button:disabled,
+.vn-button:disabled:hover {
+  color: #838383;
+  border-color: #adb2b5;
+  background: #f4f4f4;
+  box-shadow: none;
+}
+.vn-link-button:disabled { color: #777; cursor: default; }
+.vn-link-button:disabled:hover { background: none; border-color: transparent; text-decoration: none; }
+.vn-button:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
+.vn-input {
+  height: 21px;
+  padding: 0 4px;
+  border: 1px solid #abadb3;
+  border-color: #abadb3 #dbdfe6 #e3e9ef #e2e3ea;
+  background: #fff;
+}
+.vn-input:hover, .vn-input:focus { border-color: #5794bf #b7d5ea #c7e2f1 #c5daed; outline: none; }
+.vn-link-button {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 6px; border: 1px solid transparent; border-radius: 3px;
+  background: none; color: #0b4ea2; cursor: pointer; text-align: start;
+}
+.vn-link-button:hover { background: linear-gradient(#fafdff, #e3eefb); border-color: #a9c8ee; text-decoration: underline; }
+.vn-link-button img { width: 16px; height: 16px; flex: none; }

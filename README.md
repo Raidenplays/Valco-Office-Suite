@@ -8,6 +8,7 @@ A suite of Windows Vista-style apps for Windows 11 that replace Microsoft and ot
 | **Valco Express** | E-mail (IMAP/POP/SMTP, .eml, mailto:) | C# / WPF, .NET 8 |
 | **Valco Code** | Code editor (VS Code layout, Python/Java, Git/GitHub) | C# / WPF, .NET 8 |
 | **Valco Weave** | Visual web editor (Dreamweaver-style) | Tauri + React |
+| **ValcoNet** | Web browser (Internet Explorer 8 style) on the Gecko engine | Gecko (Firefox ESR) + JS/CSS layer, C launcher |
 | **Valco Office Setup** | Office 2007-style installer and Valco Office Update | C# / WPF, .NET 8 |
 
 `ValcoCommon` holds the shared Ribbon, colour schemes, Valco button, Quick Access Toolbar, Valco menu and suite icons used by Word, Express and Code. Edit them there, never in the apps.
@@ -27,6 +28,8 @@ ValcoSetup\build.cmd          rebuild setup.exe from the apps' existing builds
 The single-file installer ends up in `ValcoSetup\dist\ValcoOffice-Setup.exe` (also copied to `ValcoSetup\release`), and its release tag in `ValcoSetup\dist\release-tag.txt`.
 
 Valco Weave's MSI is cross-built on Linux: `ValcoWeave/packaging/windows/build-msi-on-linux.sh`.
+
+ValcoNet's build downloads the latest Firefox ESR as its engine each time, so rebuilding is how it gets engine security fixes — see `ValcoNet/README.md`.
 
 ## Releasing an update
 1. Bump `<Version>` in the app's project (or just rebuild — every build gets a new revision number).

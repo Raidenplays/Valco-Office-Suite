@@ -1,0 +1,1263 @@
+/* ValcoNet — IE8-on-Vista chrome for the Gecko browser window.
+ * Original artwork and styling; no Microsoft assets.  © 2026 ItsRaiden, MPL 2.0 */
+
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+:root[valconet] {
+  --vn-font: 9pt "Segoe UI", system-ui, sans-serif;
+  --vn-text: #000;
+  --vn-link: #0b3b8c;
+  --vn-strip-top: #fbfdff;
+  --vn-strip-mid: #e9f0f9;
+  --vn-strip-bot: #d7e3f2;
+  --vn-strip-line: #8ea4c1;
+  --vn-hover-border: #8fb1dc;
+  --vn-hover-bg: linear-gradient(#fbfdff, #e3eefb 45%, #d3e4f8 46%, #e2eefc);
+  --vn-press-bg: linear-gradient(#cfe0f5, #b9d1ef 45%, #a9c6ec 46%, #bfd6f2);
+  --vn-press-border: #6f93c4;
+  --vn-field-border: #7a8ea9;
+  --vn-glass:
+    linear-gradient(to bottom, rgba(255,255,255,.42), rgba(255,255,255,.12) 24px, rgba(255,255,255,0) 26px),
+    repeating-linear-gradient(112deg, transparent 0 140px, rgba(255,255,255,.10) 140px 175px, transparent 175px 230px, rgba(255,255,255,.06) 230px 244px, transparent 244px 420px),
+    linear-gradient(to bottom, #a8c3e1 0%, #8badd5 45%, #7c9fca 100%);
+  --vn-glass-inactive:
+    linear-gradient(to bottom, rgba(255,255,255,.45), rgba(255,255,255,0) 26px),
+    repeating-linear-gradient(112deg, transparent 0 140px, rgba(255,255,255,.10) 140px 175px, transparent 175px 420px),
+    linear-gradient(to bottom, #d3dfec, #c2d2e4 60%, #b8c9de);
+  --vn-glass-translucent:
+    linear-gradient(to bottom, rgba(255,255,255,.40), rgba(255,255,255,.08) 24px, rgba(255,255,255,0) 26px),
+    repeating-linear-gradient(112deg, transparent 0 140px, rgba(255,255,255,.10) 140px 175px, transparent 175px 420px),
+    linear-gradient(to bottom, rgba(150,186,226,.55), rgba(112,150,200,.55));
+
+  /* Gecko variables */
+  --toolbar-bgcolor: transparent !important;
+  --toolbar-color: var(--vn-text) !important;
+  --toolbar-field-background-color: #fff !important;
+  --toolbar-field-focus-background-color: #fff !important;
+  --toolbar-field-color: #000 !important;
+  --toolbar-field-focus-color: #000 !important;
+  --toolbar-field-border-color: var(--vn-field-border) !important;
+  --toolbar-field-focus-border-color: #3d7bad !important;
+  --toolbarbutton-border-radius: 2px !important;
+  --toolbarbutton-hover-background: transparent !important;
+  --toolbarbutton-active-background: transparent !important;
+  --tab-min-height: 23px !important;
+  --tab-min-width: 60px !important;
+  --tab-border-radius: 3px !important;
+  --tab-block-margin: 0 !important;
+  --tab-selected-bgcolor: #fff !important;
+  --tab-selected-textcolor: #000 !important;
+  --chrome-content-separator-color: var(--vn-strip-line) !important;
+  --chrome-block-radius: 0 !important;
+  --focus-outline-color: #3d7bad !important;
+  --urlbar-container-height: 28px !important;
+  --urlbar-min-height: 23px !important;
+  --urlbar-icon-border-radius: 0 !important;
+  --arrowpanel-border-radius: 0 !important;
+  --panel-border-radius: 0 !important;
+  --toolbarbutton-icon-fill: #1d2d44 !important;
+  color-scheme: light !important;
+  font: var(--vn-font) !important;
+  background-color: #fff !important;
+}
+
+/* ------------------------------------------------------------ the frame */
+:root[valconet] #navigator-toolbox {
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--vn-glass) !important;
+  border-bottom: none !important;
+  color: #000;
+  position: relative;
+}
+:root[valconet] #navigator-toolbox:-moz-window-inactive {
+  background: var(--vn-glass-inactive) !important;
+}
+/* Windows 11: acrylic backdrop behind tinted, streaked glass — the closest thing to Aero. */
+@media (-moz-windows-mica) {
+  :root[valconet]:not([valco-glass="painted"]) {
+    background-color: transparent !important;
+  }
+  :root[valconet]:not([valco-glass="painted"]) #navigator-toolbox,
+  :root[valconet]:not([valco-glass="painted"]) #navigator-toolbox:-moz-window-inactive {
+    background: var(--vn-glass-translucent) !important;
+  }
+}
+
+:root[valconet] #valco-titlebar { order: 0; }
+:root[valconet] #nav-bar { order: 1; }
+:root[valconet] #toolbar-menubar { order: 2; }
+:root[valconet] #PersonalToolbar { order: 3; }
+:root[valconet] #TabsToolbar { order: 4; }
+:root[valconet] #navigator-toolbox > :not(#valco-titlebar, #nav-bar, #toolbar-menubar, #PersonalToolbar, #TabsToolbar) { order: 5; }
+
+/* Hide Gecko's own titlebar furniture and the bits IE didn't have. */
+:root[valconet] .titlebar-buttonbox-container,
+:root[valconet] .titlebar-spacer,
+:root[valconet] #PanelUI-button,
+:root[valconet] #firefox-view-button,
+:root[valconet] #alltabs-button,
+:root[valconet] #new-tab-button,
+:root[valconet] #fxa-toolbar-menu-button,
+:root[valconet] #tracking-protection-icon-container,
+:root[valconet] #star-button-box,
+:root[valconet] #remote-control-box,
+:root[valconet] #trust-icon,
+:root[valconet] #trust-label,
+:root[valconet] #identity-icon-box,
+:root[valconet] .private-browsing-indicator-with-label,
+:root[valconet] #private-browsing-indicator-with-label,
+:root[valconet] #ai-window-toggle,
+:root[valconet] #taskbar-tabs-favicon,
+:root[valconet] #vertical-spacer,
+:root[valconet] #nav-bar-overflow-button:not([overflowedItem]),
+:root[valconet] #stop-reload-button,
+:root[valconet] .content-analysis-indicator {
+  display: none !important;
+}
+:root[valconet] #statuspanel {
+  visibility: collapse !important;
+}
+
+/* Title row ------------------------------------------------------------- */
+#valco-titlebar {
+  height: 28px;
+  padding-inline-start: 6px;
+  -moz-window-dragging: drag;
+  color: #000;
+}
+:root[valco-sizemode="maximized"] #valco-titlebar {
+  height: 24px;
+}
+#valco-title-icon {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://valconet/skin/icons/valconet.svg");
+  margin-inline-end: 6px;
+  -moz-window-dragging: drag;
+}
+#valco-title-text {
+  margin: 0;
+  font: 9pt "Segoe UI", system-ui, sans-serif;
+  /* Vista draws caption text black on a soft white glow. */
+  text-shadow: 0 0 6px #fff, 0 0 10px rgba(255,255,255,.9), 0 0 3px #fff;
+  -moz-window-dragging: drag;
+}
+:root[valconet]:-moz-window-inactive #valco-title-text {
+  color: #3d4a5b;
+}
+#valco-inprivate-title {
+  margin-inline-end: 10px;
+  padding: 0 6px 0 3px;
+  height: 17px;
+  border-radius: 3px;
+  background: linear-gradient(#6fb0f2, #1d5fb4);
+  color: #fff;
+  font-weight: 600;
+  border: 1px solid #123f80;
+}
+#valco-inprivate-title > label { margin: 0 0 0 3px; }
+.valco-inprivate-icon {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://valconet/skin/icons/inprivate.svg");
+}
+
+/* Vista caption buttons */
+#valco-caption {
+  align-self: start;
+  height: 20px;
+  margin-inline-end: 6px;
+  -moz-window-dragging: no-drag;
+}
+:root[valco-sizemode="maximized"] #valco-caption { margin-inline-end: 2px; }
+.valco-cap {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 27px;
+  height: 19px;
+  border: 1px solid rgba(20, 38, 66, .78);
+  border-top: none;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.55), rgba(255,255,255,.18) 48%, rgba(255,255,255,0) 52%, rgba(255,255,255,.18)),
+    linear-gradient(to bottom, rgba(120,150,190,.55), rgba(70,100,145,.6));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+  list-style-image: none;
+  -moz-window-dragging: no-drag;
+}
+.valco-cap > .toolbarbutton-icon {
+  width: 12px !important;
+  height: 10px !important;
+  margin: auto !important;
+  padding: 0 !important;
+}
+.valco-cap > .toolbarbutton-text { display: none !important; }
+#valco-cap-min {
+  border-bottom-left-radius: 5px;
+  border-inline-end: none;
+  list-style-image: url("chrome://valconet/skin/icons/cap-min.svg");
+}
+#valco-cap-max, #valco-cap-restore {
+  list-style-image: url("chrome://valconet/skin/icons/cap-max.svg");
+  border-inline-end: none;
+}
+#valco-cap-restore { list-style-image: url("chrome://valconet/skin/icons/cap-restore.svg"); }
+:root:not([valco-sizemode="maximized"]) #valco-cap-restore,
+:root[valco-sizemode="maximized"] #valco-cap-max { display: none; }
+#valco-cap-close {
+  width: 45px;
+  border-bottom-right-radius: 5px;
+  list-style-image: url("chrome://valconet/skin/icons/cap-close.svg");
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.45), rgba(255,255,255,.1) 48%, rgba(255,255,255,0) 52%, rgba(255,255,255,.12)),
+    linear-gradient(to bottom, #d9806b, #c4462b 50%, #b5341a 52%, #cf5a3b);
+  border-color: rgba(70, 20, 10, .85);
+}
+.valco-cap:hover {
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.6), rgba(255,255,255,.25) 48%, rgba(255,255,255,0) 52%, rgba(255,255,255,.3)),
+    radial-gradient(ellipse at 50% 100%, rgba(140,230,255,.95), rgba(60,150,220,.7) 70%);
+}
+#valco-cap-close:hover {
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.5), rgba(255,255,255,.2) 48%, rgba(255,255,255,0) 52%, rgba(255,255,255,.25)),
+    radial-gradient(ellipse at 50% 100%, #ffb38a, #e8492a 70%);
+}
+.valco-cap:active,
+#valco-cap-close:active {
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,0) 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(80,180,240,.95), rgba(30,90,170,.8) 70%);
+}
+#valco-cap-close:active {
+  background: linear-gradient(to bottom, rgba(0,0,0,.2), rgba(0,0,0,0) 60%), radial-gradient(ellipse at 50% 100%, #f07a55, #a92c12 70%);
+}
+:root[valconet]:-moz-window-inactive .valco-cap:not(:hover) {
+  background: linear-gradient(to bottom, rgba(255,255,255,.5), rgba(255,255,255,.2) 50%, rgba(255,255,255,.1));
+  border-color: rgba(60, 75, 95, .45);
+}
+
+/* Navigation row (on glass) ---------------------------------------------------- */
+:root[valconet] #nav-bar {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 1px 6px 5px 4px !important;
+  min-height: 34px;
+  -moz-window-dragging: drag;
+}
+:root[valconet] #nav-bar-customization-target {
+  align-items: center;
+  -moz-window-dragging: drag;
+}
+:root[valconet] #nav-bar toolbarbutton,
+:root[valconet] #nav-bar toolbaritem,
+:root[valconet] #urlbar,
+:root[valconet] #searchbar {
+  -moz-window-dragging: no-drag;
+}
+
+/* Back / forward: glass orbs */
+:root[valconet] #back-button,
+:root[valconet] #forward-button {
+  appearance: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #16386d;
+  background:
+    radial-gradient(ellipse 70% 42% at 50% 22%, rgba(255,255,255,.95), rgba(255,255,255,.15) 85%, transparent 100%),
+    radial-gradient(circle at 50% 100%, #7fe0ff 0%, #3b8be0 45%, #1d4f9c 100%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.45), inset 0 -2px 4px rgba(150,240,255,.6);
+  list-style-image: url("chrome://valconet/skin/icons/arrow-back.svg");
+  z-index: 1;
+}
+:root[valconet] #forward-button {
+  list-style-image: url("chrome://valconet/skin/icons/arrow-forward.svg");
+  margin-inline-start: 1px !important;
+}
+:root[valconet] :is(#back-button, #forward-button) > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: auto !important;
+  background: none !important;
+  fill: none !important;
+}
+:root[valconet] :is(#back-button, #forward-button) > .toolbarbutton-text { display: none !important; }
+:root[valconet] :is(#back-button, #forward-button):not([disabled]):hover {
+  background:
+    radial-gradient(ellipse 70% 42% at 50% 22%, rgba(255,255,255,.95), rgba(255,255,255,.2) 85%, transparent 100%),
+    radial-gradient(circle at 50% 100%, #b6f4ff 0%, #4fb0f5 45%, #2462b8 100%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.55), 0 0 7px rgba(140,230,255,.95), inset 0 -2px 5px rgba(190,250,255,.8);
+}
+:root[valconet] :is(#back-button, #forward-button):not([disabled]):hover:active {
+  background:
+    radial-gradient(ellipse 70% 42% at 50% 22%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(circle at 50% 100%, #4fb0f5 0%, #1f5fb5 60%, #123d7a 100%);
+}
+:root[valconet] :is(#back-button, #forward-button)[disabled] {
+  opacity: 1 !important;
+  border-color: rgba(30, 50, 80, .5);
+  background:
+    radial-gradient(ellipse 70% 42% at 50% 22%, rgba(255,255,255,.75), rgba(255,255,255,.1) 85%, transparent 100%),
+    radial-gradient(circle at 50% 100%, rgba(225,235,245,.75), rgba(150,170,195,.6) 100%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.3);
+}
+:root[valconet] :is(#back-button, #forward-button)[disabled] > .toolbarbutton-icon {
+  opacity: .55 !important;
+}
+
+/* Recent pages dropdown */
+#valco-history-button {
+  appearance: none !important;
+  padding: 0 !important;
+  margin: 0 4px 0 1px !important;
+  width: 13px;
+  height: 22px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  list-style-image: url("chrome://valconet/skin/icons/dropdown.svg");
+}
+#valco-history-button > .toolbarbutton-icon {
+  width: 7px !important;
+  height: 4px !important;
+  padding: 0 !important;
+  margin: auto !important;
+}
+#valco-history-button > :is(.toolbarbutton-text, .toolbarbutton-menu-dropmarker) { display: none !important; }
+#valco-history-button:not([disabled]):hover,
+#valco-history-button[open] {
+  border-color: rgba(30, 60, 100, .55);
+  background: linear-gradient(rgba(255,255,255,.7), rgba(255,255,255,.25));
+}
+#valco-history-button[disabled] { opacity: .5; }
+
+/* Address bar --------------------------------------------------------------------- */
+:root[valconet] #urlbar-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 24px !important;
+  --urlbar-height: 24px;
+}
+:root[valconet] #urlbar {
+  --urlbar-height: 24px !important;
+  --urlbar-toolbar-height: 28px !important;
+  min-height: 24px !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+}
+:root[valconet] #urlbar:not([breakout-extend]) {
+  height: 24px !important;
+}
+:root[valconet] #urlbar .urlbar-background {
+  border-radius: 0 !important;
+  border: 1px solid rgba(30, 55, 90, .72) !important;
+  border-inline-end-width: 0 !important;
+  background: #fff !important;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.07) !important;
+  outline: none !important;
+}
+:root[valconet] #urlbar[focused] .urlbar-background {
+  border-color: rgba(30, 75, 135, .95) !important;
+}
+:root[valconet] #urlbar[valco-security="error"] .urlbar-background {
+  background: #ffd9d4 !important;
+}
+:root[valconet] #urlbar[valco-security="secure"] .urlbar-background {
+  background: #fff !important;
+}
+:root[valconet] #urlbar .urlbar-input-container {
+  height: 24px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+:root[valconet] #urlbar .urlbar-input {
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+  color: #000 !important;
+}
+:root[valconet] #urlbar .urlbar-input::placeholder { color: #6d6d6d; }
+:root[valconet] #trust-icon-container {
+  width: 22px !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  padding: 0 0 0 4px !important;
+  background: none !important;
+  border: none !important;
+}
+#valco-urlbar-favicon {
+  width: 16px;
+  height: 16px;
+}
+#valco-urlbar-favicon[default] {
+  list-style-image: url("chrome://valconet/skin/icons/page-generic.svg");
+}
+:root[valconet] #urlbar .urlbar-page-action,
+:root[valconet] #urlbar .urlbar-icon,
+:root[valconet] #urlbar #page-action-buttons > * {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding-block: 3px !important;
+}
+#valco-urlbar-lock {
+  width: 26px !important;
+  padding: 3px 5px !important;
+  list-style-image: url("chrome://valconet/skin/icons/lock.svg");
+  background: linear-gradient(#f5f9ff, #d8e6f7) !important;
+  border-inline-start: 1px solid #a8bcd6;
+}
+#valco-urlbar-dropmarker {
+  width: 15px !important;
+  padding: 0 4px !important;
+  list-style-image: url("chrome://valconet/skin/icons/dropdown.svg");
+  -moz-context-properties: none;
+  border-inline-start: 1px solid transparent;
+}
+#valco-urlbar-dropmarker:hover {
+  background: var(--vn-hover-bg) !important;
+  border-inline-start-color: var(--vn-hover-border);
+}
+:root[valconet] #urlbar[valco-security="secure"] .urlbar-input-container {
+  background: linear-gradient(to right, transparent 70%, rgba(214, 232, 250, .8)) !important;
+}
+#valco-inprivate-badge {
+  margin: 2px 2px 2px 2px;
+  padding: 0 5px 0 2px;
+  border-radius: 2px;
+  background: linear-gradient(#6fb0f2, #1d5fb4);
+  border: 1px solid #123f80;
+  color: #fff;
+  font-weight: 600;
+}
+#valco-inprivate-badge > label { margin: 0 0 0 3px; }
+
+/* Refresh / stop glued to the right of the address bar */
+#valco-refresh-stop {
+  margin: 0 6px 0 0 !important;
+  padding: 0 !important;
+  height: 24px;
+  border: 1px solid rgba(30, 55, 90, .72);
+  background: linear-gradient(#fdfeff, #e7eef7 48%, #d9e4f1 52%, #e9f0f8);
+}
+#valco-refresh-stop > toolbarbutton {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 25px;
+  height: 22px;
+  border: none !important;
+  border-radius: 0 !important;
+}
+#valco-refresh-stop > toolbarbutton + toolbarbutton {
+  border-inline-start: 1px solid #b2c2d6 !important;
+}
+#valco-refresh-stop > toolbarbutton > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: auto !important;
+}
+#valco-refresh { list-style-image: url("chrome://valconet/skin/icons/refresh.svg"); }
+#valco-stop { list-style-image: url("chrome://valconet/skin/icons/stop.svg"); }
+#valco-stop[disabled] > .toolbarbutton-icon { opacity: .4 !important; filter: grayscale(1); }
+#valco-refresh-stop > toolbarbutton:not([disabled]):hover {
+  background: var(--vn-hover-bg) !important;
+  box-shadow: inset 0 0 0 1px var(--vn-hover-border);
+}
+#valco-refresh-stop > toolbarbutton:not([disabled]):hover:active {
+  background: var(--vn-press-bg) !important;
+}
+
+/* Search box ------------------------------------------------------------------------- */
+:root[valconet] #search-container {
+  min-width: 190px !important;
+  width: 260px !important;
+  max-width: 260px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+:root[valconet] #searchbar {
+  height: 24px !important;
+  min-height: 24px !important;
+  border-radius: 0 !important;
+  border: 1px solid rgba(30, 55, 90, .72) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+:root[valconet] #searchbar .searchbar-textbox {
+  order: 1;
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+  padding-inline-start: 4px !important;
+}
+:root[valconet] #searchbar .searchbar-textbox::placeholder { color: #6d6d6d; font-style: italic; }
+:root[valconet] #searchbar .searchbar-search-button {
+  order: 2;
+  margin: 0 !important;
+  padding: 0 3px !important;
+  border-radius: 0 !important;
+  border-inline-start: 1px solid #c5d2e3 !important;
+  background: linear-gradient(#fdfeff, #e7eef7 48%, #d9e4f1 52%, #e9f0f8) !important;
+  min-width: 34px;
+}
+:root[valconet] #searchbar .searchbar-search-icon {
+  list-style-image: url("chrome://valconet/skin/icons/search.svg") !important;
+  -moz-context-properties: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+}
+:root[valconet] #searchbar .searchbar-search-icon-overlay {
+  list-style-image: url("chrome://valconet/skin/icons/dropdown.svg") !important;
+  -moz-context-properties: none !important;
+  width: 7px !important;
+  height: 4px !important;
+  margin: 0 0 0 4px !important;
+  display: flex !important;
+  align-self: center;
+}
+:root[valconet] #searchbar .searchbar-search-button:hover {
+  background: var(--vn-hover-bg) !important;
+}
+:root[valconet] #searchbar .search-go-button {
+  order: 3;
+  list-style-image: url("chrome://valconet/skin/icons/search.svg") !important;
+  -moz-context-properties: none !important;
+}
+
+/* Menu bar (shown with Alt, like IE7/8) ------------------------------------------------- */
+:root[valconet] #toolbar-menubar {
+  background: linear-gradient(var(--vn-strip-top), var(--vn-strip-mid)) !important;
+  border-top: 1px solid rgba(40, 70, 110, .45) !important;
+  min-height: 21px !important;
+  padding: 0 2px !important;
+  -moz-window-dragging: no-drag;
+}
+:root[valconet] #main-menubar > menu {
+  appearance: none !important;
+  padding: 1px 7px !important;
+  margin: 1px 0 !important;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #000 !important;
+}
+:root[valconet] #main-menubar > menu[_moz-menuactive],
+:root[valconet] #main-menubar > menu[open] {
+  background: var(--vn-hover-bg) !important;
+  border-color: var(--vn-hover-border) !important;
+}
+
+/* Favorites bar ------------------------------------------------------------------------ */
+:root[valconet] #PersonalToolbar {
+  background: linear-gradient(var(--vn-strip-top), var(--vn-strip-mid)) !important;
+  border-top: 1px solid rgba(40, 70, 110, .55) !important;
+  min-height: 25px !important;
+  max-height: none !important;
+  padding: 1px 4px !important;
+  color: #000 !important;
+  -moz-window-dragging: no-drag;
+}
+#valco-favorites {
+  margin: 0 4px 0 0 !important;
+  padding: 0 6px 0 0 !important;
+  border-inline-end: 1px solid #b7c7dc;
+  box-shadow: 1px 0 0 #fff;
+}
+#valco-favorites > toolbarbutton {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 1px 4px !important;
+  min-height: 21px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #000 !important;
+  font: inherit;
+}
+#valco-favorites-button {
+  list-style-image: url("chrome://valconet/skin/icons/fav-star.svg");
+  font-weight: normal;
+}
+#valco-favorites-button > .toolbarbutton-text {
+  display: flex !important;
+  padding-inline-start: 4px !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif;
+}
+#valco-addfav-button { list-style-image: url("chrome://valconet/skin/icons/fav-add.svg"); }
+#valco-favorites > toolbarbutton > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+}
+#valco-favorites > toolbarbutton:hover,
+#valco-favorites > toolbarbutton[checked],
+:root[valconet] #PlacesToolbarItems > .bookmark-item:hover,
+:root[valconet] #PlacesToolbarItems > .bookmark-item[open] {
+  background: var(--vn-hover-bg) !important;
+  border-color: var(--vn-hover-border) !important;
+}
+#valco-favorites > toolbarbutton:hover:active,
+#valco-favorites > toolbarbutton[checked] {
+  background: var(--vn-press-bg) !important;
+  border-color: var(--vn-press-border) !important;
+}
+:root[valconet] #PlacesToolbarItems > .bookmark-item {
+  appearance: none !important;
+  margin: 0 1px !important;
+  padding: 1px 4px !important;
+  min-height: 21px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #000 !important;
+}
+:root[valconet] #PlacesToolbarItems > .bookmark-item > .toolbarbutton-text {
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+  padding-inline-start: 3px !important;
+}
+:root[valconet] #PlacesToolbarItems > .bookmark-item[container] {
+  list-style-image: url("chrome://valconet/skin/icons/folder.svg") !important;
+  -moz-context-properties: none !important;
+}
+:root[valconet] #PlacesToolbarItems > .bookmark-item:not([container]):not([image]) {
+  list-style-image: url("chrome://valconet/skin/icons/page-generic.svg") !important;
+}
+:root[valconet] #personal-toolbar-empty-description { color: #4b5d75 !important; }
+
+/* Tabs + command bar row ------------------------------------------------------------- */
+:root[valconet] #TabsToolbar {
+  background: linear-gradient(var(--vn-strip-mid), var(--vn-strip-bot)) !important;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid var(--vn-strip-line) !important;
+  min-height: 28px !important;
+  padding: 0 4px 0 2px !important;
+  -moz-window-dragging: no-drag !important;
+  color: #000 !important;
+}
+:root[valconet] #TabsToolbar .toolbar-items { align-items: end !important; }
+:root[valconet] #TabsToolbar-customization-target { align-items: end; }
+:root[valconet] #tabbrowser-tabs {
+  min-height: 26px !important;
+  border: none !important;
+  padding-inline: 0 !important;
+  margin-inline-start: 2px !important;
+  --tab-overflow-pinned-tabs-width: 0px;
+}
+:root[valconet] #tabbrowser-arrowscrollbox { min-height: 26px !important; }
+
+#valco-tabtools {
+  align-self: end;
+  margin: 0 2px 2px 0 !important;
+  padding: 0 !important;
+}
+#valco-tabtools > toolbarbutton {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 26px;
+  height: 22px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+#valco-tabtools > toolbarbutton > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: auto !important;
+}
+#valco-tabtools > toolbarbutton > :is(.toolbarbutton-text, .toolbarbutton-menu-dropmarker) { display: none !important; }
+#valco-quicktabs-button { list-style-image: url("chrome://valconet/skin/icons/quicktabs.svg"); }
+#valco-tablist-button { list-style-image: url("chrome://valconet/skin/icons/tablist.svg"); width: 24px !important; }
+#valco-tabtools > toolbarbutton:hover,
+#valco-tabtools > toolbarbutton[open],
+#valco-tabtools > toolbarbutton[checked] {
+  background: var(--vn-hover-bg) !important;
+  border-color: var(--vn-hover-border) !important;
+}
+
+/* IE8 tabs */
+:root[valconet] .tabbrowser-tab {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 24px !important;
+  max-height: 26px !important;
+  align-items: end !important;
+}
+:root[valconet] .tabbrowser-tab:not([pinned]) {
+  max-width: 200px !important;
+  min-width: 60px !important;
+}
+:root[valconet] .tabbrowser-tab:not([pinned])[fadein] { max-width: 200px !important; }
+:root[valconet] .tab-stack { height: 24px; }
+:root[valconet] .tabbrowser-tab[selected] .tab-stack { height: 26px; }
+:root[valconet] .tab-background {
+  margin: 0 !important;
+  margin-inline-end: -1px !important;
+  border-radius: 3px 3px 0 0 !important;
+  border: 1px solid #8ea4c1 !important;
+  border-bottom: none !important;
+  background: linear-gradient(#fdfeff, #edf3fa 48%, #dde8f5 52%, #e6eef8) !important;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,.9) !important;
+  outline: none !important;
+}
+:root[valconet] .tabbrowser-tab:hover:not([selected]) .tab-background {
+  background: linear-gradient(#ffffff, #eaf5fe 48%, #d3ebfd 52%, #e2f2fe) !important;
+  border-color: #6f9cd0 !important;
+}
+:root[valconet] .tabbrowser-tab[selected] .tab-background {
+  background: linear-gradient(#ffffff, #fbfdff 70%, #f5f9fd) !important;
+  border-color: #7d95b6 !important;
+  margin-bottom: -1px !important;
+  box-shadow: inset 1px 1px 0 #fff !important;
+}
+:root[valconet] .tab-context-line,
+:root[valconet] .tab-loading-burst,
+:root[valconet] .tab-secondary-label,
+:root[valconet] .tab-icon-overlay:not([soundplaying], [muted], [activemedia-blocked]) {
+  display: none !important;
+}
+:root[valconet] .tab-content {
+  padding: 0 4px 0 6px !important;
+  height: 24px;
+  color: #000 !important;
+}
+:root[valconet] .tabbrowser-tab[selected] .tab-content { height: 26px; padding-bottom: 1px !important; }
+:root[valconet] .tab-label {
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+  font-weight: normal !important;
+  color: #000 !important;
+  margin: 0 !important;
+}
+:root[valconet] .tab-label-container { height: auto !important; }
+:root[valconet] .tab-icon-image,
+:root[valconet] .tab-throbber { margin-inline-end: 5px !important; }
+:root[valconet] .tabbrowser-tab:not([image]):not([busy]) .tab-icon-image {
+  display: flex !important;
+  content: url("chrome://valconet/skin/icons/page-generic.svg") !important;
+}
+:root[valconet] .tab-close-button {
+  list-style-image: url("chrome://valconet/skin/icons/close-small.svg") !important;
+  -moz-context-properties: none !important;
+  width: 18px !important;
+  height: 16px !important;
+  padding: 3px 4px !important;
+  margin: 0 !important;
+  border-radius: 2px !important;
+  border: 1px solid transparent;
+  fill: none !important;
+}
+:root[valconet] .tabbrowser-tab:not([selected]):not(:hover) .tab-close-button { visibility: hidden; }
+:root[valconet] .tab-close-button:hover {
+  list-style-image: url("chrome://valconet/skin/icons/close-small-hot.svg") !important;
+  background: linear-gradient(#e8a493, #d45a3c 50%, #c7401f 52%, #db6b4e) !important;
+  border-color: #8d2a14;
+}
+/* IE8 colour-coded tab groups */
+:root[valco-tabcolors] .tabbrowser-tab[valco-group] .tab-background { border-top-width: 3px !important; border-top-style: solid !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group="0"] .tab-background { border-top-color: #e1a42d !important; background: linear-gradient(#fff4dc, #fbe7bd 50%, #f6dca6 52%, #fae8c4) !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group="1"] .tab-background { border-top-color: #3f9ad6 !important; background: linear-gradient(#e7f4fd, #cde8fa 50%, #b9dcf6 52%, #d2eafb) !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group="2"] .tab-background { border-top-color: #5aaa3a !important; background: linear-gradient(#ecf8e5, #d6efc8 50%, #c4e6b1 52%, #d9f0cd) !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group="3"] .tab-background { border-top-color: #b45bc4 !important; background: linear-gradient(#f7ebf9, #ecd2f1 50%, #e2bfe9 52%, #eed6f2) !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group="4"] .tab-background { border-top-color: #d55a4a !important; background: linear-gradient(#fdeceb, #f8d3cf 50%, #f2bdb6 52%, #f9d8d4) !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group="5"] .tab-background { border-top-color: #3eb0a4 !important; background: linear-gradient(#e6f7f5, #c9ece7 50%, #b2e2dc 52%, #cdefea) !important; }
+:root[valco-tabcolors] .tabbrowser-tab[valco-group][selected] .tab-background {
+  background: linear-gradient(#ffffff, #fbfdff 70%, #f5f9fd) !important;
+}
+
+/* New-tab stub */
+:root[valconet] #tabs-newtab-button {
+  appearance: none !important;
+  margin: 0 0 0 2px !important;
+  padding: 0 !important;
+  width: 30px !important;
+  height: 22px !important;
+  align-self: end;
+  border: 1px solid #a7b8cf !important;
+  border-bottom: none !important;
+  border-radius: 3px 3px 0 0 !important;
+  background: linear-gradient(rgba(255,255,255,.55), rgba(225,235,247,.55)) !important;
+  list-style-image: url("chrome://valconet/skin/icons/new-tab.svg") !important;
+  -moz-context-properties: none !important;
+}
+:root[valconet] #tabs-newtab-button > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: auto !important;
+  background: none !important;
+  opacity: .35;
+  fill: none !important;
+}
+:root[valconet] #tabs-newtab-button:hover > .toolbarbutton-icon { opacity: 1; }
+:root[valconet] #tabs-newtab-button:hover {
+  background: linear-gradient(#ffffff, #eaf5fe 48%, #d3ebfd 52%, #e2f2fe) !important;
+  border-color: #6f9cd0 !important;
+}
+
+/* Command bar ----------------------------------------------------------------------- */
+#valco-commandbar {
+  align-self: center;
+  margin: 0 0 1px 8px !important;
+  padding: 0 !important;
+  gap: 1px;
+}
+#valco-commandbar .valco-split { align-items: stretch; }
+#valco-commandbar toolbarbutton {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 1px 4px !important;
+  min-height: 22px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #000 !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif;
+  -moz-window-dragging: no-drag;
+}
+#valco-commandbar toolbarbutton > .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#valco-commandbar toolbarbutton > .toolbarbutton-text {
+  padding: 0 0 0 3px !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+}
+#valco-commandbar toolbarbutton[label]:not([label=""]) > .toolbarbutton-text,
+#valco-favorites-button > .toolbarbutton-text {
+  display: flex !important;
+}
+#valco-commandbar toolbarbutton:not([label]) > .toolbarbutton-text,
+#valco-commandbar toolbarbutton[label=""] > .toolbarbutton-text { display: none !important; }
+:root:not([valco-cmdlabels]) #valco-commandbar .valco-cmd-menu > .toolbarbutton-text { display: none !important; }
+#valco-commandbar .valco-cmd-main {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  padding-inline-end: 3px !important;
+}
+#valco-commandbar .valco-cmd-arrow {
+  padding: 0 3px !important;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-inline-start: none;
+  list-style-image: none;
+}
+#valco-commandbar .valco-cmd-arrow > :is(.toolbarbutton-icon, .toolbarbutton-text) { display: none !important; }
+#valco-commandbar toolbarbutton > .toolbarbutton-menu-dropmarker,
+#valco-commandbar .valco-cmd-arrow::after {
+  appearance: none !important;
+}
+/* Gecko 153 toolbarbuttons have no dropmarker, so IE's little arrows are drawn here. */
+#valco-commandbar toolbarbutton[type="menu"]::after,
+#valco-zoom-menu::after {
+  content: "";
+  display: block;
+  flex: none;
+  width: 7px;
+  height: 4px;
+  margin-inline-start: 4px;
+  align-self: center;
+  background: url("chrome://valconet/skin/icons/dropdown.svg") no-repeat center / 7px 4px;
+}
+#valco-commandbar .valco-cmd-arrow::after,
+#valco-zoom-menu::after { margin-inline-start: 0; }
+#valco-commandbar toolbarbutton:hover,
+#valco-commandbar toolbarbutton[open],
+#valco-commandbar .valco-split:hover > toolbarbutton {
+  background: var(--vn-hover-bg) !important;
+  border-color: var(--vn-hover-border) !important;
+}
+#valco-commandbar .valco-split:hover > .valco-cmd-arrow { border-inline-start: 1px solid var(--vn-hover-border); }
+#valco-commandbar toolbarbutton:hover:active,
+#valco-commandbar toolbarbutton[open] {
+  background: var(--vn-press-bg) !important;
+  border-color: var(--vn-press-border) !important;
+}
+#valco-cmd-home { list-style-image: url("chrome://valconet/skin/icons/home.svg"); }
+#valco-cmd-feeds { list-style-image: url("chrome://valconet/skin/icons/feeds-off.svg"); }
+#valco-cmd-feeds[found] { list-style-image: url("chrome://valconet/skin/icons/feeds.svg"); }
+#valco-cmd-mail { list-style-image: url("chrome://valconet/skin/icons/mail.svg"); }
+#valco-cmd-print { list-style-image: url("chrome://valconet/skin/icons/print.svg"); }
+#valco-cmd-page { list-style-image: url("chrome://valconet/skin/icons/page.svg"); }
+#valco-cmd-safety { list-style-image: url("chrome://valconet/skin/icons/safety.svg"); }
+#valco-cmd-tools { list-style-image: url("chrome://valconet/skin/icons/tools.svg"); }
+#valco-cmd-help { list-style-image: url("chrome://valconet/skin/icons/help.svg"); }
+
+/* Downloads / extensions buttons, kept small on the glass */
+:root[valconet] #nav-bar :is(#downloads-button, #unified-extensions-button) {
+  margin: 0 0 0 2px !important;
+  padding: 0 !important;
+}
+:root[valconet] #nav-bar :is(#downloads-button, #unified-extensions-button) > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
+  padding: 4px !important;
+  border-radius: 2px !important;
+  border: 1px solid transparent;
+}
+:root[valconet] #nav-bar :is(#downloads-button, #unified-extensions-button):hover > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
+  background: linear-gradient(rgba(255,255,255,.75), rgba(255,255,255,.3)) !important;
+  border-color: rgba(30, 55, 90, .5);
+}
+
+/* Content area --------------------------------------------------------------------- */
+:root[valconet] #browser {
+  position: relative;
+  background: #fff;
+}
+:root[valconet] #tabbrowser-tabbox,
+:root[valconet] #tabbrowser-tabpanels,
+:root[valconet] .browserSidebarContainer,
+:root[valconet] .browserStack {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+}
+:root[valconet] #tabbrowser-tabbox { outline: none !important; }
+:root[valconet] .chrome-block { border-radius: 0 !important; }
+:root[valconet] #tabbrowser-tabpanels { background: #fff !important; }
+
+/* Status bar --------------------------------------------------------------------------- */
+#valco-statusbar {
+  height: 23px;
+  background: linear-gradient(#f9fbfd, #e8eef6 50%, #dde5f0);
+  border-top: 1px solid #a4b4c9;
+  color: #000;
+  font: 9pt "Segoe UI", system-ui, sans-serif;
+  -moz-window-dragging: no-drag;
+}
+:root[inDOMFullscreen] #valco-statusbar,
+:root[sizemode="fullscreen"] #valco-statusbar { display: none; }
+#valco-status-main {
+  min-width: 100px;
+  padding-inline-start: 4px;
+}
+#valco-status-icon {
+  width: 16px;
+  height: 16px;
+  margin-inline-end: 4px;
+  list-style-image: url("chrome://valconet/skin/icons/page-generic.svg");
+}
+#valco-status-icon[state="error"] { list-style-image: url("chrome://valconet/skin/icons/stop.svg"); }
+#valco-status-text { margin: 0; }
+.valco-status-pane {
+  height: 100%;
+  padding: 0 8px;
+  border-inline-start: 1px solid #b9c6d6;
+  box-shadow: inset 1px 0 0 #fff;
+}
+#valco-status-progress { min-width: 130px; }
+#valco-progress {
+  width: 114px;
+  height: 11px;
+  border: 1px solid #8d9db2;
+  border-radius: 2px;
+  background: linear-gradient(#e7ebf0, #fafbfc);
+  overflow: hidden;
+}
+#valco-progress-fill {
+  height: 100%;
+  width: 0;
+  background:
+    linear-gradient(rgba(255,255,255,.55), rgba(255,255,255,0) 50%),
+    linear-gradient(#5fd15a, #24a51d);
+  transition: width .25s;
+}
+.valco-status-img { width: 16px; height: 16px; }
+#valco-status-security .valco-status-img { list-style-image: url("chrome://valconet/skin/icons/lock.svg"); }
+#valco-status-popups .valco-status-img { list-style-image: url("chrome://valconet/skin/icons/popup-blocked.svg"); }
+#valco-status-zone { min-width: 230px; }
+#valco-zone-icon {
+  width: 16px;
+  height: 16px;
+  margin-inline-end: 5px;
+  list-style-image: url("chrome://valconet/skin/icons/zone-internet.svg");
+}
+#valco-zone-icon[zone="computer"] { list-style-image: url("chrome://valconet/skin/icons/zone-computer.svg"); }
+#valco-zone-icon[zone="intranet"] { list-style-image: url("chrome://valconet/skin/icons/zone-intranet.svg"); }
+#valco-zone-text { margin: 0; }
+#valco-status-zoom {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 4px 0 22px !important;
+  min-width: 60px;
+  background: url("chrome://valconet/skin/icons/search.svg") no-repeat 4px center / 14px;
+  font: inherit;
+  color: #000;
+}
+#valco-status-zoom > .toolbarbutton-icon { display: none !important; }
+#valco-status-zoom > .toolbarbutton-text { padding: 0 !important; font: 9pt "Segoe UI", system-ui, sans-serif !important; }
+#valco-status-zoom-arrow { padding: 0 !important; border: none; box-shadow: none; }
+#valco-zoom-menu {
+  appearance: none !important;
+  margin: 0 !important;
+  padding: 0 4px !important;
+  height: 100%;
+  min-width: 15px;
+}
+#valco-zoom-menu > :is(.toolbarbutton-icon, .toolbarbutton-text) { display: none !important; }
+#valco-status-zoom:hover, #valco-zoom-menu:hover, #valco-zoom-menu[open],
+#valco-status-security:hover, #valco-status-popups:hover {
+  background-color: rgba(255,255,255,.75);
+}
+#valco-gripper {
+  width: 14px;
+  height: 100%;
+  background:
+    radial-gradient(circle, #8696aa 1px, transparent 1.4px) 0 0 / 4px 4px;
+  mask: linear-gradient(to top left, #000 50%, transparent 50%);
+  opacity: .9;
+}
+:root[valco-sizemode="maximized"] #valco-gripper { visibility: hidden; }
+
+/* Favorites Center ----------------------------------------------------------------- */
+#valco-favcenter {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 290px;
+  min-width: 200px;
+  max-width: 60vw;
+  z-index: 10;
+  background: #fff;
+  border-inline-end: 1px solid #7d95b6;
+  box-shadow: 3px 0 10px rgba(0, 30, 70, .3);
+}
+#valco-favcenter[pinned] {
+  position: static;
+  box-shadow: none;
+}
+#valco-favcenter-frame {
+  border: none;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+#valco-favcenter-splitter {
+  appearance: none !important;
+  width: 4px !important;
+  min-width: 4px !important;
+  border: none !important;
+  background: linear-gradient(to right, #e8eef6, #d3dceb) !important;
+}
+
+/* Quick Tabs --------------------------------------------------------------------------- */
+#valco-quicktabs {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  overflow: auto;
+  background: linear-gradient(#fdfeff, #eef3f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#valco-quicktabs[hidden] { display: none; }
+#valco-qt-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--qt-cols, 2), minmax(140px, 260px));
+  gap: 26px 30px;
+  padding: 30px;
+  width: 100%;
+  justify-content: center;
+}
+.valco-qt-cell {
+  cursor: default;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+}
+.valco-qt-cell:hover {
+  background: var(--vn-hover-bg);
+  border-color: var(--vn-hover-border);
+}
+.valco-qt-cell[selected] .valco-qt-frame {
+  outline: 3px solid #3d86d9;
+}
+.valco-qt-frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #fff;
+  border: 1px solid #7d95b6;
+  box-shadow: 0 2px 8px rgba(0, 30, 70, .25);
+}
+.valco-qt-cell[valco-group] .valco-qt-frame { border-top: 4px solid #e1a42d; }
+.valco-qt-cell[valco-group="1"] .valco-qt-frame { border-top-color: #3f9ad6; }
+.valco-qt-cell[valco-group="2"] .valco-qt-frame { border-top-color: #5aaa3a; }
+.valco-qt-cell[valco-group="3"] .valco-qt-frame { border-top-color: #b45bc4; }
+.valco-qt-cell[valco-group="4"] .valco-qt-frame { border-top-color: #d55a4a; }
+.valco-qt-cell[valco-group="5"] .valco-qt-frame { border-top-color: #3eb0a4; }
+.valco-qt-thumb { width: 100%; height: 100%; display: block; }
+.valco-qt-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 18px;
+  border: 1px solid #8d2a14;
+  border-radius: 2px;
+  background: url("chrome://valconet/skin/icons/close-small-hot.svg") center / 10px no-repeat,
+    linear-gradient(#e8a493, #d45a3c 50%, #c7401f 52%, #db6b4e);
+  visibility: hidden;
+}
+.valco-qt-cell:hover .valco-qt-close { visibility: visible; }
+.valco-qt-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  font: 9pt "Segoe UI", system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.valco-qt-title > span { overflow: hidden; text-overflow: ellipsis; }
+.valco-qt-icon { width: 16px; height: 16px; flex: none; }
+
+/* Vista menus everywhere in the window ---------------------------------------------------- */
+:root[valconet] menupopup {
+  --panel-background: #f0f0f0 !important;
+  --panel-color: #000 !important;
+  --panel-border-color: #979797 !important;
+  --panel-border-radius: 0 !important;
+  --panel-padding: 2px !important;
+  --panel-shadow-margin: 4px;
+  --menuitem-padding: 2px 20px 2px 4px;
+  --menuitem-border-radius: 3px;
+  --menu-background-color: #f0f0f0 !important;
+  --menu-color: #000 !important;
+  --menu-border-color: #979797 !important;
+  --menuitem-hover-background-color: transparent !important;
+  --menu-disabled-color: #8a8a8a !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+}
+:root[valconet] menupopup::part(content) {
+  background:
+    linear-gradient(to right, transparent 26px, #e2e3e3 26px, #e2e3e3 27px, #fff 27px, #fff 28px, transparent 28px),
+    #f0f0f0 !important;
+  border-radius: 0 !important;
+  border-color: #979797 !important;
+}
+:root[valconet] menupopup > :is(menuitem, menu) {
+  min-height: 22px;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #000;
+}
+:root[valconet] menupopup > :is(menuitem, menu)[_moz-menuactive]:not([disabled="true"]) {
+  background: linear-gradient(#f2f7fd, #dfeafa) !important;
+  border-color: #aeccf1 !important;
+  color: #000 !important;
+}
+:root[valconet] menupopup > :is(menuitem, menu)[disabled="true"] { color: #8a8a8a; }
+:root[valconet] menupopup > :is(menuitem, menu) > .menu-icon,
+:root[valconet] menupopup > :is(menuitem, menu) > .menu-iconic-left {
+  margin-inline: 3px 9px !important;
+  width: 16px;
+}
+:root[valconet] menupopup > :is(menuitem, menu) > :is(.menu-text, .menu-iconic-text, label) {
+  padding-inline-start: 6px !important;
+}
+:root[valconet] menupopup > menuseparator {
+  appearance: none !important;
+  padding: 3px 0 3px 30px !important;
+  margin: 0 !important;
+  border: none !important;
+}
+:root[valconet] menupopup > menuseparator::before {
+  content: "";
+  display: block;
+  height: 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #fff;
+  flex: 1;
+}
+/* Vista menu gutter: no native boxes; checks/radios sit on a pale blue square. */
+:root[valconet] menupopup > :is(menuitem, menu) > .menu-icon {
+  appearance: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: none !important;
+  -moz-context-properties: none !important;
+}
+:root[valconet] menupopup > menuitem:is([type="checkbox"], [type="radio"]) > .menu-icon {
+  list-style-image: none;
+}
+:root[valconet] menupopup > menuitem[type="checkbox"][checked="true"] > .menu-icon {
+  content: url("chrome://valconet/skin/icons/menu-check.svg") !important;
+  background: linear-gradient(#f4f9ff, #dbe9fb) !important;
+  border-color: #a8c6ee;
+}
+:root[valconet] menupopup > menuitem[type="radio"][checked="true"] > .menu-icon {
+  content: url("chrome://valconet/skin/icons/menu-radio.svg") !important;
+  background: linear-gradient(#f4f9ff, #dbe9fb) !important;
+  border-color: #a8c6ee;
+}
+
+
+/* Address-bar autocomplete, IE style */
+:root[valconet] .urlbarView {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: 1px solid #7a8ea9 !important;
+  border-top: none !important;
+  background: #fff !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,.25) !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+}
+:root[valconet] .urlbarView-row {
+  border-radius: 0 !important;
+  padding-block: 1px !important;
+  min-height: 0 !important;
+}
+:root[valconet] .urlbarView-row[selected],
+:root[valconet] .urlbarView-row:hover {
+  background: linear-gradient(#f2f7fd, #dfeafa) !important;
+  outline: 1px solid #aeccf1;
+  outline-offset: -1px;
+}
+:root[valconet] .urlbarView-row-inner { padding-block: 2px !important; border-radius: 0 !important; }
+:root[valconet] .urlbarView-url { color: #0b3b8c !important; }
+:root[valconet] .search-one-offs { display: none !important; }
+
+/* Information bar (IE's yellow strip) */
+:root[valconet] notification-message,
+:root[valconet] .notificationbox-stack notification-message {
+  --message-bar-background-color: #ffffe1;
+  --message-bar-text-color: #000;
+  --message-bar-border-color: #ada98a;
+  --message-bar-border-radius: 0;
+  --message-bar-icon-color: #b07d00;
+  --notification-background: #ffffe1;
+  --notification-text: #000;
+  --notification-border: #ada98a;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  font: 9pt "Segoe UI", system-ui, sans-serif !important;
+}
+:root[valconet] notification-message::part(container) {
+  border-radius: 0;
+  background: #ffffe1;
+}
+:root[valconet] .notificationbox-stack { padding: 0 !important; gap: 0 !important; }
+
+/* Panels: square Vista corners */
+:root[valconet] panel {
+  --arrowpanel-border-radius: 0;
+  --panel-border-radius: 0;
+}
+
+/* Sidebar (when Gecko's own is used) */
+:root[valconet] #sidebar-box { border-radius: 0 !important; margin: 0 !important; }
+
+/* Fullscreen: the toolbox slides like IE's */
+:root[valconet][inFullscreen] #valco-titlebar { display: none; }

@@ -44,7 +44,27 @@ namespace ValcoSetup
             void GetCurFile([MarshalAs(UnmanagedType.LPWStr)] out string file);
         }
 
-        public static void Create(string lnkPath, string target, string args, string workDir, string description, string icon)
+        [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99")]
+        interface IPropertyStore
+        {
+            void GetCount(out uint count);
+            void GetAt(uint index, out PropertyKey key);
+            void GetValue(ref PropertyKey key, out PropVariant value);
+            void SetValue(ref PropertyKey key, ref PropVariant value);
+            void Commit();
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 4)]
+        struct PropertyKey { public Guid FormatId; public uint PropertyId; }
+
+        // Just enough PROPVARIANT for a VT_LPWSTR (24 bytes on x64).
+        [StructLayout(LayoutKind.Explicit, Size = 24)]
+        struct PropVariant { [FieldOffset(0)] public ushort Type; [FieldOffset(8)] public IntPtr Pointer; }
+
+        // PKEY_AppUserModel_ID
+        static PropertyKey AppUserModelIdKey = new PropertyKey { FormatId = new Guid("9F4C2855-9F79-4B39-A8D0-E1D42DE1D5F3"), PropertyId = 5 };
+
+        public static void Create(string lnkPath, string target, string args, string workDir, string description, string icon, string appUserModelId = null)
         {
             try
             {
@@ -55,6 +75,18 @@ namespace ValcoSetup
                 link.SetWorkingDirectory(workDir ?? Path.GetDirectoryName(target));
                 link.SetDescription(description ?? "");
                 if (!string.IsNullOrEmpty(icon)) link.SetIconLocation(icon, 0);
+                if (!string.IsNullOrEmpty(appUserModelId))
+                {
+                    var pv = new PropVariant { Type = 31 /* VT_LPWSTR */, Pointer = Marshal.StringToCoTaskMemUni(appUserModelId) };
+                    try
+                    {
+                        var store = (IPropertyStore)link;
+                        store.SetValue(ref AppUserModelIdKey, ref pv);
+                        store.Commit();
+                    }
+                    catch { }
+                    finally { Marshal.FreeCoTaskMem(pv.Pointer); }
+                }
                 ((IPersistFile)link).Save(lnkPath, true);
                 Marshal.FinalReleaseComObject(link);
             }

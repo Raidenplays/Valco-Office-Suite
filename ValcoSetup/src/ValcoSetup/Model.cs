@@ -51,6 +51,8 @@ namespace ValcoSetup
         public string Notes { get; set; }
         /// <summary>Name under HKLM\\Software\\RegisteredApplications, used to open Settings → Default apps for this program.</summary>
         public string DefaultApps { get; set; }
+        /// <summary>Optional taskbar AppUserModelID stamped on the app's shortcuts, so pinned icons relaunch through the shortcut's target.</summary>
+        public string AppUserModelId { get; set; }
         public List<RegEntry> Registry { get; set; } = new List<RegEntry>();
         public List<ExtraShortcut> Shortcuts { get; set; } = new List<ExtraShortcut>();
     }

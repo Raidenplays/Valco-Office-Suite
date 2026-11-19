@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html windowtype="valconet:options">
+<head>
+<meta charset="utf-8">
+<title>Internet Options</title>
+<link rel="icon" href="chrome://valconet/skin/icons/zone-internet.svg">
+<link rel="stylesheet" href="chrome://valconet/content/dialogs/dialog.css">
+<style>
+  #vn-client { width: 468px; height: 600px; }
+  .tabs button { padding: 0 6px; }
+  .sheet { min-height: 0; }
+  .sheet { padding: 9px 11px; }
+  .zones { display: flex; gap: 4px; border: 1px solid #c9d3df; padding: 6px; margin-bottom: 9px; background: #fff; }
+  .zone { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 2px; border: 1px solid transparent; text-align: center; }
+  .zone img { width: 32px; height: 32px; }
+  .zone.sel { background: linear-gradient(#dcebfc, #c1dbfc); border-color: #84acdd; }
+  .adv { border: 1px solid #898c95; height: 300px; overflow: auto; padding: 4px 6px; background: #fff; }
+  .adv h4 { margin: 6px 0 2px; font: 600 9pt "Segoe UI", sans-serif; display: flex; align-items: center; gap: 5px; }
+  .adv h4 img { width: 16px; height: 16px; }
+  .adv label { margin-left: 18px; }
+  select.vn-input { height: 23px; }
+  .grid2 { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 6px; align-items: center; }
+  .grid2 input { width: 100%; box-sizing: border-box; }
+  #default-status { margin: 4px 0 8px; }
+</style>
+</head>
+<body>
+<div class="tabs" role="tablist">
+  <button data-sheet="general">General</button><button data-sheet="security">Security</button><button data-sheet="privacy">Privacy</button><button data-sheet="content">Content</button><button data-sheet="connections">Connections</button><button data-sheet="programs">Programs</button><button data-sheet="advanced">Advanced</button>
+</div>
+
+<div class="sheet" id="general">
+  <fieldset><legend>Home page</legend>
+    <div class="iconhead"><img src="chrome://valconet/skin/icons/home.svg" alt="">
+      <div style="flex:1">To create home page tabs, type each address on its own line.
+        <textarea id="homepages" class="vn-input"></textarea>
+        <div class="row" style="justify-content:flex-end">
+          <button class="vn-button" id="use-current">Use current</button>
+          <button class="vn-button" id="use-default">Use default</button>
+          <button class="vn-button" id="use-blank">Use blank</button>
+        </div></div></div>
+  </fieldset>
+  <fieldset><legend>Startup</legend>
+    <label><input type="radio" name="browser.startup.page" value="3" data-type="int"> Start with tabs from the last session</label>
+    <label><input type="radio" name="browser.startup.page" value="1" data-type="int"> Start with home page</label>
+  </fieldset>
+  <fieldset><legend>Browsing history</legend>
+    <div class="iconhead"><img src="chrome://valconet/skin/icons/history-day.svg" alt="">
+      <div style="flex:1">Delete temporary files, history, cookies, saved passwords, and web form information.
+        <label><input type="checkbox" data-pref="privacy.sanitize.sanitizeOnShutdown"> Delete browsing history on exit</label>
+        <div class="row" style="justify-content:flex-end"><button class="vn-button" id="delete-history">Delete...</button></div></div></div>
+  </fieldset>
+  <fieldset><legend>Search</legend>
+    <div class="row"><img src="chrome://valconet/skin/icons/search.svg" alt="" style="width:16px">Default search provider:
+      <select id="engine" class="vn-input" style="flex:1"></select></div>
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="search-settings">Settings</button></div>
+  </fieldset>
+  <fieldset><legend>Tabs</legend>
+    <label><input type="checkbox" data-pref="valconet.newtab.show"> Show the "What do you want to do next?" page in new tabs</label>
+    <label><input type="checkbox" data-pref="browser.tabs.warnOnClose"> Warn me when closing multiple tabs</label>
+    <label><input type="checkbox" data-pref="browser.tabs.loadInBackground" data-invert> Always switch to new tabs when they are created</label>
+    <label><input type="checkbox" data-pref="valconet.tabgroups.colors"> Color-code tab groups</label>
+  </fieldset>
+  <fieldset><legend>Appearance</legend>
+    <div class="row"><button class="vn-button" id="fonts">Fonts</button><button class="vn-button" id="languages">Languages</button><button class="vn-button" id="accessibility">Accessibility</button></div>
+  </fieldset>
+</div>
+
+<div class="sheet" id="security" hidden>
+  <div>Select a zone to view or change security settings.</div>
+  <div class="zones">
+    <div class="zone sel"><img src="chrome://valconet/skin/icons/zone-internet.svg" alt="">Internet</div>
+    <div class="zone"><img src="chrome://valconet/skin/icons/zone-intranet.svg" alt="">Local intranet</div>
+    <div class="zone"><img src="chrome://valconet/skin/icons/safety.svg" alt="">Trusted sites</div>
+    <div class="zone"><img src="chrome://valconet/skin/icons/popup-blocked.svg" alt="">Restricted sites</div>
+  </div>
+  <fieldset><legend>Security level for this zone</legend>
+    <div class="row"><select class="vn-input" data-pref="browser.contentblocking.category" style="flex:1">
+      <option value="standard">Medium-high — Standard tracking protection</option>
+      <option value="strict">High — Strict tracking protection</option>
+      <option value="custom">Custom level</option>
+    </select></div>
+    <label><input type="checkbox" checked disabled> Enable Protected Mode (sandboxed content processes)</label>
+    <label><input type="checkbox" data-pref="browser.safebrowsing.phishing.enabled" data-also="browser.safebrowsing.malware.enabled"> Turn on SmartScreen Filter (block dangerous and deceptive content)</label>
+    <label><input type="checkbox" data-pref="dom.security.https_only_mode"> Only connect to websites over HTTPS (HTTPS-Only Mode)</label>
+    <label><input type="checkbox" data-pref="browser.download.always_ask_before_handling_new_types"> Ask where to save or how to open each new kind of download</label>
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="custom-security">Custom level...</button></div>
+  </fieldset>
+  <p class="note">Trusted and Restricted sites are handled per website: click the page icon in the address bar to change a site's permissions.</p>
+</div>
+
+<div class="sheet" id="privacy" hidden>
+  <fieldset><legend>Settings</legend>
+    Cookies:
+    <select class="vn-input" data-pref="network.cookie.cookieBehavior" data-type="int" style="width:100%;margin:3px 0 6px">
+      <option value="0">Accept All Cookies</option>
+      <option value="5">Medium — Isolate cross-site cookies (recommended)</option>
+      <option value="4">Medium High — Block cross-site tracking cookies</option>
+      <option value="1">High — Block all third-party cookies</option>
+      <option value="2">Block All Cookies</option>
+    </select>
+    <label><input type="checkbox" data-pref="privacy.globalprivacycontrol.enabled"> Tell websites not to sell or share my data (Global Privacy Control)</label>
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="cookie-exceptions">Sites</button><button class="vn-button" id="cookie-advanced">Advanced</button></div>
+  </fieldset>
+  <fieldset><legend>Location</legend>
+    <label><input type="checkbox" data-pref="permissions.default.geo" data-type="int" data-on="2" data-off="0"> Never allow websites to request your physical location</label>
+  </fieldset>
+  <fieldset><legend>Pop-up Blocker</legend>
+    <div class="iconhead"><img src="chrome://valconet/skin/icons/popup-blocked.svg" alt="">
+      <div style="flex:1"><label><input type="checkbox" data-pref="dom.disable_open_during_load"> Turn on Pop-up Blocker</label>
+      <div class="row" style="justify-content:flex-end"><button class="vn-button" id="popup-settings">Settings</button></div></div></div>
+  </fieldset>
+  <fieldset><legend>InPrivate</legend>
+    <label><input type="checkbox" data-pref="browser.privatebrowsing.autostart"> Always browse InPrivate (requires restart)</label>
+    <label><input type="checkbox" data-pref="extensions.allowPrivateBrowsingByDefault"> Run add-ons in InPrivate windows</label>
+  </fieldset>
+</div>
+
+<div class="sheet" id="content" hidden>
+  <fieldset><legend>Certificates</legend>
+    Use certificates for encrypted connections and identification.
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="certs">Certificates</button><button class="vn-button" id="devices">Security Devices</button></div>
+  </fieldset>
+  <fieldset><legend>Sync</legend>
+    <div class="iconhead"><img src="chrome://valconet/skin/icons/fav-star.svg" alt="">
+      <div style="flex:1"><div id="sync-status">Sync your favorites, passwords, add-ons, history and open tabs with a Mozilla account.</div>
+        <div class="row" style="justify-content:flex-end"><button class="vn-button" id="sync-signin">Sign in</button><button class="vn-button" id="sync-settings">Settings</button></div></div></div>
+  </fieldset>
+  <fieldset><legend>AutoComplete</legend>
+    <label><input type="checkbox" data-pref="browser.formfill.enable"> Remember what I type into forms and the search bar</label>
+    <label><input type="checkbox" data-pref="signon.rememberSignons"> Ask to save user names and passwords</label>
+    <label><input type="checkbox" data-pref="browser.urlbar.autoFill"> Complete addresses as I type in the address bar</label>
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="passwords">Saved passwords</button></div>
+  </fieldset>
+  <fieldset><legend>Feeds</legend>
+    <label><input type="checkbox" data-pref="valconet.home.feeds"> Show my feeds' headlines on ValcoNet Home</label>
+    <label><input type="checkbox" data-pref="valconet.feeds.detect"> Detect feeds on web pages (orange Feeds button)</label>
+  </fieldset>
+  <fieldset><legend>Media</legend>
+    <label><input type="checkbox" data-pref="media.autoplay.default" data-type="int" data-on="1" data-off="0"> Block audio from playing automatically</label>
+    <label><input type="checkbox" data-pref="media.eme.enabled"> Play DRM-protected content (Widevine)</label>
+  </fieldset>
+</div>
+
+<div class="sheet" id="connections" hidden>
+  <fieldset><legend>Proxy</legend>
+    <label><input type="radio" name="network.proxy.type" value="0" data-type="int"> No proxy</label>
+    <label><input type="radio" name="network.proxy.type" value="4" data-type="int"> Automatically detect settings</label>
+    <label><input type="radio" name="network.proxy.type" value="5" data-type="int"> Use Windows proxy settings</label>
+    <label><input type="radio" name="network.proxy.type" value="1" data-type="int"> Use a proxy server:</label>
+    <div class="grid2" style="margin-left:20px">
+      Address: <input class="vn-input" data-pref="network.proxy.http" data-also-text="network.proxy.ssl"> <span>Port: <input class="vn-input" style="width:56px" data-pref="network.proxy.http_port" data-type="int" data-also-text="network.proxy.ssl_port"></span>
+    </div>
+    <label><input type="checkbox" data-pref="network.proxy.share_proxy_settings"> Use this proxy server for all protocols</label>
+    <div>Bypass proxy for: <input class="vn-input" style="width:100%;box-sizing:border-box" data-pref="network.proxy.no_proxies_on"></div>
+  </fieldset>
+  <fieldset><legend>DNS</legend>
+    <select class="vn-input" data-pref="network.trr.mode" data-type="int" style="width:100%">
+      <option value="0">Use the system's DNS</option>
+      <option value="2">Use secure DNS (DNS over HTTPS) when available</option>
+      <option value="3">Only use secure DNS (DNS over HTTPS)</option>
+      <option value="5">Turn off secure DNS</option>
+    </select>
+  </fieldset>
+  <fieldset><legend>Network settings</legend>
+    <div class="row"><button class="vn-button" id="win-network">Windows network settings</button><button class="vn-button" id="win-proxy">Windows proxy settings</button></div>
+  </fieldset>
+</div>
+
+<div class="sheet" id="programs" hidden>
+  <fieldset><legend>Default web browser</legend>
+    <div class="iconhead"><img src="chrome://valconet/skin/icons/valconet.svg" alt="">
+      <div style="flex:1"><div id="default-status"></div>
+        <div class="row" style="justify-content:flex-end"><button class="vn-button" id="make-default">Make default</button></div>
+</div></div>
+  </fieldset>
+  <fieldset><legend>Manage add-ons</legend>
+    Enable or disable browser add-ons installed in your system.
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="addons">Manage add-ons</button></div>
+  </fieldset>
+  <fieldset><legend>Internet programs</legend>
+    Choose the programs you want to use for other Internet services, such as e-mail.
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="set-programs">Set programs</button></div>
+  </fieldset>
+  <fieldset><legend>Downloads</legend>
+    <label><input type="checkbox" data-pref="browser.download.useDownloadDir" data-invert> Ask me where to save each file</label>
+  </fieldset>
+</div>
+
+<div class="sheet" id="advanced" hidden>
+  Settings
+  <div class="adv">
+    <h4><img src="chrome://valconet/skin/icons/help.svg" alt="">Accessibility</h4>
+    <label><input type="checkbox" data-pref="accessibility.browsewithcaret"> Move system caret with focus/selection changes (Caret Browsing)</label>
+    <label><input type="checkbox" data-pref="browser.zoom.siteSpecific"> Remember zoom level for each website</label>
+    <label><input type="checkbox" data-pref="accessibility.typeaheadfind"> Search for text when I start typing</label>
+    <h4><img src="chrome://valconet/skin/icons/page.svg" alt="">Browsing</h4>
+    <label><input type="checkbox" data-pref="general.smoothScroll"> Use smooth scrolling</label>
+    <label><input type="checkbox" data-pref="general.autoScroll"> Use autoscrolling (middle-click)</label>
+    <label><input type="checkbox" data-pref="valconet.menubar.alwaysShow"> Always show the menu bar</label>
+    <label><input type="checkbox" data-pref="valconet.statusbar.visible"> Show the status bar</label>
+    <label><input type="checkbox" data-pref="valconet.commandbar.labels"> Show text labels on the command bar</label>
+    <label><input type="checkbox" data-pref="browser.ctrlTab.sortByRecentlyUsed"> Ctrl+Tab cycles through tabs in recently used order</label>
+    <label><input type="checkbox" data-pref="valconet.glass" data-type="string" data-on="auto" data-off="painted"> Use translucent glass (Windows 11 acrylic)</label>
+    <h4><img src="chrome://valconet/skin/icons/tools.svg" alt="">Performance</h4>
+    <label><input type="checkbox" data-pref="layers.acceleration.disabled" data-invert> Use hardware acceleration (requires restart)</label>
+    <label><input type="checkbox" data-pref="browser.tabs.unloadOnLowMemory"> Unload inactive tabs when memory is low</label>
+    <h4><img src="chrome://valconet/skin/icons/lock.svg" alt="">Security</h4>
+    <label><input type="checkbox" data-pref="security.OCSP.enabled" data-type="int" data-on="1" data-off="0"> Check for server certificate revocation</label>
+    <label><input type="checkbox" data-pref="security.mixed_content.block_display_content"> Block insecure images and media on secure pages</label>
+    <label><input type="checkbox" data-pref="dom.security.https_only_mode_pbm"> Use HTTPS-Only Mode in InPrivate windows</label>
+    <label><input type="checkbox" data-pref="privacy.query_stripping.enabled"> Remove tracking parameters from links</label>
+  </div>
+  <div class="row" style="justify-content:flex-end;margin-top:8px">
+    <button class="vn-button" id="about-config">Advanced configuration</button>
+    <button class="vn-button" id="gecko-settings">Engine settings</button>
+  </div>
+  <fieldset style="margin-top:8px"><legend>Reset ValcoNet settings</legend>
+    Resets ValcoNet's toolbar layout and options to their defaults. Favorites and history are kept.
+    <div class="row" style="justify-content:flex-end"><button class="vn-button" id="reset">Reset...</button></div>
+  </fieldset>
+</div>
+
+<div class="buttons">
+  <button class="vn-button" id="ok">OK</button>
+  <button class="vn-button" id="cancel">Cancel</button>
+  <button class="vn-button" id="apply" disabled>Apply</button>
+</div>
+<script src="chrome://valconet/content/dialogs/dialog.js"></script>
+<script src="chrome://valconet/content/dialogs/options.js"></script>
+</body>
+</html>

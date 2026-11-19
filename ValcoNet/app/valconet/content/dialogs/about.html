@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html windowtype="valconet:about">
+<head>
+<meta charset="utf-8">
+<title>About ValcoNet</title>
+<link rel="icon" href="chrome://valconet/skin/icons/valconet.svg">
+<link rel="stylesheet" href="chrome://valconet/content/dialogs/dialog.css">
+<style>
+  #vn-client { width: 460px; }
+  .banner { height: 96px; display: flex; align-items: center; gap: 14px; padding: 0 20px; color: #fff;
+    background:
+      radial-gradient(ellipse 70% 90% at 85% 130%, rgba(120,220,110,.6), transparent 70%),
+      radial-gradient(ellipse 60% 120% at 0% -20%, rgba(255,255,255,.35), transparent 60%),
+      linear-gradient(120deg, #0d3c78, #1b6dbd 55%, #2aa6c4); }
+  .banner img { width: 64px; height: 64px; filter: drop-shadow(0 2px 5px rgba(0,0,0,.35)); }
+  .banner h1 { font: 300 24pt "Segoe UI Light", "Segoe UI", sans-serif; }
+  .banner p { margin: 0; opacity: .9; }
+  .content { background: #fff; line-height: 1.55; }
+  .content p { margin: 0 0 8px; }
+  .fine { color: #555; font-size: 8pt; }
+</style>
+</head>
+<body>
+<div class="banner">
+  <img src="chrome://valconet/skin/icons/valconet.svg" alt="">
+  <div><h1>ValcoNet</h1><p>A web browser for Windows, from the Valco suite.</p></div>
+</div>
+<div class="content">
+  <p><b>Version:</b> <span id="version"></span><br>
+     <b>Engine:</b> <span id="engine"></span><br>
+     <b>Update channel:</b> ValcoNet releases on GitHub</p>
+  <p>© 2026 ItsRaiden. ValcoNet's own code is available under the Mozilla Public License 2.0.</p>
+  <p class="fine">ValcoNet runs on the Gecko engine from the Mozilla project (MPL 2.0). It is an independent project and is not
+  affiliated with or endorsed by Mozilla or Microsoft. Firefox is a trademark of the Mozilla Foundation; Internet Explorer
+  and Windows are trademarks of Microsoft Corporation.</p>
+  <p><a href="#" id="licenses">Open-source licenses</a> · <a href="#" id="site">Project page</a></p>
+</div>
+<div class="buttons"><button class="vn-button" id="ok" autofocus>OK</button></div>
+<script src="chrome://valconet/content/dialogs/dialog.js"></script>
+<script src="chrome://valconet/content/dialogs/about.js"></script>
+</body>
+</html>

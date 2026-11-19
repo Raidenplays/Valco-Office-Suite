@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html windowtype="valconet:delete-history">
+<head>
+<meta charset="utf-8">
+<title>Delete Browsing History</title>
+<link rel="icon" href="chrome://valconet/skin/icons/safety.svg">
+<link rel="stylesheet" href="chrome://valconet/content/dialogs/dialog.css">
+<style>
+  #vn-client { width: 430px; }
+  .item { display: grid; grid-template-columns: auto 1fr; gap: 0 6px; margin: 0 0 9px; }
+  .item input { margin: 2px 0 0; }
+  .item b { font-weight: 600; }
+  .item span { grid-column: 2; color: #444; }
+  #busy { color: #1e3287; }
+</style>
+</head>
+<body>
+<div class="content">
+  <div class="item"><input type="checkbox" id="preserve" checked><label for="preserve" class="block"><b>Preserve Favorites website data</b></label>
+    <span>Keep cookies and site data for the sites in your Favorites, so they stay signed in.</span></div>
+  <div class="item"><input type="checkbox" id="cache" checked><label for="cache" class="block"><b>Temporary Internet files</b></label>
+    <span>Copies of webpages, images, and media saved for faster viewing.</span></div>
+  <div class="item"><input type="checkbox" id="cookies" checked><label for="cookies" class="block"><b>Cookies and website data</b></label>
+    <span>Files and databases stored on your computer by websites to save preferences or improve performance.</span></div>
+  <div class="item"><input type="checkbox" id="history" checked><label for="history" class="block"><b>History</b></label>
+    <span>List of websites you have visited.</span></div>
+  <div class="item"><input type="checkbox" id="downloads"><label for="downloads" class="block"><b>Download History</b></label>
+    <span>List of files you have downloaded.</span></div>
+  <div class="item"><input type="checkbox" id="formdata"><label for="formdata" class="block"><b>Form data</b></label>
+    <span>Saved information that you have typed into forms.</span></div>
+  <div class="item"><input type="checkbox" id="passwords"><label for="passwords" class="block"><b>Passwords</b></label>
+    <span>Saved passwords that are automatically filled in when you sign in to a website you've previously visited.</span></div>
+  <div class="item"><input type="checkbox" id="siteSettings"><label for="siteSettings" class="block"><b>Site permissions</b></label>
+    <span>Pop-up, camera, location and other choices you've made for individual websites.</span></div>
+  <div id="busy" hidden>Deleting browsing history…</div>
+</div>
+<div class="buttons">
+  <a href="#" id="about" style="margin-right:auto;align-self:center">About deleting browsing history</a>
+  <button class="vn-button" id="delete">Delete</button>
+  <button class="vn-button" id="cancel">Cancel</button>
+</div>
+<script src="chrome://valconet/content/dialogs/dialog.js"></script>
+<script src="chrome://valconet/content/dialogs/delete-history.js"></script>
+</body>
+</html>

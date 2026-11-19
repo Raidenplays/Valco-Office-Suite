@@ -1,0 +1,1 @@
+return Services.console.getMessageArray().map(m => { try { m.QueryInterface(Ci.nsIScriptError); return (m.flags & 1 ? "W " : "E ") + m.errorMessage + " @ " + m.sourceName + ":" + m.lineNumber; } catch(e) { return "M " + m.message; } }).filter(s => /valconet/i.test(s)).slice(-40);

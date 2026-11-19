@@ -1,0 +1,95 @@
+/* ValcoNet dialogs: Vista glass frame + #F0F0F0 client area. */
+@import url("chrome://valconet/content/pages.css");
+:root { background: transparent; }
+body {
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,.42), rgba(255,255,255,0) 26px),
+    repeating-linear-gradient(112deg, transparent 0 120px, rgba(255,255,255,.1) 120px 150px, transparent 150px 320px),
+    linear-gradient(#a8c3e1, #8badd5 50%, #7c9fca);
+  border: 1px solid #3b5372;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+:root:-moz-window-inactive body {
+  background: linear-gradient(to bottom, rgba(255,255,255,.45), rgba(255,255,255,0) 26px), linear-gradient(#d3dfec, #b8c9de);
+}
+#vn-titlebar {
+  display: flex;
+  align-items: flex-start;
+  height: 28px;
+  padding-left: 8px;
+  -moz-window-dragging: drag;
+}
+#vn-titlebar img { width: 16px; height: 16px; margin: 6px 6px 0 0; }
+#vn-title {
+  flex: 1;
+  margin-top: 6px;
+  text-shadow: 0 0 6px #fff, 0 0 10px rgba(255,255,255,.9), 0 0 3px #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#vn-close {
+  -moz-window-dragging: no-drag;
+  width: 43px;
+  height: 18px;
+  margin-right: 5px;
+  border: 1px solid rgba(70, 20, 10, .85);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background:
+    url("chrome://valconet/skin/icons/cap-close.svg") center / 12px 10px no-repeat,
+    linear-gradient(to bottom, rgba(255,255,255,.45), rgba(255,255,255,.1) 48%, rgba(255,255,255,0) 52%, rgba(255,255,255,.12)),
+    linear-gradient(to bottom, #d9806b, #c4462b 50%, #b5341a 52%, #cf5a3b);
+}
+#vn-close:hover {
+  background:
+    url("chrome://valconet/skin/icons/cap-close.svg") center / 12px 10px no-repeat,
+    radial-gradient(ellipse at 50% 100%, #ffb38a, #e8492a 70%);
+}
+#vn-client {
+  flex: 1;
+  margin: 0 6px 6px;
+  background: #f0f0f0;
+  border: 1px solid #5f7894;
+  display: flex;
+  flex-direction: column;
+}
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  padding: 10px 11px 11px;
+}
+.content { padding: 11px; flex: 1; }
+fieldset {
+  border: 1px solid #d5dfe5;
+  border-radius: 3px;
+  margin: 0 0 9px;
+  padding: 6px 9px 9px;
+}
+legend { color: #1e3287; padding: 0 3px; }
+label { display: flex; align-items: center; gap: 5px; margin: 3px 0; }
+label.block { display: block; }
+.row { display: flex; gap: 6px; align-items: center; margin: 4px 0; }
+.note { color: #555; }
+/* Vista property-sheet tabs */
+.tabs { display: flex; flex-wrap: wrap-reverse; padding: 9px 9px 0; gap: 0; }
+.tabs button {
+  height: 22px; padding: 0 8px; margin-right: -1px;
+  border: 1px solid #898c95; border-bottom: none; border-radius: 3px 3px 0 0;
+  background: linear-gradient(#f2f2f2, #ebebeb 50%, #dddddd 51%, #cfcfcf);
+  position: relative; top: 2px;
+}
+.tabs button:hover { background: linear-gradient(#eaf6fd, #d9f0fc 50%, #bee6fd 51%, #a7d9f5); }
+.tabs button[aria-selected="true"] { background: #fff; top: 0; height: 25px; z-index: 1; }
+.sheet { margin: 0 9px; padding: 11px; background: #fff; border: 1px solid #898c95; flex: 1; overflow: auto; }
+.sheet[hidden] { display: none; }
+.sheet fieldset { border-color: #d5dfe5; }
+.iconhead { display: flex; gap: 10px; align-items: flex-start; }
+.iconhead img { width: 32px; height: 32px; flex: none; }
+textarea.vn-input { font: inherit; height: 54px; width: 100%; box-sizing: border-box; resize: none; padding: 3px; }

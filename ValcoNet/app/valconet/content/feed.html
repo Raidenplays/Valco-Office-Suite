@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src chrome:; img-src chrome:; style-src chrome: 'unsafe-inline'; connect-src https: http: file:">
+<title>Feed</title>
+<link rel="icon" href="chrome://valconet/skin/icons/feeds.svg">
+<link rel="stylesheet" href="chrome://valconet/content/pages.css">
+<style>
+  body { display: grid; grid-template-columns: 1fr 230px; gap: 0 26px; padding: 0 26px 30px; max-width: 1200px; }
+  #head { grid-column: 1 / -1; padding: 22px 0 14px; }
+  #head h1 { font: 300 20pt "Segoe UI Light", "Segoe UI", sans-serif; color: #1e395b; }
+  #head p { color: #555; margin: 4px 0 0; }
+  #box { grid-column: 1 / -1; display: flex; gap: 12px; padding: 10px 12px; margin-bottom: 16px;
+    border: 1px solid #e4d27c; background: linear-gradient(#fffbe0, #fff4bf); border-radius: 3px; }
+  #box img { width: 32px; height: 32px; flex: none; }
+  #box p { margin: 0 0 6px; }
+  #box.subscribed { border-color: #9fcf8d; background: linear-gradient(#f2fbee, #dff3d6); }
+  #items article { margin-bottom: 18px; }
+  #items h3 { font: 600 11pt "Segoe UI", sans-serif; }
+  .meta { color: #6b7d93; font-size: 8pt; margin: 2px 0 4px; display: flex; gap: 6px; align-items: center; }
+  .meta .arrow { width: 9px; height: 9px; background: linear-gradient(135deg, #5aa2e6, #1d5fb4); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .summary { color: #222; line-height: 1.45; }
+  aside { padding-top: 2px; }
+  aside h4 { margin: 0 0 6px; font: 600 9pt "Segoe UI", sans-serif; color: #1e395b; }
+  aside .group { border-top: 1px solid #dde6f1; padding: 8px 0 12px; }
+  aside a { display: block; padding: 1px 0; cursor: pointer; }
+  aside a.on { font-weight: 600; color: #000; }
+  #count { color: #333; }
+  #filter { width: 100%; box-sizing: border-box; }
+  #error { grid-column: 1 / -1; color: #a1260d; }
+</style>
+</head>
+<body>
+<div id="head"><h1 id="title">Loading feed…</h1><p id="desc"></p></div>
+<div id="box">
+  <img src="chrome://valconet/skin/icons/feeds.svg" alt="">
+  <div>
+    <p id="box-text">You are viewing a feed that contains frequently updated content. When you subscribe to a feed, it is added to the
+    Feeds list in the Favorites Center and its headlines appear on ValcoNet Home.</p>
+    <a id="subscribe" href="#">Subscribe to this feed</a>
+  </div>
+</div>
+<div id="error" hidden></div>
+<main id="items"></main>
+<aside>
+  <div class="group"><span id="count"></span></div>
+  <div class="group"><input id="filter" class="vn-input" type="search" placeholder="Search this feed"></div>
+  <div class="group" id="sort"><h4>Sort by:</h4>
+    <a data-sort="date" class="on">▾ Date</a><a data-sort="title">Title</a><a data-sort="author">Author</a></div>
+  <div class="group" id="cats" hidden><h4>Filter by category:</h4></div>
+</aside>
+<script src="chrome://valconet/content/feed.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><defs><radialGradient id="disc" cx="0.42" cy="0.32" r="0.78"><stop offset="0" stop-color="#8be8ff"/><stop offset="0.55" stop-color="#2b8ad8"/><stop offset="1" stop-color="#0c3f8a"/></radialGradient><linearGradient id="sw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c7f59a"/><stop offset="0.5" stop-color="#58c22c"/><stop offset="1" stop-color="#1f7d12"/></linearGradient><linearGradient id="shine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.85"/><stop offset="1" stop-color="#fff" stop-opacity="0.05"/></linearGradient></defs>
+<circle cx="128" cy="128" r="124" fill="url(#disc)" stroke="#0a3470" stroke-width="6"/>
+<path d="M14 168 C70 120 170 112 246 150 C236 196 198 232 150 244 C108 210 60 186 14 168Z" fill="url(#sw)" opacity=".92"/>
+<g fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" opacity=".97">
+  <circle cx="128" cy="124" r="66"/>
+  <ellipse cx="128" cy="124" rx="30" ry="66"/>
+  <path d="M62 124 H194 M72 90 H184 M72 158 H184"/>
+</g>
+<ellipse cx="128" cy="64" rx="98" ry="54" fill="url(#shine)"/>
+</svg>

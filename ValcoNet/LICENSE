@@ -1,0 +1,15 @@
+ValcoNet
+Copyright (c) 2026 ItsRaiden
+
+ValcoNet's own source code (the app/, launcher/, build/, installer/ and tools/
+folders) is licensed under the Mozilla Public License, version 2.0.
+You can get a copy of the license at https://mozilla.org/MPL/2.0/
+
+This Source Code Form is subject to the terms of the Mozilla Public License,
+v. 2.0. If a copy of the MPL was not distributed with this file, You can
+obtain one at https://mozilla.org/MPL/2.0/.
+
+ValcoNet's builds include the Gecko engine from the Mozilla project, also
+under the MPL 2.0 (with some components under other free licenses). The
+engine's source is available at https://hg.mozilla.org/ and
+https://github.com/mozilla-firefox/firefox. In ValcoNet, see about:license.

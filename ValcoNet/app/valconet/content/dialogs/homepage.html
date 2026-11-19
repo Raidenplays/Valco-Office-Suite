@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html windowtype="valconet:homepage">
+<head>
+<meta charset="utf-8">
+<title>Add or Change Home Page</title>
+<link rel="icon" href="chrome://valconet/skin/icons/home.svg">
+<link rel="stylesheet" href="chrome://valconet/content/dialogs/dialog.css">
+<style>
+  #vn-client { width: 420px; }
+  #url { margin: 4px 0 12px 42px; word-break: break-all; color: #1e3287; }
+  label { margin: 6px 0 6px 42px; }
+</style>
+</head>
+<body>
+<div class="content">
+  <div class="iconhead"><img src="chrome://valconet/skin/icons/home.svg" alt=""><div>Would you like to use the following as your home page?</div></div>
+  <div id="url"></div>
+  <label><input type="radio" name="mode" value="only" checked> Use this webpage as your only home page</label>
+  <label><input type="radio" name="mode" value="add"> Add this webpage to your home page tabs</label>
+  <label><input type="radio" name="mode" value="tabs"> Use the current tab set as your home page</label>
+</div>
+<div class="buttons"><button class="vn-button" id="yes">Yes</button><button class="vn-button" id="no">No</button></div>
+<script src="chrome://valconet/content/dialogs/dialog.js"></script>
+<script src="chrome://valconet/content/dialogs/homepage.js"></script>
+</body>
+</html>

@@ -315,18 +315,18 @@ namespace ValcoSetup
                 var exe = Path.Combine(AppDir(app), app.Exe ?? "");
                 Directory.CreateDirectory(StartMenuDir);
                 var lnk = Path.Combine(StartMenuDir, app.Name + ".lnk");
-                ShellLink.Create(lnk, exe, "", AppDir(app), app.ShortcutDescription ?? app.Description, exe);
+                ShellLink.Create(lnk, exe, "", AppDir(app), app.ShortcutDescription ?? app.Description, exe, app.AppUserModelId);
                 shortcuts.Add(lnk);
                 foreach (var s in app.Shortcuts)
                 {
                     var l2 = Path.Combine(StartMenuDir, s.Name + ".lnk");
-                    ShellLink.Create(l2, exe, s.Args, AppDir(app), s.Description, exe);
+                    ShellLink.Create(l2, exe, s.Args, AppDir(app), s.Description, exe, app.AppUserModelId);
                     shortcuts.Add(l2);
                 }
                 if (DesktopShortcuts && app.Desktop)
                 {
                     var dl = Path.Combine(DesktopDir, app.Name + ".lnk");
-                    ShellLink.Create(dl, exe, "", AppDir(app), app.ShortcutDescription ?? app.Description, exe);
+                    ShellLink.Create(dl, exe, "", AppDir(app), app.ShortcutDescription ?? app.Description, exe, app.AppUserModelId);
                     shortcuts.Add(dl);
                 }
             }

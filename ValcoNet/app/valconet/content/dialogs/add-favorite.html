@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html windowtype="valconet:add-favorite">
+<head>
+<meta charset="utf-8">
+<title>Add a Favorite</title>
+<link rel="icon" href="chrome://valconet/skin/icons/fav-add.svg">
+<link rel="stylesheet" href="chrome://valconet/content/dialogs/dialog.css">
+<style>
+  #vn-client { width: 420px; }
+  .head { display: flex; gap: 12px; padding: 12px; background: #fff; border-bottom: 1px solid #dfdfdf; }
+  .head img { width: 40px; height: 40px; }
+  .head h2 { font: 11pt "Segoe UI", sans-serif; color: #1e3287; margin-bottom: 3px; }
+  .form { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 14px 12px 4px; }
+  .form input, .form select { width: 100%; box-sizing: border-box; height: 23px; }
+</style>
+</head>
+<body>
+<div class="head"><img src="chrome://valconet/skin/icons/fav-star.svg" alt="">
+  <div><h2>Add a Favorite</h2>Add this webpage as a favorite. To access your favorites, visit the Favorites Center.</div></div>
+<div class="form">
+  <label for="name">Name:</label><input id="name" class="vn-input" autofocus><span></span>
+  <label for="folder">Create in:</label><select id="folder" class="vn-input"></select><button class="vn-button" id="newfolder">New Folder</button>
+</div>
+<div class="buttons"><button class="vn-button" id="add">Add</button><button class="vn-button" id="cancel">Cancel</button></div>
+<script src="chrome://valconet/content/dialogs/dialog.js"></script>
+<script src="chrome://valconet/content/dialogs/add-favorite.js"></script>
+</body>
+</html>

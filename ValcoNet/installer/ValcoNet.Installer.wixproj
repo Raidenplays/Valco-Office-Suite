@@ -1,0 +1,15 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <!-- Standalone ValcoNet MSI. Build ..\build.ps1 -Msi (it stages ..\dist\ValcoNet first). -->
+  <PropertyGroup>
+    <OutputName>ValcoNet-Setup</OutputName>
+    <Platform>x64</Platform>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <ValcoNetVersion Condition="'$(ValcoNetVersion)' == ''">1.0.0</ValcoNetVersion>
+    <DefineConstants>Version=$(ValcoNetVersion);Dist=$(MSBuildThisFileDirectory)..\dist\ValcoNet;AssetsDir=$(MSBuildThisFileDirectory)..\assets</DefineConstants>
+    <SuppressIces>ICE61</SuppressIces>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="5.0.2" />
+  </ItemGroup>
+</Project>
