@@ -30,6 +30,7 @@ user_pref("devtools.console.stdout.chrome", true);
 user_pref("browser.dom.window.dump.enabled", true);
 user_pref("marionette.port", 2828);
 user_pref("remote.prefs.recommended", false);
+user_pref("ui.prefersReducedMotion", 0);
 user_pref("font.name.sans-serif.x-western", "DejaVu Sans");
 P
   pgrep Xvfb >/dev/null || (Xvfb :99 -screen 0 1400x900x24 >/dev/null 2>&1 &)

@@ -97,7 +97,6 @@
 :root[valconet] #PanelUI-button,
 :root[valconet] #firefox-view-button,
 :root[valconet] #alltabs-button,
-:root[valconet] #new-tab-button,
 :root[valconet] #fxa-toolbar-menu-button,
 :root[valconet] #tracking-protection-icon-container,
 :root[valconet] #star-button-box,
@@ -687,11 +686,13 @@
   max-height: 26px !important;
   align-items: end !important;
 }
-:root[valconet] .tabbrowser-tab:not([pinned]) {
-  max-width: 200px !important;
-  min-width: 60px !important;
+/* Only size tabs that are fully open: Gecko opens and closes tabs by animating
+   max-width to 0.1px and removes a closing tab when that transition ends, so a
+   forced width on every tab would leave closed tabs behind as invisible gaps. */
+:root[valconet] .tabbrowser-tab:not([pinned])[fadein] {
+  max-width: 200px;
+  min-width: 60px;
 }
-:root[valconet] .tabbrowser-tab:not([pinned])[fadein] { max-width: 200px !important; }
 :root[valconet] .tab-stack { height: 24px; }
 :root[valconet] .tabbrowser-tab[selected] .tab-stack { height: 26px; }
 :root[valconet] .tab-background {
@@ -769,7 +770,8 @@
 }
 
 /* New-tab stub */
-:root[valconet] #tabs-newtab-button {
+:root[valconet] #tabs-newtab-button,
+:root[valconet] #TabsToolbar #new-tab-button {
   appearance: none !important;
   margin: 0 0 0 2px !important;
   padding: 0 !important;
@@ -783,7 +785,7 @@
   list-style-image: url("chrome://valconet/skin/icons/new-tab.svg") !important;
   -moz-context-properties: none !important;
 }
-:root[valconet] #tabs-newtab-button > .toolbarbutton-icon {
+:root[valconet] :is(#tabs-newtab-button, #TabsToolbar #new-tab-button) > .toolbarbutton-icon {
   width: 16px !important;
   height: 16px !important;
   padding: 0 !important;
@@ -792,8 +794,8 @@
   opacity: .35;
   fill: none !important;
 }
-:root[valconet] #tabs-newtab-button:hover > .toolbarbutton-icon { opacity: 1; }
-:root[valconet] #tabs-newtab-button:hover {
+:root[valconet] :is(#tabs-newtab-button, #TabsToolbar #new-tab-button):hover > .toolbarbutton-icon { opacity: 1; }
+:root[valconet] :is(#tabs-newtab-button, #TabsToolbar #new-tab-button):hover {
   background: linear-gradient(#ffffff, #eaf5fe 48%, #d3ebfd 52%, #e2f2fe) !important;
   border-color: #6f9cd0 !important;
 }

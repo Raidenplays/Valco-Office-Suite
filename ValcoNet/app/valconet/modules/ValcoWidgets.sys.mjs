@@ -4,7 +4,7 @@
 import { CustomizableUI } from "moz-src:///browser/components/customizableui/CustomizableUI.sys.mjs";
 
 const XUL = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-export const LAYOUT_VERSION = 4;
+export const LAYOUT_VERSION = 5;
 
 function el(doc, tag, attrs = {}, children = []) {
   const node = doc.createXULElement(tag);
@@ -198,7 +198,7 @@ export const ValcoWidgets = {
         "downloads-button",
         "unified-extensions-button",
       ],
-      TabsToolbar: ["valco-tabtools", "tabbrowser-tabs", "valco-commandbar"],
+      TabsToolbar: ["valco-tabtools", "tabbrowser-tabs", "new-tab-button", "valco-commandbar"],
       PersonalToolbar: ["valco-favorites", "personal-bookmarks"],
     };
     CustomizableUI.beginBatchUpdate();
