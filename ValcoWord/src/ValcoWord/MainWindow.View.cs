@@ -831,7 +831,7 @@ namespace ValcoWord
             var host = new ContentControl { Width = 490, Margin = new Thickness(12, 0, 0, 0) };
             // controls (kept so OK can read them)
             var mini = new CheckBox { Content = "Show Mini Toolbar on selection", IsChecked = s.MiniToolbar };
-            var scheme = new ComboBox { Width = 120, ItemsSource = new[] { "Blue", "Silver", "Black" }, SelectedItem = OfficeTheme.Current };
+            var scheme = new ComboBox { Width = 120, ItemsSource = OfficeTheme.Schemes, SelectedItem = OfficeTheme.Current };
             var user = D.Box(s.UserName ?? "", 220); var initials = D.Box(s.Initials ?? "", 60);
             var marks = new CheckBox { Content = "Show all formatting marks", IsChecked = s.ShowMarks };
             var ruler = new CheckBox { Content = "Show the ruler", IsChecked = s.ShowRuler };

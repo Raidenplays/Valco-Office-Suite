@@ -19,7 +19,10 @@ namespace Valco.UI
     /// </summary>
     public static class OfficeTheme
     {
-        public static readonly string[] Schemes = { "Blue", "Silver", "Black" };
+        /// <summary>Blue, Silver and Black are Office 2007's; the others match the Valco app themes (Valco Code, Valco Weave).</summary>
+        public static readonly string[] Schemes = { "Blue", "Silver", "Black", "Windows Vista", "Modern Dark", "Dreamweaver CS6", "2077" };
+        /// <summary>True for the schemes with a dark ribbon and dark text areas around the document.</summary>
+        public static bool IsDark => Current == "Modern Dark" || Current == "2077";
         public static string Current { get; private set; } = "Blue";
         public static event Action Changed;
 
@@ -62,6 +65,7 @@ namespace Valco.UI
                     r["LightBarBrush"] = V(("#FFF8F8F9", 0), ("#FFE6E8EC", 1));
                     r["SplitterBrush"] = S("#FFD5D9E0");
                     r["ChromeLine"] = S("#FFB9BEC6");
+                    r["Rb.CaptionText"] = S("#FF4C535C");
                     break;
                 case "Black":
                     Current = "Black";
@@ -87,7 +91,128 @@ namespace Valco.UI
                     r["LightBarBrush"] = V(("#FFEFEFEF", 0), ("#FFD9D9D9", 1));
                     r["SplitterBrush"] = S("#FF9A9A9A");
                     r["ChromeLine"] = S("#FF7A7A7A");
+                    r["Rb.CaptionText"] = S("#FFFFFFFF");
                     break;
+                case "Windows Vista":
+                    Current = scheme;
+                    r["Rb.TabStrip"] = V(("#FF5A7FA3", 0), ("#FF2C4E70", 0.5), ("#FF1D3A5C", 0.51), ("#FF27496B", 1));
+                    r["Rb.Body"] = V(("#FFF7FAFD", 0), ("#FFE6EEF7", 0.4), ("#FFD8E5F2", 1));
+                    r["Rb.Group"] = V(("#FFFFFFFF", 0), ("#FFEEF4FA", 0.7), ("#FFE2ECF6", 1));
+                    r["Rb.GroupBorder"] = S("#FFA8C0DA");
+                    r["Rb.GroupLabelBg"] = V(("#FFD5E3F1", 0), ("#FFC3D6EA", 1));
+                    r["Rb.Text"] = S("#FF1E395B");
+                    r["Rb.TabText"] = S("#FFFFFFFF");
+                    r["Rb.TabSel"] = V(("#FFFFFFFF", 0), ("#FFE4EEF8", 1));
+                    r["Rb.TabBorder"] = S("#FF6F8FB0");
+                    r["Rb.Workspace"] = V(("#FFC9D9EA", 0), ("#FFAFC6DE", 1));
+                    r["Rb.Status"] = V(("#FFF0F5FA", 0), ("#FFD9E5F1", 1));
+                    r["Rb.StatusText"] = S("#FF1E395B");
+                    r["MenuBarBrush"] = V(("#FF5A7FA3", 0), ("#FF2C4E70", 0.5), ("#FF1D3A5C", 0.51), ("#FF27496B", 1));
+                    r["CommandBarBrush"] = V(("#FF5A7FA3", 0), ("#FF2C4E70", 0.48), ("#FF1D3A5C", 0.5), ("#FF27496B", 1));
+                    r["StatusBarBrush"] = V(("#FFF0F5FA", 0), ("#FFD9E5F1", 1));
+                    r["StatusText"] = S("#FF1E395B");
+                    r["PaneHeaderBrush"] = V(("#FFF5F9FD", 0), ("#FFDCE7F3", 1));
+                    r["PaneHeaderText"] = S("#FF1E395B");
+                    r["PreviewHeaderBrush"] = V(("#FFFBFDFF", 0), ("#FFE2ECF6", 1));
+                    r["LightBarBrush"] = V(("#FFFFFFFF", 0), ("#FFE8F0F8", 1));
+                    r["SplitterBrush"] = S("#FFB9CDE3");
+                    r["ChromeLine"] = S("#FF8FAAC8");
+                    r["Rb.CaptionText"] = S("#FF1E395B");
+                    Hover(r, V(("#FFEAF6FD", 0), ("#FFD9F0FC", 0.45), ("#FFBEE6FD", 0.5), ("#FFA7D9F5", 1)), "#FF3C7FB1",
+                             V(("#FFE5F4FC", 0), ("#FFC4E5F6", 0.45), ("#FF98D1EF", 0.5), ("#FF68B3DB", 1)), "#FF2C628B",
+                             V(("#FFDAEEF9", 0), ("#FFB2DDF4", 0.5), ("#FF8DCAEB", 1)));
+                    Changed?.Invoke();
+                    return;
+                case "Dreamweaver CS6":
+                    Current = scheme;
+                    r["Rb.TabStrip"] = V(("#FFE8E8E8", 0), ("#FFCDCDCD", 1));
+                    r["Rb.Body"] = V(("#FFF2F2F2", 0), ("#FFDCDCDC", 1));
+                    r["Rb.Group"] = V(("#FFFAFAFA", 0), ("#FFE4E4E4", 1));
+                    r["Rb.GroupBorder"] = S("#FFA8A8A8");
+                    r["Rb.GroupLabelBg"] = V(("#FFD4D4D4", 0), ("#FFC4C4C4", 1));
+                    r["Rb.Text"] = S("#FF1E1E1E");
+                    r["Rb.TabText"] = S("#FF1E1E1E");
+                    r["Rb.TabSel"] = V(("#FFFFFFFF", 0), ("#FFEFEFEF", 1));
+                    r["Rb.TabBorder"] = S("#FFA8A8A8");
+                    r["Rb.Workspace"] = V(("#FFB4B4B4", 0), ("#FF9E9E9E", 1));
+                    r["Rb.Status"] = V(("#FFD6D6D6", 0), ("#FFBDBDBD", 1));
+                    r["Rb.StatusText"] = S("#FF1E1E1E");
+                    r["MenuBarBrush"] = V(("#FFE8E8E8", 0), ("#FFCDCDCD", 1));
+                    r["CommandBarBrush"] = V(("#FF8A8A8A", 0), ("#FF6A6A6A", 0.48), ("#FF555555", 0.5), ("#FF646464", 1));
+                    r["StatusBarBrush"] = V(("#FFD6D6D6", 0), ("#FFBDBDBD", 1));
+                    r["StatusText"] = S("#FF1E1E1E");
+                    r["PaneHeaderBrush"] = V(("#FFEDEDED", 0), ("#FFD6D6D6", 1));
+                    r["PaneHeaderText"] = S("#FF1E1E1E");
+                    r["PreviewHeaderBrush"] = V(("#FFFAFAFA", 0), ("#FFE2E2E2", 1));
+                    r["LightBarBrush"] = V(("#FFFAFAFA", 0), ("#FFE4E4E4", 1));
+                    r["SplitterBrush"] = S("#FFB8B8B8");
+                    r["ChromeLine"] = S("#FFA8A8A8");
+                    r["Rb.CaptionText"] = S("#FF1E1E1E");
+                    Hover(r, V(("#FFE5F0FB", 0), ("#FFCFE3F8", 1)), "#FF7DA2CE",
+                             V(("#FFBFD7F2", 0), ("#FFA6C6EC", 1)), "#FF5A84B8",
+                             V(("#FFD4E5F7", 0), ("#FFBDD6F2", 1)));
+                    Changed?.Invoke();
+                    return;
+                case "Modern Dark":
+                    Current = scheme;
+                    r["Rb.TabStrip"] = V(("#FF1A1C21", 0), ("#FF1A1C21", 1));
+                    r["Rb.Body"] = V(("#FF262930", 0), ("#FF1F2127", 1));
+                    r["Rb.Group"] = V(("#FF2C2F37", 0), ("#FF25282F", 1));
+                    r["Rb.GroupBorder"] = S("#FF3A3F4B");
+                    r["Rb.GroupLabelBg"] = V(("#FF30343D", 0), ("#FF2A2D35", 1));
+                    r["Rb.Text"] = S("#FFD6D9E0");
+                    r["Rb.TabText"] = S("#FFC9CED8");
+                    r["Rb.TabSel"] = V(("#FF30343D", 0), ("#FF262930", 1));
+                    r["Rb.TabBorder"] = S("#FF3A3F4B");
+                    r["Rb.Workspace"] = V(("#FF16181C", 0), ("#FF111317", 1));
+                    r["Rb.Status"] = V(("#FF1A1C21", 0), ("#FF16181C", 1));
+                    r["Rb.StatusText"] = S("#FFC9CED8");
+                    r["MenuBarBrush"] = V(("#FF1A1C21", 0), ("#FF1A1C21", 1));
+                    r["CommandBarBrush"] = V(("#FF2C2F37", 0), ("#FF1F2127", 1));
+                    r["StatusBarBrush"] = V(("#FF1A1C21", 0), ("#FF16181C", 1));
+                    r["StatusText"] = S("#FFC9CED8");
+                    r["PaneHeaderBrush"] = V(("#FF2C2F37", 0), ("#FF25282F", 1));
+                    r["PaneHeaderText"] = S("#FFD6D9E0");
+                    r["PreviewHeaderBrush"] = V(("#FFF4F4F4", 0), ("#FFD8D8D8", 1));
+                    r["LightBarBrush"] = V(("#FFEFEFEF", 0), ("#FFD9D9D9", 1));
+                    r["SplitterBrush"] = S("#FF3A3F4B");
+                    r["ChromeLine"] = S("#FF3A3F4B");
+                    r["Rb.CaptionText"] = S("#FF9AA1AE");
+                    Hover(r, V(("#FF2F5F5A", 0), ("#FF27504C", 1)), "#FF36C2B4",
+                             V(("#FF1F7A70", 0), ("#FF19665E", 1)), "#FF36C2B4",
+                             V(("#FF245B55", 0), ("#FF1E4C47", 1)));
+                    Changed?.Invoke();
+                    return;
+                case "2077":
+                    Current = scheme;
+                    r["Rb.TabStrip"] = V(("#FF0B082E", 0), ("#FF120C45", 1));
+                    r["Rb.Body"] = V(("#FF1A1250", 0), ("#FF0E0A33", 1));
+                    r["Rb.Group"] = V(("#FF21175E", 0), ("#FF160F45", 1));
+                    r["Rb.GroupBorder"] = S("#FFFF2592");
+                    r["Rb.GroupLabelBg"] = V(("#FF2A1366", 0), ("#FF1E0F4D", 1));
+                    r["Rb.Text"] = S("#FFEAE2FF");
+                    r["Rb.TabText"] = S("#FF2DE2E6");
+                    r["Rb.TabSel"] = V(("#FF2A1366", 0), ("#FF1A1250", 1));
+                    r["Rb.TabBorder"] = S("#FFFF2592");
+                    r["Rb.Workspace"] = V(("#FF0B082E", 0), ("#FF07051F", 1));
+                    r["Rb.Status"] = V(("#FF0B082E", 0), ("#FF07051F", 1));
+                    r["Rb.StatusText"] = S("#FF2DE2E6");
+                    r["MenuBarBrush"] = V(("#FF0B082E", 0), ("#FF120C45", 1));
+                    r["CommandBarBrush"] = V(("#FF21175E", 0), ("#FF0E0A33", 1));
+                    r["StatusBarBrush"] = V(("#FF0B082E", 0), ("#FF07051F", 1));
+                    r["StatusText"] = S("#FF2DE2E6");
+                    r["PaneHeaderBrush"] = V(("#FF21175E", 0), ("#FF160F45", 1));
+                    r["PaneHeaderText"] = S("#FFFF2592");
+                    r["PreviewHeaderBrush"] = V(("#FFF4F0FF", 0), ("#FFDCD4F2", 1));
+                    r["LightBarBrush"] = V(("#FFF1ECFF", 0), ("#FFDCD4F2", 1));
+                    r["SplitterBrush"] = S("#FFFF2592");
+                    r["ChromeLine"] = S("#FFFF2592");
+                    r["Rb.CaptionText"] = S("#FFFF2592");
+                    Hover(r, V(("#FF3B1670", 0), ("#FF2D0F5A", 1)), "#FF2DE2E6",
+                             V(("#FFFF2592", 0), ("#FFC81C74", 1)), "#FFFFE600",
+                             V(("#FF5A1A80", 0), ("#FF451366", 1)));
+                    Changed?.Invoke();
+                    return;
                 default:
                     Current = "Blue";
                     r["Rb.TabStrip"] = V(("#FFDCE8F7", 0), ("#FFCADBF1", 1));
@@ -112,15 +237,24 @@ namespace Valco.UI
                     r["LightBarBrush"] = V(("#FFF3F7FC", 0), ("#FFDFE9F6", 1));
                     r["SplitterBrush"] = S("#FFC8D8EE");
                     r["ChromeLine"] = S("#FF8DB2E3");
+                    r["Rb.CaptionText"] = S("#FF15428B");
                     break;
             }
-            r["Rb.Hover"] = V(("#FFFFFDF0", 0), ("#FFFFEDB3", 0.45), ("#FFFFD660", 0.5), ("#FFFFE7A0", 1));
-            r["Rb.HoverBorder"] = S("#FFDBCE99");
-            r["Rb.Pressed"] = V(("#FFF8C985", 0), ("#FFF6AE5C", 0.45), ("#FFF39434", 0.5), ("#FFF8C46C", 1));
-            r["Rb.PressedBorder"] = S("#FFC2A15D");
-            r["Rb.Checked"] = V(("#FFFCDCA4", 0), ("#FFFAC36E", 0.45), ("#FFF8B044", 0.5), ("#FFFBD58D", 1));
-            r["Rb.Menu"] = S("#FFFAFAFA");
+            // Office 2007's gold hover for Blue, Silver and Black
+            Hover(r, V(("#FFFFFDF0", 0), ("#FFFFEDB3", 0.45), ("#FFFFD660", 0.5), ("#FFFFE7A0", 1)), "#FFDBCE99",
+                     V(("#FFF8C985", 0), ("#FFF6AE5C", 0.45), ("#FFF39434", 0.5), ("#FFF8C46C", 1)), "#FFC2A15D",
+                     V(("#FFFCDCA4", 0), ("#FFFAC36E", 0.45), ("#FFF8B044", 0.5), ("#FFFBD58D", 1)));
             Changed?.Invoke();
+        }
+
+        static void Hover(ResourceDictionary r, Brush hover, string hoverBorder, Brush pressed, string pressedBorder, Brush check)
+        {
+            r["Rb.Hover"] = hover;
+            r["Rb.HoverBorder"] = S(hoverBorder);
+            r["Rb.Pressed"] = pressed;
+            r["Rb.PressedBorder"] = S(pressedBorder);
+            r["Rb.Checked"] = check;
+            r["Rb.Menu"] = S("#FFFAFAFA");
         }
 
         /// <summary>The Valco Office suite mark (three petals), or null if it can't be loaded.</summary>
@@ -448,7 +582,7 @@ namespace Valco.UI
             var label = new Grid { Height = 16 };
             label.SetResourceReference(Panel.BackgroundProperty, "Rb.GroupLabelBg");
             var tb = new TextBlock { Text = caption, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, FontSize = 11, Margin = new Thickness(6, 0, launcher != null ? 14 : 6, 0) };
-            tb.SetResourceReference(TextBlock.ForegroundProperty, "Rb.Text");
+            tb.SetResourceReference(TextBlock.ForegroundProperty, "Rb.CaptionText");
             label.Children.Add(tb);
             if (launcher != null)
             {

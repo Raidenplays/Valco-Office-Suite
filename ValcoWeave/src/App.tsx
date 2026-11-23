@@ -253,7 +253,7 @@ function Workspace({ platform }: { platform: Platform }) {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.mode = mode;
-    document.documentElement.dataset.scheme = scheme.toLowerCase();
+    document.documentElement.dataset.scheme = scheme.toLowerCase().replace(/\s+/g, '-');
   }, [theme, mode, scheme]);
   useEffect(() => {
     document.documentElement.style.setProperty('--code-size', codeSize + 'px');

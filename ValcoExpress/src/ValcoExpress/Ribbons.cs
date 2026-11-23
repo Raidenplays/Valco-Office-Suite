@@ -104,7 +104,7 @@ namespace ValcoExpress
                 var t = RB.Toggle(null, name, v => SetScheme(name), $"Use the {name} colour scheme.");
                 _tgScheme[name] = t; return t;
             }
-            view.Add(RB.Group("Color Scheme", null, RB.Stack(SchemeT("Blue"), SchemeT("Silver"), SchemeT("Black"))));
+            view.Add(RB.Group("Color Scheme", null, RB.Stack(SchemeT("Blue"), SchemeT("Silver"), SchemeT("Black")), RB.Stack(SchemeT("Windows Vista"), SchemeT("Dreamweaver CS6")), RB.Stack(SchemeT("Modern Dark"), SchemeT("2077"))));
             view.Add(RB.Group("Window", null, RB.Large("IconRefresh", "Refresh", () => Refresh_Click(null, NoArgs), "Check this folder for new messages (F5).")));
 
             var help = new RibbonTab("Help");

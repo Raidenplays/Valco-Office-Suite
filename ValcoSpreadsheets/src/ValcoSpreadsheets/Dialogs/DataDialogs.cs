@@ -8,6 +8,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using ClosedXML.Excel;
+using Valco.UI;
 using ValcoSpreadsheets.Grid;
 using ValcoSpreadsheets.Model;
 
@@ -605,7 +606,7 @@ namespace ValcoSpreadsheets
             var tabs = new TabControl { Height = 380 };
             var pop = new StackPanel { Margin = new Thickness(10) };
             pop.Children.Add(Heading("Top options for working with Valco Spreadsheets"));
-            var scheme = Combo(new[] { "Blue", "Silver", "Black" }, Math.Max(0, Array.IndexOf(new[] { "Blue", "Silver", "Black" }, s.ColorScheme)), 120);
+            var scheme = Combo(OfficeTheme.Schemes, Math.Max(0, Array.IndexOf(OfficeTheme.Schemes, s.ColorScheme)), 130);
             pop.Children.Add(Row(new TextBlock { Text = "Color scheme:", Width = 160, VerticalAlignment = VerticalAlignment.Center }, scheme));
             pop.Children.Add(Heading("When creating new workbooks"));
             var font = Combo(Fonts.SystemFontFamilies.Select(f => f.Source).OrderBy(f => f), 0, 200, true); font.Text = s.DefaultFont;

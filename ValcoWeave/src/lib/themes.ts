@@ -314,5 +314,5 @@ export function editorTheme(name: ThemeName, mode: ThemeMode = NATIVE_MODE[name]
 
 /** Valco Office colour schemes (Office 2007's Blue, Silver and Black), shared with Valco Word and Valco Express.
  *  They recolour the Windows Vista theme's menu bar, command bar, panel headers and status bar. */
-export type Scheme = 'Blue' | 'Silver' | 'Black';
-export const SCHEMES: Scheme[] = ['Blue', 'Silver', 'Black'];
+export type Scheme = 'Blue' | 'Silver' | 'Black' | 'Windows Vista';
+export const SCHEMES: Scheme[] = ['Blue', 'Silver', 'Black', 'Windows Vista'];

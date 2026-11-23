@@ -381,7 +381,16 @@ public static class ThemeManager
     {
         Current = theme;
         // ribbon and Valco button colours (shared with Word and Express); the theme's own brushes are applied after, so they win
-        OfficeTheme.Apply(theme.Id switch { "valco-silver" or "dw-cs6" => "Silver", "valco-black" or "weavecraft" or "cyber2077" => "Black", _ => "Blue" });
+        OfficeTheme.Apply(theme.Id switch
+        {
+            "valco-silver" => "Silver",
+            "valco-black" => "Black",
+            "vista" => "Windows Vista",
+            "dw-cs6" => "Dreamweaver CS6",
+            "weavecraft" => "Modern Dark",
+            "cyber2077" => "2077",
+            _ => "Blue",
+        });
         var res = Application.Current.Resources;
         foreach (var (k, v) in theme.Brushes)
         {
