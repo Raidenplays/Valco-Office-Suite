@@ -13,3 +13,4 @@ _xfer/
 *.msi
 *.user
 .vs/
+__pycache__/

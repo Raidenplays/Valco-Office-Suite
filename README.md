@@ -32,8 +32,16 @@ Valco Weave's MSI is cross-built on Linux: `ValcoWeave/packaging/windows/build-m
 ValcoNet's build downloads the latest Firefox ESR as its engine each time, so rebuilding is how it gets engine security fixes — see `ValcoNet/README.md`.
 
 ## Releasing an update
-1. Bump `<Version>` in the app's project (or just rebuild — every build gets a new revision number).
-2. Run `ValcoSetup\build-all.cmd`.
-3. Create a GitHub release with the tag from `dist\release-tag.txt` (for example `v1.0.0.464900`) and attach every file in `ValcoSetup\release` (the full installer, `ValcoOffice-Updater.exe`, `valco-office.json`, and each program's .zip/.msi and .ico). The apps compare that tag with the installed suite version.
+Releases are automatic. **Push to `main`** and GitHub Actions (`.github/workflows/release.yml`) does the rest:
+
+1. `ValcoSetup/ci/plan.py` compares each program's sources (`sourceDirs` in `ValcoSetup/apps.json`) with the hash stored in the latest release's `valco-office.json`.
+2. Only the programs that changed are rebuilt (Valco Weave on Linux, everything else on Windows). Unchanged programs are copied from the previous release with the same file and version, so Valco Office Update doesn't download them again.
+3. A release tagged `v1.0.0.<revision>` goes up with `ValcoOffice-Setup.exe`, `ValcoOffice-Updater.exe`, `valco-office.json` and each program's .zip/.msi and .ico. Release notes list each changed program's commit messages; Valco Office Update shows the same list.
+
+- Pushes that only change Markdown files don't make a release; neither does a push where nothing a program is built from changed.
+- Every Monday the workflow also checks for a new Firefox ESR and rebuilds ValcoNet with it (engine security fixes).
+- **Actions → Release Valco Office → Run workflow** starts one by hand; tick *Rebuild everything* for a full rebuild.
+- Write commit messages as `Valco Word: what changed` — the app name is dropped in that program's list.
+- A manual release still works: run `ValcoSetup\build-all.cmd` and upload every file in `ValcoSetup\release` with the tag from `dist\release-tag.txt`.
 
 © 2026 ItsRaiden

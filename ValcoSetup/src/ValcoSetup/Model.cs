@@ -20,6 +20,10 @@ namespace ValcoSetup
         public List<AppEntry> Apps { get; set; } = new List<AppEntry>();
         /// <summary>Discontinued programs (e.g. Valco Shell): removed whenever Valco Office is installed, changed or updated.</summary>
         public List<AppEntry> Retired { get; set; } = new List<AppEntry>();
+        /// <summary>Release builds: the commit it was built from and what changed in Setup itself.</summary>
+        public string Commit { get; set; }
+        public string SetupSourceHash { get; set; }
+        public List<string> SetupChanges { get; set; }
 
         static readonly JsonSerializerOptions Opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
         public static SuiteManifest Parse(string json) => JsonSerializer.Deserialize<SuiteManifest>(json, Opts);
@@ -55,6 +59,12 @@ namespace ValcoSetup
         public string AppUserModelId { get; set; }
         public List<RegEntry> Registry { get; set; } = new List<RegEntry>();
         public List<ExtraShortcut> Shortcuts { get; set; } = new List<ExtraShortcut>();
+        /// <summary>Release builds: hash of the sources this program was built from (unchanged programs keep their file and version).</summary>
+        public string SourceHash { get; set; }
+        /// <summary>ValcoNet: the Gecko (Firefox ESR) version inside.</summary>
+        public string Engine { get; set; }
+        /// <summary>What changed since the previous release, shown by Valco Office Update.</summary>
+        public List<string> Changes { get; set; }
     }
 
     /// <summary>A registry value written for an app. {EXE}, {DIR} and {NAME} are expanded. Owned keys are deleted on removal; otherwise only the value is.</summary>

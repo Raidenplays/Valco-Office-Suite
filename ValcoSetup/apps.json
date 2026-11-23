@@ -209,7 +209,12 @@
           "value": "Software\\ItsRaiden\\Valco Word\\Capabilities"
         }
       ],
-      "defaultApps": "Valco Word"
+      "defaultApps": "Valco Word",
+      "sourceDirs": [
+        "ValcoWord",
+        "ValcoCommon"
+      ],
+      "runner": "windows"
     },
     {
       "id": "sheets",
@@ -439,7 +444,12 @@
           "value": "Software\\ItsRaiden\\Valco Spreadsheets\\Capabilities"
         }
       ],
-      "defaultApps": "Valco Spreadsheets"
+      "defaultApps": "Valco Spreadsheets",
+      "sourceDirs": [
+        "ValcoSpreadsheets",
+        "ValcoCommon"
+      ],
+      "runner": "windows"
     },
     {
       "id": "express",
@@ -596,7 +606,12 @@
           "owned": true
         }
       ],
-      "defaultApps": "Valco Express"
+      "defaultApps": "Valco Express",
+      "sourceDirs": [
+        "ValcoExpress",
+        "ValcoCommon"
+      ],
+      "runner": "windows"
     },
     {
       "id": "code",
@@ -1665,7 +1680,12 @@
           "value": "Software\\ItsRaiden\\Valco Code\\Capabilities"
         }
       ],
-      "defaultApps": "Valco Code"
+      "defaultApps": "Valco Code",
+      "sourceDirs": [
+        "ValcoCode",
+        "ValcoCommon"
+      ],
+      "runner": "windows"
     },
     {
       "id": "weave",
@@ -1807,7 +1827,11 @@
           "value": "Software\\ItsRaiden\\Valco Weave\\Capabilities"
         }
       ],
-      "defaultApps": "Valco Weave"
+      "defaultApps": "Valco Weave",
+      "sourceDirs": [
+        "ValcoWeave"
+      ],
+      "runner": "linux"
     },
     {
       "id": "net",
@@ -2136,7 +2160,11 @@
           "value": "{DIR}",
           "owned": true
         }
-      ]
+      ],
+      "sourceDirs": [
+        "ValcoNet"
+      ],
+      "runner": "windows"
     }
   ],
   "retired": [
@@ -2151,5 +2179,10 @@
       "upgradeCode": "9B3E4C21-7D5A-4F8E-A1C6-3E2D9F7B5A18",
       "notes": "Discontinued. Removed automatically when Valco Office is installed or updated."
     }
+  ],
+  "setupSourceDirs": [
+    "ValcoSetup/src",
+    "ValcoSetup/assets",
+    "ValcoCommon"
   ]
 }

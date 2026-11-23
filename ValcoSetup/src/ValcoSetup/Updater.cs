@@ -93,6 +93,7 @@ namespace ValcoSetup
         readonly Border _body = new Border { Padding = new Thickness(24, 16, 24, 16) };
         readonly StackPanel _buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 0, 14, 0), VerticalAlignment = VerticalAlignment.Center };
         string _latest, _tag;
+        SuiteManifest _manifest;
         CancellationTokenSource _cts;
 
         public UpdateWindow()
@@ -159,6 +160,11 @@ namespace ValcoSetup
             try
             {
                 (_latest, _tag) = await UpdateFeed.LatestAsync(_cts.Token);
+                _manifest = null;
+                if (_tag != null && UpdateFeed.IsNewer(_latest))
+                {
+                    try { _manifest = await UpdateFeed.ManifestAsync(_tag, _cts.Token); } catch (OperationCanceledException) { throw; } catch { }
+                }
                 using (var k = Registry.CurrentUser.CreateSubKey(@"Software\Valco\Office\Update")) k.SetValue("LastCheck", DateTime.Now.ToString("o"));
                 ShowResults();
             }
@@ -188,13 +194,62 @@ namespace ValcoSetup
                 Btn("Check _Again", Check); Btn("Close", Close, true);
                 return;
             }
-            sp.Children.Add(Status(WarnShield, new SolidColorBrush(Color.FromRgb(0xE8, 0xA0, 0x10)), "An update for Valco Office is available",
-                $"Valco Office {_latest} is ready to download. You have version {UpdateFeed.InstalledVersion}. Your installed programs will be updated; programs you haven't installed stay as they are."));
-            sp.Children.Add(InstalledList());
+            var updates = PendingUpdates();
+            if (updates != null && updates.Count == 0)
+            {
+                // the release only changed programs that aren't installed here
+                sp.Children.Add(Status(OkShield, new SolidColorBrush(Color.FromRgb(0x3C, 0xA8, 0x3C)), "Your Valco Office programs are up to date",
+                    $"Valco Office {_latest} only changes programs you haven't installed. Click Install updates to record the new version, or close this window."));
+                sp.Children.Add(InstalledList());
+            }
+            else
+            {
+                long size = updates?.Sum(a => a.DownloadSize) ?? 0;
+                sp.Children.Add(Status(WarnShield, new SolidColorBrush(Color.FromRgb(0xE8, 0xA0, 0x10)), "An update for Valco Office is available",
+                    updates == null
+                        ? $"Valco Office {_latest} is ready to download. You have version {UpdateFeed.InstalledVersion}. Your installed programs will be updated; programs you haven't installed stay as they are."
+                        : $"Valco Office {_latest} is ready to download ({Math.Max(1, size / 1048576.0):N0} MB). You have version {UpdateFeed.InstalledVersion}. Only the programs below are downloaded; everything else stays as it is."));
+                sp.Children.Add(updates == null ? InstalledList() : UpdatesList(updates));
+            }
             sp.Children.Add(Footer(lastCheck));
             _body.Child = new ScrollViewer { Content = sp, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
             Btn("_Install updates", async () => await DownloadAndApply(), true);
             Btn("Close", Close);
+        }
+
+        /// <summary>Installed programs that the latest release has a newer version of; null when the release has no manifest.</summary>
+        List<AppEntry> PendingUpdates()
+        {
+            if (_manifest == null || _manifest.Apps.Count == 0) return null;
+            var installed = Engine.InstalledApps();
+            return _manifest.Apps.Where(a => installed.TryGetValue(a.Id, out var v) && Ver.Newer(a.Version, v)).ToList();
+        }
+
+        /// <summary>Each program that will be updated: old and new version, download size and what changed.</summary>
+        UIElement UpdatesList(List<AppEntry> updates)
+        {
+            var sp = new StackPanel { Margin = new Thickness(0, 4, 0, 0) };
+            var installed = Engine.InstalledApps();
+            sp.Children.Add(new TextBlock { Text = "Updates for your programs", FontWeight = FontWeights.SemiBold, Foreground = SetupWindow.HeadingBrush, Margin = new Thickness(0, 0, 0, 4) });
+            foreach (var a in updates)
+            {
+                installed.TryGetValue(a.Id, out var from);
+                var head = new TextBlock { Foreground = SetupWindow.TextBrush, Margin = new Thickness(0, 6, 0, 0), TextWrapping = TextWrapping.Wrap };
+                head.Inlines.Add(new System.Windows.Documents.Run(a.Name) { FontWeight = FontWeights.SemiBold });
+                head.Inlines.Add(new System.Windows.Documents.Run($"   {from} → {a.Version}   ({Math.Max(0.1, a.DownloadSize / 1048576.0):N1} MB)") { Foreground = SetupWindow.DimBrush });
+                sp.Children.Add(head);
+                var changes = (a.Changes ?? new List<string>()).Where(c => !string.IsNullOrWhiteSpace(c)).Take(6).ToList();
+                foreach (var c in changes)
+                    sp.Children.Add(new TextBlock { Text = "   •  " + c, TextWrapping = TextWrapping.Wrap, Foreground = SetupWindow.TextBrush, Margin = new Thickness(8, 1, 0, 0) });
+                if ((a.Changes?.Count ?? 0) > changes.Count)
+                    sp.Children.Add(new TextBlock { Text = $"   and {a.Changes.Count - changes.Count} more", Foreground = SetupWindow.DimBrush, Margin = new Thickness(8, 1, 0, 0) });
+            }
+            var link = new TextBlock { Margin = new Thickness(0, 10, 0, 0) };
+            var h = new System.Windows.Documents.Hyperlink(new System.Windows.Documents.Run("See the full release notes")) { NavigateUri = new Uri(UpdateFeed.LatestPage) };
+            h.RequestNavigate += (s, e) => { try { Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true }); } catch { } };
+            link.Inlines.Add(h);
+            sp.Children.Add(link);
+            return sp;
         }
 
         UIElement InstalledList()
@@ -280,8 +335,9 @@ namespace ValcoSetup
         /// </summary>
         async Task<bool> TryDownloadPrograms(string dir, TextBlock line, ProgressBar bar)
         {
-            var m = await UpdateFeed.ManifestAsync(_tag, _cts.Token);
+            var m = _manifest ?? await UpdateFeed.ManifestAsync(_tag, _cts.Token);
             if (m == null || m.Apps.Count == 0) return false;
+            m = SuiteManifest.Parse(m.ToJson()); // a copy: the list below is trimmed to what's needed
             var installed = Engine.InstalledApps();
             m.Apps.RemoveAll(a => !installed.TryGetValue(a.Id, out var v) || !Ver.Newer(a.Version, v));
             var payload = Path.Combine(dir, "payload");

@@ -1,7 +1,10 @@
 # Builds Valco Office Setup and packs every Valco app into it.
 #   .\build.ps1              package the apps as they are built now
 #   .\build.ps1 -BuildApps   rebuild every app first (runs each app's own build.ps1)
-param([switch]$BuildApps)
+#   .\build.ps1 -Plan ci-plan.json -Previous prev
+#                            release build (GitHub Actions): programs the plan doesn't rebuild are taken,
+#                            unchanged and with the same version, from the previous release's files in prev\
+param([switch]$BuildApps, [string]$Plan, [string]$Previous)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -25,6 +28,14 @@ if (-not $sdkOk) {
 }
 
 $cfg = Get-Content apps.json -Raw | ConvertFrom-Json
+$planData = $null; $planApps = @{}; $prevApps = @{}
+if ($Plan) {
+    $planData = Get-Content $Plan -Raw | ConvertFrom-Json
+    foreach ($p in $planData.apps) { $planApps[$p.id] = $p }
+}
+if ($Previous -and (Test-Path (Join-Path $Previous 'valco-office.json'))) {
+    foreach ($p in (Get-Content (Join-Path $Previous 'valco-office.json') -Raw | ConvertFrom-Json).apps) { $prevApps[$p.id] = $p }
+}
 
 if ($BuildApps) {
     foreach ($a in $cfg.apps) {
@@ -66,10 +77,21 @@ function Sha($f) { (Get-FileHash $f -Algorithm SHA256).Hash }
 $apps = @()
 foreach ($a in $cfg.apps) {
     $src = Join-Path $PSScriptRoot $a.source
-    if (-not (Test-Path $src)) { Log "Skipping $($a.name): not built yet ($src)" Yellow; continue }
     $file = ($a.exe -replace '\.exe$','') + $(if ($a.kind -eq 'msi') { '.msi' } else { '.zip' })
     $dest = Join-Path $payload $file
-    if ($a.kind -eq 'msi') {
+    $pa = $planApps[$a.id]
+    $reused = $false
+    if ($pa -and -not $pa.build) {
+        # unchanged since the previous release: same file, same version, so updates skip it
+        $old = $prevApps[$a.id]
+        $oldFile = if ($old) { Join-Path $Previous $old.file } else { $null }
+        if (-not $old -or -not (Test-Path $oldFile) -or (Sha $oldFile) -ne $old.sha256) { throw "$($a.name) is unchanged but the previous release's $($old.file) is missing or damaged" }
+        Copy-Item $oldFile $dest
+        $version = $old.version; $installSize = $old.installSize
+        $reused = $true
+    }
+    elseif (-not (Test-Path $src)) { if ($planData) { throw "$($a.name) should have been built but $src is missing" }; Log "Skipping $($a.name): not built yet ($src)" Yellow; continue }
+    elseif ($a.kind -eq 'msi') {
         Copy-Item $src $dest
         $stamp = (Get-Item $src).LastWriteTime
         $installSize = (Get-Item $src).Length * 3
@@ -90,10 +112,21 @@ foreach ($a in $cfg.apps) {
         if (-not $stamp) { $stamp = ($files | Measure-Object LastWriteTime -Maximum).Maximum }
         $installSize = ($files | Measure-Object Length -Sum).Sum
     }
-    # base version from the project + a revision from the build time, so every rebuild is offered as an update
-    $base = (BaseVersion $a) -split '\.'
-    while ($base.Count -lt 3) { $base += '0' }
-    $version = "$($base[0]).$($base[1]).$($base[2]).$(Revision $stamp)"
+    if (-not $reused) {
+        # base version from the project + a revision from the build time, so every rebuild is offered as an update
+        $base = (BaseVersion $a) -split '\.'
+        while ($base.Count -lt 3) { $base += '0' }
+        $version = "$($base[0]).$($base[1]).$($base[2]).$(Revision $stamp)"
+    }
+    # ValcoNet: the Gecko version inside, so the release build knows when Mozilla ships a newer ESR
+    $engine = $null
+    if ($a.id -eq 'net') {
+        if ($reused) { $engine = $prevApps['net'].engine }
+        else {
+            $ini = Join-Path $src 'engine\application.ini'
+            if (Test-Path $ini) { $engine = ((Get-Content $ini) -match '^Version=' | Select-Object -First 1) -replace '^Version=', '' }
+        }
+    }
     $iconName = "$($a.id).ico"
     if ($a.icon -and (Test-Path (Join-Path $PSScriptRoot $a.icon))) { Copy-Item (Join-Path $PSScriptRoot $a.icon) (Join-Path $payload $iconName) } else { $iconName = $null }
     $entry = [ordered]@{
@@ -104,9 +137,11 @@ foreach ($a in $cfg.apps) {
         desktop = $(if ($null -eq $a.desktop) { $true } else { [bool]$a.desktop }); upgradeCode = $a.upgradeCode; notes = $a.notes; defaultApps = $a.defaultApps; appUserModelId = $a.appUserModelId
         registry = @($a.registry | Where-Object { $_ } | ForEach-Object { [ordered]@{ key = $_.key; name = $(if ($_.name) { $_.name } else { '' }); value = $(if ($null -ne $_.value) { $_.value } else { '' }); owned = [bool]$_.owned; associations = [bool]$_.associations } })
         shortcuts = @($a.shortcuts | Where-Object { $_ })
+        sourceHash = $(if ($pa) { $pa.sourceHash } else { $null }); engine = $engine
+        changes = @($(if ($pa -and $pa.build) { $pa.changes } elseif ($reused) { @() } else { @() }) | Where-Object { $_ })
     }
     $apps += $entry
-    Log ("  {0,-14} {1,-16} {2,8:N1} MB" -f $a.name, $version, ((Get-Item $dest).Length / 1MB)) Green
+    Log ("  {0,-18} {1,-16} {2,8:N1} MB  {3}" -f $a.name, $version, ((Get-Item $dest).Length / 1MB), $(if ($reused) { '(unchanged)' } else { '' })) Green
 }
 if ($apps.Count -eq 0) { "BUILD FAILED: no apps were found to package" | Out-File $log -Append -Encoding utf8; throw "No apps to package" }
 
@@ -119,6 +154,9 @@ $manifest = [ordered]@{
     product = 'Valco Office'; version = $suiteVersion; publisher = 'ItsRaiden'; updateUrl = $cfg.updateUrl
     setupVersion = $setupVer; setupFile = 'setup.exe'; setupSha256 = (Sha $setupExe); apps = $apps
     retired = @($cfg.retired | Where-Object { $_ })
+    commit = $(if ($planData) { $planData.commit } else { $null })
+    setupSourceHash = $(if ($planData) { $planData.setupSourceHash } else { $null })
+    setupChanges = @($(if ($planData) { $planData.setupChanges } else { @() }) | Where-Object { $_ })
 }
 $json = $manifest | ConvertTo-Json -Depth 8
 [IO.File]::WriteAllText((Join-Path $payload 'valco-office.json'), $json, (New-Object Text.UTF8Encoding $false))
@@ -149,7 +187,28 @@ Copy-Item $setupExe (Join-Path $release 'ValcoOffice-Updater.exe')
 Get-ChildItem $payload -File | ForEach-Object { Copy-Item $_.FullName (Join-Path $release $_.Name) }
 "v$suiteVersion" | Out-File (Join-Path $PSScriptRoot 'dist\release-tag.txt') -Encoding ascii -NoNewline
 
+# release notes: what changed in each program since the previous release
+$notes = New-Object Text.StringBuilder
+[void]$notes.AppendLine("**New install:** download **ValcoOffice-Setup.exe** and run it.")
+[void]$notes.AppendLine("**Already installed:** Valco Office Update downloads only the programs below that changed.`n")
+foreach ($e in $apps) {
+    $pa = $planApps[$e.id]
+    if ($pa -and -not $pa.build) { continue }
+    [void]$notes.AppendLine("### $($e.name) $($e.version)")
+    if ($e.changes.Count -gt 0) { foreach ($c in $e.changes) { [void]$notes.AppendLine("- $c") } } else { [void]$notes.AppendLine("- Rebuilt") }
+    [void]$notes.AppendLine()
+}
+if ($planData -and $planData.setupChanged) {
+    [void]$notes.AppendLine("### Valco Office Setup")
+    if (@($planData.setupChanges).Count -gt 0) { foreach ($c in $planData.setupChanges) { [void]$notes.AppendLine("- $c") } } else { [void]$notes.AppendLine("- Rebuilt") }
+    [void]$notes.AppendLine()
+}
+$same = @($apps | Where-Object { $planApps[$_.id] -and -not $planApps[$_.id].build } | ForEach-Object { "$($_.name) $($_.version)" })
+if ($same.Count -gt 0) { [void]$notes.AppendLine("Unchanged: " + ($same -join ', ')) }
+[IO.File]::WriteAllText((Join-Path $PSScriptRoot 'dist\release-notes.md'), $notes.ToString(), (New-Object Text.UTF8Encoding $false))
+
 "BUILD SUCCEEDED: $dist" | Out-File $log -Append -Encoding utf8
 Log "`nDone! Setup: $dist\setup.exe" Green
 Log "Single-file installer: $single" Green
-Log "GitHub release: tag v$suiteVersion, upload every file in $release" Green
+Log "Releases are published by GitHub Actions when you push to main (.github/workflows/release.yml)." Green
+Log "Manual release: tag v$suiteVersion, upload every file in $release" Green

@@ -1,0 +1,159 @@
+# Valco Office releases, built and published by GitHub.
+#
+# Push to main -> the programs whose source changed are rebuilt, the rest are reused from the previous
+# release (same file, same version), and a new release goes up with ValcoOffice-Setup.exe plus every
+# program as its own file. Valco Office Update then downloads only what changed.
+#
+# Also runs every Monday to pick up a new Firefox ESR for ValcoNet's engine, and by hand from
+# Actions -> "Release Valco Office" -> Run workflow (tick "Rebuild everything" for a full rebuild).
+name: Release Valco Office
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.github/ISSUE_TEMPLATE/**'
+  schedule:
+    - cron: '17 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      rebuild_all:
+        description: Rebuild everything
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.plan.outputs.release }}
+      build_linux: ${{ steps.plan.outputs.build_linux }}
+      windows_apps: ${{ steps.plan.outputs.windows_apps }}
+      reuse_apps: ${{ steps.plan.outputs.reuse_apps }}
+      previous_tag: ${{ steps.plan.outputs.previous_tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 ValcoSetup/ci/plan.py ${{ inputs.rebuild_all && '--force' || '' }} --out ci-plan.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ci-plan
+          path: ci-plan.json
+
+  # Valco Weave cross-builds on Linux into its Vista-style .msi
+  weave:
+    needs: plan
+    if: needs.plan.outputs.release == 'true' && needs.plan.outputs.build_linux == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ValcoWeave/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-gnu
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ValcoWeave/src-tauri
+      - name: Install cross-build tools
+        run: sudo apt-get update && sudo apt-get install -y mingw-w64 wixl msitools
+      - name: Build Valco Weave
+        working-directory: ValcoWeave
+        run: |
+          npm ci
+          bash packaging/windows/build-msi-on-linux.sh
+          mkdir -p dist && cp packaging/windows/out/ValcoWeave-Setup.msi dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: weave
+          path: ValcoWeave/dist/ValcoWeave-Setup.msi
+
+  release:
+    needs: [plan, weave]
+    if: always() && needs.plan.outputs.release == 'true' && needs.plan.result == 'success' && (needs.weave.result == 'success' || needs.weave.result == 'skipped')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/download-artifact@v4
+        with:
+          name: ci-plan
+      - name: Valco Weave from the Linux build
+        if: needs.weave.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: weave
+          path: ValcoWeave/dist
+
+      - name: Build the programs that changed
+        shell: powershell
+        env:
+          APPS: ${{ needs.plan.outputs.windows_apps }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $cfg = Get-Content ValcoSetup\apps.json -Raw | ConvertFrom-Json
+          foreach ($id in ($env:APPS -split ' ' | Where-Object { $_ })) {
+            $a = $cfg.apps | Where-Object id -eq $id
+            $dir = $a.sourceDirs[0]
+            Write-Host "::group::Building $($a.name)"
+            & powershell -NoProfile -ExecutionPolicy Bypass -File "$dir\build.ps1"
+            if ($LASTEXITCODE -ne 0) { Get-Content "$dir\build.log" -Tail 60 -ErrorAction SilentlyContinue; throw "$($a.name) failed to build" }
+            Write-Host "::endgroup::"
+          }
+
+      - name: Fetch unchanged programs from the previous release
+        if: needs.plan.outputs.reuse_apps != ''
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.plan.outputs.previous_tag }}
+          REUSE: ${{ needs.plan.outputs.reuse_apps }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force prev | Out-Null
+          gh release download $env:TAG -R $env:GITHUB_REPOSITORY -D prev -p valco-office.json
+          $m = Get-Content prev\valco-office.json -Raw | ConvertFrom-Json
+          foreach ($id in ($env:REUSE -split ' ' | Where-Object { $_ })) {
+            $a = $m.apps | Where-Object id -eq $id
+            gh release download $env:TAG -R $env:GITHUB_REPOSITORY -D prev -p $a.file
+            if ($LASTEXITCODE -ne 0) { throw "Couldn't download $($a.file) from $env:TAG" }
+          }
+
+      - name: Package Valco Office
+        shell: powershell
+        run: |
+          $buildArgs = @('-Plan', "$pwd\ci-plan.json")
+          if (Test-Path prev) { $buildArgs += @('-Previous', "$pwd\prev") }
+          & powershell -NoProfile -ExecutionPolicy Bypass -File ValcoSetup\build.ps1 @buildArgs
+          if ($LASTEXITCODE -ne 0) { Get-Content ValcoSetup\build.log -Tail 80; exit 1 }
+
+      - name: Publish the release
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = Get-Content ValcoSetup\dist\release-tag.txt -Raw
+          $files = Get-ChildItem ValcoSetup\release -File | ForEach-Object { $_.FullName }
+          gh release create $tag @files -R $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "Valco Office $($tag.TrimStart('v'))" --notes-file ValcoSetup\dist\release-notes.md --latest
+          if ($LASTEXITCODE -ne 0) { throw "Publishing the release failed" }
+          Get-Content ValcoSetup\dist\release-notes.md | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
