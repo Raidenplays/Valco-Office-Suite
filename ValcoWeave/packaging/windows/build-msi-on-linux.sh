@@ -14,7 +14,11 @@ export CC_x86_64_pc_windows_gnu=x86_64-w64-mingw32-gcc
 OUT="$ROOT/packaging/windows/out"; rm -rf "$OUT"; mkdir -p "$OUT"
 REL=src-tauri/target/x86_64-pc-windows-gnu/release
 cp "$REL/valco-weave.exe" "$OUT/ValcoWeave.exe"
-cp "$(ls $REL/build/webview2-com-sys-*/out/x64/WebView2Loader.dll | head -1)" "$OUT/"
+# webview2-com-sys copies the loader into its build output; where that is depends on the cargo version
+LOADER="$(find src-tauri/target -path '*webview2-com-sys*' -path '*x64*' -name WebView2Loader.dll 2>/dev/null | head -1)"
+if [ -z "$LOADER" ]; then LOADER="$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path '*webview2-com-sys*/x64/WebView2Loader.dll' 2>/dev/null | head -1)"; fi
+[ -n "$LOADER" ] || { echo "WebView2Loader.dll not found"; exit 1; }
+cp "$LOADER" "$OUT/"
 cp packaging/assets/ValcoWeave.ico "$OUT/icon.ico"
 sed 's/$/\r/' LICENSE > "$OUT/LICENSE.txt"
 sed "s/ Version=\"[0-9.]*\"/ Version=\"$VERSION.0\"/" packaging/windows/valco-weave.wxs > "$OUT/valco-weave.wxs"
