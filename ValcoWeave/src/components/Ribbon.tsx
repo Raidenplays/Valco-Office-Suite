@@ -48,7 +48,7 @@ function Drop({ item, large, onDone }: { item: MenuItem; large: boolean; onDone(
   return (
     <div className="rb-drop" ref={ref}>
       <button className={'rb-btn ' + (large ? 'lg' : 'sm') + (open ? ' pressed' : '')} title={item.label} onMouseDown={(e) => { e.preventDefault(); setOpen(!open); }}>
-        <RibbonIcon name={iconFor(item.label ?? '')} size={large ? 32 : 16} />
+        <RibbonIcon name={iconFor(item.label ?? '')} size={large ? 32 : 16} themed />
         <span className="rb-lbl">{clean(item.label ?? '')}<span className="rb-arrow">▾</span></span>
       </button>
       {open && (
@@ -70,7 +70,7 @@ function Btn({ item, large }: { item: MenuItem; large: boolean }) {
       onMouseDown={(e) => e.preventDefault()}
       onClick={() => item.action?.()}
     >
-      <RibbonIcon name={iconFor(item.label ?? '')} size={large ? 32 : 16} />
+      <RibbonIcon name={iconFor(item.label ?? '')} size={large ? 32 : 16} themed />
       <span className="rb-lbl">{clean(item.label ?? '')}</span>
     </button>
   );
@@ -186,7 +186,7 @@ export function Ribbon(p: {
         <div className="rb-qat">
           {p.qat.map((q, i) => (
             <button key={i} className="rb-qat-btn" disabled={q.disabled} title={(q.label ?? '') + (q.shortcut ? ` (${q.shortcut})` : '')} onMouseDown={(e) => e.preventDefault()} onClick={() => q.action?.()}>
-              <RibbonIcon name={iconFor(q.label ?? '')} size={16} />
+              <RibbonIcon name={iconFor(q.label ?? '')} size={16} themed />
             </button>
           ))}
           <button className="rb-qat-btn more" title={min ? 'Restore the Ribbon' : 'Minimize the Ribbon'} onClick={() => { setMin(!min); setPeek(false); }}>{min ? '▾' : '▴'}</button>

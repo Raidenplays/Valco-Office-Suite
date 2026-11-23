@@ -121,7 +121,7 @@ namespace Valco.UI
                     Hover(r, V(("#FFEAF6FD", 0), ("#FFD9F0FC", 0.45), ("#FFBEE6FD", 0.5), ("#FFA7D9F5", 1)), "#FF3C7FB1",
                              V(("#FFE5F4FC", 0), ("#FFC4E5F6", 0.45), ("#FF98D1EF", 0.5), ("#FF68B3DB", 1)), "#FF2C628B",
                              V(("#FFDAEEF9", 0), ("#FFB2DDF4", 0.5), ("#FF8DCAEB", 1)));
-                    Changed?.Invoke();
+                    IconTheme.Apply(Current); Changed?.Invoke();
                     return;
                 case "Dreamweaver CS6":
                     Current = scheme;
@@ -151,7 +151,7 @@ namespace Valco.UI
                     Hover(r, V(("#FFE5F0FB", 0), ("#FFCFE3F8", 1)), "#FF7DA2CE",
                              V(("#FFBFD7F2", 0), ("#FFA6C6EC", 1)), "#FF5A84B8",
                              V(("#FFD4E5F7", 0), ("#FFBDD6F2", 1)));
-                    Changed?.Invoke();
+                    IconTheme.Apply(Current); Changed?.Invoke();
                     return;
                 case "Modern Dark":
                     Current = scheme;
@@ -181,7 +181,7 @@ namespace Valco.UI
                     Hover(r, V(("#FF2F5F5A", 0), ("#FF27504C", 1)), "#FF36C2B4",
                              V(("#FF1F7A70", 0), ("#FF19665E", 1)), "#FF36C2B4",
                              V(("#FF245B55", 0), ("#FF1E4C47", 1)));
-                    Changed?.Invoke();
+                    IconTheme.Apply(Current); Changed?.Invoke();
                     return;
                 case "2077":
                     Current = scheme;
@@ -211,7 +211,7 @@ namespace Valco.UI
                     Hover(r, V(("#FF3B1670", 0), ("#FF2D0F5A", 1)), "#FF2DE2E6",
                              V(("#FFFF2592", 0), ("#FFC81C74", 1)), "#FFFFE600",
                              V(("#FF5A1A80", 0), ("#FF451366", 1)));
-                    Changed?.Invoke();
+                    IconTheme.Apply(Current); Changed?.Invoke();
                     return;
                 default:
                     Current = "Blue";
@@ -244,7 +244,7 @@ namespace Valco.UI
             Hover(r, V(("#FFFFFDF0", 0), ("#FFFFEDB3", 0.45), ("#FFFFD660", 0.5), ("#FFFFE7A0", 1)), "#FFDBCE99",
                      V(("#FFF8C985", 0), ("#FFF6AE5C", 0.45), ("#FFF39434", 0.5), ("#FFF8C46C", 1)), "#FFC2A15D",
                      V(("#FFFCDCA4", 0), ("#FFFAC36E", 0.45), ("#FFF8B044", 0.5), ("#FFFBD58D", 1)));
-            Changed?.Invoke();
+            IconTheme.Apply(Current); Changed?.Invoke();
         }
 
         static void Hover(ResourceDictionary r, Brush hover, string hoverBorder, Brush pressed, string pressedBorder, Brush check)
@@ -449,11 +449,18 @@ namespace Valco.UI
             return sp;
         }
 
-        static Path Arrow() => new Path { Data = Geometry.Parse("M0,0 L5,0 L2.5,3 Z"), Fill = new SolidColorBrush(Color.FromRgb(0x3B, 0x4A, 0x5C)), VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(3, 1, 1, 0) };
+        static Path Arrow() { var p = new Path { Data = Geometry.Parse("M0,0 L5,0 L2.5,3 Z"), VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(3, 1, 1, 0) }; p.SetResourceReference(Shape.FillProperty, "Rb.Text"); return p; }
 
-        public static ImageSource Icon(string key) => Application.Current?.TryFindResource(key) as ImageSource;
+        /// <summary>An icon as drawn on light backgrounds (menus, dialogs, the title bar); ribbon buttons use the themed one.</summary>
+        public static ImageSource Icon(string key) => IconTheme.Original(key) ?? Application.Current?.TryFindResource(key) as ImageSource;
 
-        static Image Img(string key, double size) => new Image { Source = Icon(key), Width = size, Height = size, SnapsToDevicePixels = true };
+        static Image Img(string key, double size)
+        {
+            var img = new Image { Width = size, Height = size, SnapsToDevicePixels = true };
+            // a resource reference, so the icon follows the colour scheme (IconTheme)
+            if (key != null) img.SetResourceReference(Image.SourceProperty, key);
+            return img;
+        }
 
         /// <summary>Large 32px button with label underneath.</summary>
         public static Button Large(string icon, string label, Action click, string tip = null, Func<ContextMenu> menu = null)

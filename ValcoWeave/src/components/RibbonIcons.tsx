@@ -1,6 +1,7 @@
 // Vista-style ribbon icons drawn in SVG (same palette as the WPF suite icons in ValcoCommon/SuiteIcons.xaml:
 // glossy blue arrows, gold folders, white pages with blue lines, green "go" and red "stop").
-import { useId, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import { onThemeChange, themeIcon } from '../lib/iconTheme';
 
 const BLUE = ['#92ceff', '#2b79d8', '#1a57b5'];
 const GREEN = ['#c2f59b', '#46b62c', '#2a8a18'];
@@ -68,11 +69,15 @@ const Glass = ({ x = 4, y = 4 }: { x?: number; y?: number }) => (
   </g>
 );
 const Glyph = ({ t, style }: { t: string; style?: CSSProperties }) => (
-  <text x="16" y="24" textAnchor="middle" fontFamily="Times New Roman, serif" fontWeight="bold" fontSize="22" fill="#1e2a36" style={style}>{t}</text>
+  <text x="16" y="24" textAnchor="middle" fontFamily="Times New Roman, serif" fontWeight="bold" fontSize="22" style={{ fill: 'var(--rb-glyph, #1e2a36)', ...style }}>{t}</text>
 );
 
-export function RibbonIcon({ name, size = 16 }: { name: string; size?: number }) {
+/** themed: recolour for the current theme (ribbon groups and the Quick Access Toolbar); menus keep the original colours. */
+export function RibbonIcon({ name, size = 16, themed = false }: { name: string; size?: number; themed?: boolean }) {
   const g = useId().replace(/:/g, '');
+  const ref = useRef<SVGSVGElement>(null);
+  useLayoutEffect(() => { if (themed) themeIcon(ref.current); });
+  useEffect(() => (themed ? onThemeChange(() => themeIcon(ref.current)) : undefined), [themed]);
   let body: ReactNode;
   switch (name) {
     case 'new': body = <><Page g={g} /><path d="M24 2 l1.4 3.2 3.4.3-2.6 2.2.8 3.3-3-1.8-3 1.8.8-3.3-2.6-2.2 3.4-.3z" fill="#ffd34d" stroke="#c48a00" strokeWidth=".6" /></>; break;
@@ -110,7 +115,7 @@ export function RibbonIcon({ name, size = 16 }: { name: string; size?: number })
     case 'insert': body = <><rect x="4" y="4" width="24" height="24" rx="3" fill="#fff" stroke="#6f86a6" /><path d="M16 9 V23 M9 16 H23" stroke={`url(#${g}gh)`} strokeWidth="5" /><path d="M16 9 V23 M9 16 H23" stroke="#2a8a18" strokeWidth="1" opacity=".4" /></>; break;
     case 'bold': body = <Glyph t="B" />; break;
     case 'italic': body = <Glyph t="I" style={{ fontStyle: 'italic' }} />; break;
-    case 'underline': body = <><Glyph t="U" /><path d="M8 28 H24" stroke="#1e2a36" strokeWidth="2" /></>; break;
+    case 'underline': body = <><Glyph t="U" /><path d="M8 28 H24" style={{ stroke: 'var(--rb-glyph, #1e2a36)' }} strokeWidth="2" /></>; break;
     case 'link': body = <><circle cx="16" cy="16" r="12" fill={`url(#${g}b)`} stroke="#1a4f9a" /><path d="M9 18 a3 3 0 0 1 0-4 l3-3 a3 3 0 0 1 4 0 M23 14 a3 3 0 0 1 0 4 l-3 3 a3 3 0 0 1 -4 0 M13 19 l6-6" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round" /></>; break;
     case 'ul': body = <><g fill="#2b79d8">{[7, 15, 23].map((y) => <rect key={y} x="4" y={y - 2} width="4" height="4" />)}</g><Lines y={7} n={1} x1={11} x2={28} /><Lines y={15} n={1} x1={11} x2={28} /><Lines y={23} n={1} x1={11} x2={28} /></>; break;
     case 'ol': body = <><g fontSize="7" fontFamily="Segoe UI" fill="#1e2a36">{[1, 2, 3].map((n, i) => <text key={n} x="3" y={10 + i * 8}>{n}.</text>)}</g><Lines y={7} n={1} x1={11} x2={28} /><Lines y={15} n={1} x1={11} x2={28} /><Lines y={23} n={1} x1={11} x2={28} /></>; break;
@@ -124,7 +129,7 @@ export function RibbonIcon({ name, size = 16 }: { name: string; size?: number })
     default: body = <rect x="8" y="8" width="16" height="16" rx="2" fill="#f4f7fb" stroke="#9aaecb" />;
   }
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" className="rb-ico" aria-hidden>
+    <svg ref={ref} width={size} height={size} viewBox="0 0 32 32" className="rb-ico" aria-hidden>
       <defs>
         <linearGradient id={g + 'p'} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffffff" /><stop offset="1" stopColor="#dfe8f3" /></linearGradient>
         <Grad id={g + 'b'} c={BLUE} />
