@@ -19,12 +19,15 @@ namespace ValcoWord
         enum Drag { None, First, Hanging, LeftBox, Right, MarginL, MarginR }
         Drag _drag;
         double _dragStartX, _origA, _origB;
-        static readonly Pen TickPen = Freeze(new Pen(new SolidColorBrush(Color.FromRgb(0x50, 0x5A, 0x66)), 1));
+        // colours come from the colour scheme (ChromeTheme publishes Ruler.*), with the Office Blue ruler as the fallback
+        static Brush R(string key, Brush fallback) => Application.Current?.TryFindResource(key) as Brush ?? fallback;
+        static readonly Brush TickDefault = Freeze(new SolidColorBrush(Color.FromRgb(0x50, 0x5A, 0x66)));
         static readonly Pen MarkerPen = Freeze(new Pen(new SolidColorBrush(Color.FromRgb(0x44, 0x58, 0x70)), 1));
         static readonly Brush MarkerFill = Freeze(new LinearGradientBrush(Color.FromRgb(0xFF, 0xFF, 0xFF), Color.FromRgb(0xC9, 0xD6, 0xE6), 90));
-        static readonly Brush MarginFill = Freeze(new SolidColorBrush(Color.FromRgb(0xA9, 0xBF, 0xD9)));
-        static readonly Brush BarBg = Freeze(new LinearGradientBrush(Color.FromRgb(0xF4, 0xF7, 0xFB), Color.FromRgb(0xDC, 0xE5, 0xF0), 90));
-        static readonly Brush Edge = Freeze(new SolidColorBrush(Color.FromRgb(0x8D, 0xA3, 0xBE)));
+        static readonly Brush MarginDefault = Freeze(new SolidColorBrush(Color.FromRgb(0xA9, 0xBF, 0xD9)));
+        static readonly Brush BarDefault = Freeze(new LinearGradientBrush(Color.FromRgb(0xF4, 0xF7, 0xFB), Color.FromRgb(0xDC, 0xE5, 0xF0), 90));
+        static readonly Brush EdgeDefault = Freeze(new SolidColorBrush(Color.FromRgb(0x8D, 0xA3, 0xBE)));
+        Pen TickPen = new Pen(TickDefault, 1);
         static readonly Typeface Face = new Typeface("Segoe UI");
 
         static T Freeze<T>(T f) where T : Freezable { f.Freeze(); return f; }
@@ -33,6 +36,7 @@ namespace ValcoWord
         {
             Height = 24;
             SnapsToDevicePixels = true;
+            Valco.UI.OfficeTheme.Changed += InvalidateVisual;
             ToolTip = "";
             ToolTipOpening += (s, e) =>
             {
@@ -55,12 +59,15 @@ namespace ValcoWord
         protected override void OnRender(DrawingContext dc)
         {
             double h = ActualHeight;
+            var BarBg = R("Ruler.Bar", BarDefault); var Edge = R("Ruler.Edge", EdgeDefault); var MarginFill = R("Ruler.Margin", MarginDefault);
+            var tick = R("Ruler.Tick", TickDefault);
+            if (TickPen.Brush != tick) TickPen = new Pen(tick, 1);
             dc.DrawRectangle(BarBg, null, new Rect(0, 0, ActualWidth, h));
             dc.DrawRectangle(Edge, null, new Rect(0, h - 1, ActualWidth, 1));
             double top = 4, bh = h - 9;
             // page strip
             dc.DrawRectangle(MarginFill, new Pen(Edge, 1), new Rect(X(0), top, PageWidth * Zoom, bh));
-            dc.DrawRectangle(Brushes.White, null, new Rect(X(MarginLeft), top, (PageWidth - MarginLeft - MarginRight) * Zoom, bh));
+            dc.DrawRectangle(R("Ruler.Page", Brushes.White), null, new Rect(X(MarginLeft), top, (PageWidth - MarginLeft - MarginRight) * Zoom, bh));
 
             // ticks: origin at the left margin, numbers each inch
             double origin = MarginLeft;

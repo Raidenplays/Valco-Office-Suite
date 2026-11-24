@@ -12,6 +12,10 @@
         <GradientStop Color="#FFCFDAE6" Offset="0.42"/>
         <GradientStop Color="#FFC3D0DE" Offset="1"/>
     </LinearGradientBrush>
+    <StaticResource x:Key="Rb.Frame" ResourceKey="GlassFrameBrush"/>
+    <StaticResource x:Key="Rb.FrameInactive" ResourceKey="GlassFrameInactiveBrush"/>
+    <SolidColorBrush x:Key="Rb.FrameText" Color="#FF0B0F14"/>
+    <SolidColorBrush x:Key="Rb.FrameBorder" Color="#FF26323F"/>
     <LinearGradientBrush x:Key="GlassStreakBrush" StartPoint="0,0" EndPoint="1,0.35">
         <GradientStop Color="#00FFFFFF" Offset="0"/>
         <GradientStop Color="#00FFFFFF" Offset="0.18"/>
@@ -125,7 +129,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
-                    <Border x:Name="Outer" BorderBrush="#FF26323F" BorderThickness="1" Background="{StaticResource GlassFrameBrush}">
+                    <Border x:Name="Outer" BorderBrush="{DynamicResource Rb.FrameBorder}" BorderThickness="1" Background="{DynamicResource Rb.Frame}">
                         <Grid>
                             <Border Background="{StaticResource GlassStreakBrush}" IsHitTestVisible="False"/>
                             <Border BorderBrush="#70FFFFFF" BorderThickness="1" IsHitTestVisible="False"/>
@@ -134,7 +138,7 @@
                                     <StackPanel x:Name="TitleStack" Orientation="Horizontal" Margin="7,1,140,0" VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <Image x:Name="TitleIconImg" Source="{DynamicResource TitleIcon}" Width="16" Height="16" Margin="0,0,6,0" Visibility="Collapsed"
                                                RenderOptions.BitmapScalingMode="HighQuality"/>
-                                        <TextBlock Text="{TemplateBinding Title}" FontSize="12.5" Foreground="#FF0B0F14"
+                                        <TextBlock Text="{TemplateBinding Title}" FontSize="12.5" Foreground="{DynamicResource Rb.FrameText}"
                                                    TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
                                             <TextBlock.Effect>
                                                 <DropShadowEffect Color="White" ShadowDepth="0" BlurRadius="14" Opacity="1"/>
@@ -187,7 +191,7 @@
                             <Setter TargetName="BtnMax" Property="ToolTip" Value="Restore Down"/>
                         </Trigger>
                         <Trigger Property="IsActive" Value="False">
-                            <Setter TargetName="Outer" Property="Background" Value="{StaticResource GlassFrameInactiveBrush}"/>
+                            <Setter TargetName="Outer" Property="Background" Value="{DynamicResource Rb.FrameInactive}"/>
                             <Setter TargetName="Outer" Property="BorderBrush" Value="#FF7D8B9A"/>
                         </Trigger>
                         <Trigger Property="ResizeMode" Value="NoResize">

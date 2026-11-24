@@ -7,6 +7,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Updates.cs" Link="ValcoCommon\Updates.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OpaqueWindows.cs" Link="ValcoCommon\OpaqueWindows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IconTheme.cs" Link="ValcoCommon\IconTheme.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChromeTheme.cs" Link="ValcoCommon\ChromeTheme.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" Link="ValcoCommon\GlobalUsings.cs" />
     <Page Include="$(MSBuildThisFileDirectory)SuiteIcons.xaml" Link="Themes\SuiteIcons.xaml" />
     <Resource Include="$(MSBuildThisFileDirectory)ValcoOffice-mark.png" Link="ValcoOffice-mark.png" />

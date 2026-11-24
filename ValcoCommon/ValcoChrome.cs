@@ -69,7 +69,10 @@ namespace Valco.UI
             {
                 var opt = _options.FirstOrDefault(o => o.Key == key);
                 if (opt.Key == null) continue;
-                var b = new Button { Style = RB.BtnStyle, Width = 22, Height = 22, Padding = new Thickness(2), HorizontalContentAlignment = HorizontalAlignment.Center, Content = new Image { Source = RB.Icon(opt.Icon), Width = 16, Height = 16 }, ToolTip = opt.Label };
+                var b = new Button { Style = RB.BtnStyle, Width = 22, Height = 22, Padding = new Thickness(2), HorizontalContentAlignment = HorizontalAlignment.Center, ToolTip = opt.Label };
+                var qi = new Image { Width = 16, Height = 16 };
+                qi.SetResourceReference(Image.SourceProperty, opt.Icon); // follows the colour scheme like the ribbon
+                b.Content = qi;
                 var run = opt.Run;
                 b.Click += (s, e) => run();
                 QatButtons[key] = b;

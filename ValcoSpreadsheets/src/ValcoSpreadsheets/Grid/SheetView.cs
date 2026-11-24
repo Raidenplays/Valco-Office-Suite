@@ -105,6 +105,8 @@ namespace ValcoSpreadsheets.Grid
         public SheetCanvas(SheetView host)
         {
             _host = host;
+            ThemeHeaders();
+            Valco.UI.OfficeTheme.Changed += () => { ThemeHeaders(); InvalidateVisual(); };
             ClipToBounds = true;
             Focusable = true;
             FocusVisualStyle = null;
@@ -423,15 +425,26 @@ namespace ValcoSpreadsheets.Grid
         public void SetMarquee(CellRect? r) { CopyMarquee = r; if (r.HasValue) _ants.Start(); else _ants.Stop(); InvalidateVisual(); }
 
         // ===================================================================== rendering
-        static readonly Brush HeaderBg = Frozen(new LinearGradientBrush(Color.FromRgb(0xF6, 0xF9, 0xFC), Color.FromRgb(0xE4, 0xEC, 0xF7), 90));
+        // headers follow the colour scheme (ChromeTheme publishes Grid.*); the cells stay white like a printed page
+        static Brush HeaderBg = Frozen(new LinearGradientBrush(Color.FromRgb(0xF6, 0xF9, 0xFC), Color.FromRgb(0xE4, 0xEC, 0xF7), 90));
+        static readonly Brush HeaderBgDefault = HeaderBg;
+        static void ThemeHeaders()
+        {
+            var app = Application.Current;
+            HeaderBg = app?.TryFindResource("Grid.Header") as Brush ?? HeaderBgDefault;
+            HeaderText = app?.TryFindResource("Grid.HeaderText") as Brush ?? HeaderTextDefault;
+            HeaderLine = app?.TryFindResource("Grid.HeaderLine") is SolidColorBrush l ? FrozenPen(l.Color, 1) : HeaderLineDefault;
+        }
         static readonly Brush HeaderSel = Frozen(new LinearGradientBrush(new GradientStopCollection { new GradientStop(Color.FromRgb(0xF8, 0xD8, 0x9F), 0), new GradientStop(Color.FromRgb(0xF1, 0xC1, 0x5F), 1) }, 90));
         static readonly Brush HeaderAll = Frozen(new LinearGradientBrush(new GradientStopCollection { new GradientStop(Color.FromRgb(0xFF, 0xD5, 0x8D), 0), new GradientStop(Color.FromRgb(0xF2, 0x94, 0x36), 1) }, 90));
-        static readonly Pen HeaderLine = FrozenPen(Color.FromRgb(0x9E, 0xB6, 0xCE), 1);
+        static Pen HeaderLine = FrozenPen(Color.FromRgb(0x9E, 0xB6, 0xCE), 1);
+        static readonly Pen HeaderLineDefault = HeaderLine;
         static readonly Pen GridPen = FrozenPen(Color.FromRgb(0xD0, 0xD7, 0xE5), 1);
         static readonly Brush SelFill = Frozen(new SolidColorBrush(Color.FromArgb(0x38, 0x31, 0x6A, 0xC5)));
         static readonly Pen SelPen = FrozenPen(Colors.Black, 2);
         static readonly Pen FreezePen = FrozenPen(Color.FromRgb(0x30, 0x30, 0x30), 1);
-        static readonly Brush HeaderText = Frozen(new SolidColorBrush(Color.FromRgb(0x27, 0x41, 0x5F)));
+        static Brush HeaderText = Frozen(new SolidColorBrush(Color.FromRgb(0x27, 0x41, 0x5F)));
+        static readonly Brush HeaderTextDefault = HeaderText;
         static readonly Typeface HeaderFace = new Typeface("Calibri");
         static readonly Dictionary<string, Typeface> Faces = new();
         static readonly Dictionary<Color, SolidColorBrush> BrushCache = new();
